@@ -1,1 +1,21 @@
+## Visual Studio
 .vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## Build
+bin/
+obj/
+TestResults/
+
+## Dotnet
+*.log
+*.dbmdl
+*.pdb
+
+## Others
+*.DS_Store
+*.idea/
+*.vscode/

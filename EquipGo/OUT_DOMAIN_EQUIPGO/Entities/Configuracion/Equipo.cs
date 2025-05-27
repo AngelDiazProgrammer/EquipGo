@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OUT_DOMAIN_EQUIPGO.Entities
+namespace OUT_DOMAIN_EQUIPGO.Entities.Configuracion
 {
     public class Equipo
     {
