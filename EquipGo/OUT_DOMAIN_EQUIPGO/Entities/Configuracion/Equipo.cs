@@ -19,7 +19,7 @@ namespace OUT_DOMAIN_EQUIPGO.Entities.Configuracion
         public bool EquipoPersonal { get; set; }
         public double Latitud { get; set; }
         public double Longitud { get; set; }
-        public string TipoDispositivo { get; set; }
+        public int TipoDispositivo { get; set; }
         public string SistemaOperativo { get; set; }
         public string MacEquipo { get; set; }
         public DateTime FechaCreacion { get; set; }

@@ -13,5 +13,6 @@ namespace OUT_DOMAIN_EQUIPGO.Entities.Configuracion
         public double Latitud { get; set; }
         public double Longitud { get; set; }
         public double ReadioMetros { get; set; }
+        public int sedeOS { get; set; }
     }
 }
