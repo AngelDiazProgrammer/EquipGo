@@ -6,4 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\OUT_PERSISTENCE_EQUIPGO\OUT_PERSISTENCE_EQUIPGO.csproj" />
+  </ItemGroup>
+
 </Project>
