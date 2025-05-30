@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Interface;
+using Microsoft.EntityFrameworkCore;
 using OUT_APP_EQUIPGO.Components;
 using OUT_PERSISTENCE_EQUIPGO.Context;
+using OUT_PERSISTENCE_EQUIPGO.UnitOfWork;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +11,7 @@ builder.Services.AddDbContext<EquipGoDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("EquipGoConnection")));
 
 // Add services to the container.
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 

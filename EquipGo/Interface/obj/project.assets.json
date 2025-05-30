@@ -1,11 +1,30 @@
 {
   "version": 3,
   "targets": {
-    "net8.0": {}
+    "net8.0": {
+      "OUT_DOMAIN_EQUIPGO/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/OUT_DOMAIN_EQUIPGO.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/OUT_DOMAIN_EQUIPGO.dll": {}
+        }
+      }
+    }
   },
-  "libraries": {},
+  "libraries": {
+    "OUT_DOMAIN_EQUIPGO/1.0.0": {
+      "type": "project",
+      "path": "../OUT_DOMAIN_EQUIPGO/OUT_DOMAIN_EQUIPGO.csproj",
+      "msbuildProject": "../OUT_DOMAIN_EQUIPGO/OUT_DOMAIN_EQUIPGO.csproj"
+    }
+  },
   "projectFileDependencyGroups": {
-    "net8.0": []
+    "net8.0": [
+      "OUT_DOMAIN_EQUIPGO >= 1.0.0"
+    ]
   },
   "packageFolders": {
     "C:\\Users\\Angel\\.nuget\\packages\\": {},
@@ -39,7 +58,11 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\Angel\\source\\repos\\EquipGo\\EquipGo\\OUT_DOMAIN_EQUIPGO\\OUT_DOMAIN_EQUIPGO.csproj": {
+              "projectPath": "C:\\Users\\Angel\\source\\repos\\EquipGo\\EquipGo\\OUT_DOMAIN_EQUIPGO\\OUT_DOMAIN_EQUIPGO.csproj"
+            }
+          }
         }
       },
       "warningProperties": {

@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Interface\Interface.csproj" />
     <ProjectReference Include="..\OUT_DOMAIN_EQUIPGO\OUT_DOMAIN_EQUIPGO.csproj" />
   </ItemGroup>
 
