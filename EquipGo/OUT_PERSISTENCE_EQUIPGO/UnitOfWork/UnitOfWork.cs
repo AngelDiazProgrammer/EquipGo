@@ -15,6 +15,8 @@ namespace OUT_PERSISTENCE_EQUIPGO.UnitOfWork
         private readonly EquipGoDbContext _context;
 
         public IEquiposRepository Equipos { get; }
+        public IUsuariosInformacionRepository UsuariosInformacion { get; }
+        public ITransaccionesRepository Transacciones { get; }
 
         public UnitOfWork(EquipGoDbContext context)
         {

@@ -24,12 +24,20 @@ build_property.EnableCodeStyleSeverity =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBcHAucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/Angel/source/repos/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/Component.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xDb21wb25lbnQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Angel/source/repos/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/Pages/Counter.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xDb3VudGVyLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Angel/source/repos/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/Pages/Error.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFcnJvci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Angel/source/repos/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/Pages/Escaneo.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFc2NhbmVvLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Angel/source/repos/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/Pages/Home.razor]

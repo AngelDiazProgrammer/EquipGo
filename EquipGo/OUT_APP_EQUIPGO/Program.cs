@@ -1,4 +1,6 @@
 ﻿using Interface;
+using Interface.Services;
+using Interface.Services.Equipos;
 using Microsoft.EntityFrameworkCore;
 using OUT_APP_EQUIPGO.Components;
 using OUT_PERSISTENCE_EQUIPGO.Context;
@@ -11,6 +13,7 @@ builder.Services.AddDbContext<EquipGoDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("EquipGoConnection")));
 
 // Add services to the container.
+builder.Services.AddScoped<IEquipoService, EquipoService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();

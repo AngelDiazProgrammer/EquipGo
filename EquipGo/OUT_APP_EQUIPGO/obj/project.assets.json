@@ -1008,7 +1008,8 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v8.0",
         "dependencies": {
-          "OUT_DOMAIN_EQUIPGO": "1.0.0"
+          "OUT_DOMAIN_EQUIPGO": "1.0.0",
+          "OUT_OS_APP.EQUIPGO.DTO": "1.0.0"
         },
         "compile": {
           "bin/placeholder/Interface.dll": {}
@@ -1025,6 +1026,16 @@
         },
         "runtime": {
           "bin/placeholder/OUT_DOMAIN_EQUIPGO.dll": {}
+        }
+      },
+      "OUT_OS_APP.EQUIPGO.DTO/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/OUT_OS_APP.EQUIPGO.DTO.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/OUT_OS_APP.EQUIPGO.DTO.dll": {}
         }
       },
       "OUT_PERSISTENCE_EQUIPGO/1.0.0": {
@@ -2837,6 +2848,11 @@
       "type": "project",
       "path": "../OUT_DOMAIN_EQUIPGO/OUT_DOMAIN_EQUIPGO.csproj",
       "msbuildProject": "../OUT_DOMAIN_EQUIPGO/OUT_DOMAIN_EQUIPGO.csproj"
+    },
+    "OUT_OS_APP.EQUIPGO.DTO/1.0.0": {
+      "type": "project",
+      "path": "../OUT_OS_APP.EQUIPGO.DTO/OUT_OS_APP.EQUIPGO.DTO.csproj",
+      "msbuildProject": "../OUT_OS_APP.EQUIPGO.DTO/OUT_OS_APP.EQUIPGO.DTO.csproj"
     },
     "OUT_PERSISTENCE_EQUIPGO/1.0.0": {
       "type": "project",

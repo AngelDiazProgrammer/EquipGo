@@ -10,6 +10,8 @@ namespace Interface
     public interface IUnitOfWork : IDisposable
     {
         IEquiposRepository Equipos { get; }
+        IUsuariosInformacionRepository UsuariosInformacion { get; }
+        ITransaccionesRepository Transacciones { get; }
         Task<int> CompleteAsync(); // Guarda cambios
     }
 }

@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\OUT_DOMAIN_EQUIPGO\OUT_DOMAIN_EQUIPGO.csproj" />
+    <ProjectReference Include="..\OUT_OS_APP.EQUIPGO.DTO\OUT_OS_APP.EQUIPGO.DTO.csproj" />
   </ItemGroup>
 
 </Project>
