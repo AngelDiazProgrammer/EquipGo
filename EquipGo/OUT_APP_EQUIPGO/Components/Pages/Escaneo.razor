@@ -1,5 +1,7 @@
 ﻿@page "/escaneo"
 @inject IJSRuntime JS
+@inject Interface.Services.Equipos.IEquipoService EquipoService
+
 
 <h3>Módulo de Escaneo</h3>
 
@@ -85,7 +87,29 @@
                 console.error("❌ Error al acceder a la cámara:", err);
             });
     });
-
-
-    
 </script>
+
+    @code {
+
+        private async Task MostrarModalResultadoReal(string codigoBarras)
+        {
+            try
+            {
+                var equipoDto = await EquipoService.ConsultarPorCodigoBarrasAsync(codigoBarras);
+                if (equipoDto != null)
+                {
+                    await JS.InvokeVoidAsync("mostrarModalResultado", equipoDto);
+                }
+                else
+                {
+                    Console.Error.WriteLine("⚠️ Equipo no encontrado.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine("❌ Error al obtener información:", ex.Message);
+            }
+        }
+    }
+
+

@@ -3,46 +3,47 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("✅ DOM listo (scan.js)");
 });
 
-function mostrarModalResultado(codigoBarras) {
-    console.log("📋 Mostrando modal para el código:", codigoBarras);
 
-    // Simular llamada a backend o generación de datos
-    const datosSimulados = {
-        marca: "MarcaX",
-        modelo: "ModeloY",
-        serial: codigoBarras,
-        ubicacion: "Almacén Principal",
-        nombreUsuario: "Juan Pérez",
-        documentoUsuario: "123456789",
-        historialTransacciones: [
-            "2024-05-29 09:00 - Usuario1",
-            "2024-05-28 17:30 - Usuario2"
-        ]
-    };
 
-    // Llenar el modal con la información simulada
+
+/**
+ * Mostrar el modal de información del equipo.
+ * @param {object} equipoDto - Objeto recibido desde Blazor con la información real del equipo.
+ */
+function mostrarModalResultado(equipoDto) {
+    console.log("📋 Mostrando modal para el DTO:", equipoDto);
+
     const equipoInfo = document.getElementById('equipoInfo');
     if (equipoInfo) {
-        equipoInfo.innerText = `Marca: ${datosSimulados.marca}, Modelo: ${datosSimulados.modelo}, Serial: ${datosSimulados.serial}, Ubicación: ${datosSimulados.ubicacion}, Usuario: ${datosSimulados.nombreUsuario} (${datosSimulados.documentoUsuario})`;
+        equipoInfo.innerText =
+            `Marca: ${equipoDto.marca}, Modelo: ${equipoDto.modelo}, Serial: ${equipoDto.serial}, ` +
+            `Ubicación: ${equipoDto.ubicacion}, Usuario: ${equipoDto.nombreUsuario} (${equipoDto.documentoUsuario}), ` +
+            `Área: ${equipoDto.area}, Campaña: ${equipoDto.campaña}`;
     }
 
     const historial = document.getElementById('historial');
     if (historial) {
-        historial.innerHTML = '';
-        datosSimulados.historialTransacciones.forEach(item => {
+        historial.innerHTML = ''; // Limpiar historial anterior
+        if (equipoDto.historialTransacciones && equipoDto.historialTransacciones.length > 0) {
+            equipoDto.historialTransacciones.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                li.classList.add('list-group-item');
+                historial.appendChild(li);
+            });
+        } else {
             const li = document.createElement('li');
-            li.textContent = item;
-            li.classList.add('list-group-item');
+            li.textContent = 'No hay historial de transacciones.';
+            li.classList.add('list-group-item', 'text-muted');
             historial.appendChild(li);
-        });
+        }
     }
 
-    // Mostrar el modal
     const modalElement = document.getElementById('resultadoModal');
     if (modalElement) {
-        console.log("🔍 modalElement:", modalElement);
         const modal = new bootstrap.Modal(modalElement);
-        console.log("🚀 Modal creado, intentando mostrar...");
         modal.show();
+    } else {
+        console.warn("⚠️ Modal de resultado no encontrado en el DOM.");
     }
 }

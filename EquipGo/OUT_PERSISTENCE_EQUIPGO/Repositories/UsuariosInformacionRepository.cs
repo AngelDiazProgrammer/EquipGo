@@ -1,4 +1,5 @@
 ﻿using Interface.Repositories;
+using Microsoft.EntityFrameworkCore;
 using OUT_DOMAIN_EQUIPGO.Entities.Procesos;
 using OUT_PERSISTENCE_EQUIPGO.Context;
 using System;
@@ -12,5 +13,12 @@ namespace OUT_PERSISTENCE_EQUIPGO.Repositories
     public class UsuariosInformacionRepository : GenericRepository<UsuariosInformacion>, IUsuariosInformacionRepository
     {
         public UsuariosInformacionRepository(EquipGoDbContext context) : base(context) { }
+        public async Task<UsuariosInformacion> GetByIdAsync(int id)
+        {
+            return await _context.UsuariosInformacion
+                .FirstOrDefaultAsync(u => u.Id == id);
+        }
+
+
     }
 }
