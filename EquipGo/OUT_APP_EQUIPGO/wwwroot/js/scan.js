@@ -3,9 +3,6 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("✅ DOM listo (scan.js)");
 });
 
-
-
-
 /**
  * Mostrar el modal de información del equipo.
  * @param {object} equipoDto - Objeto recibido desde Blazor con la información real del equipo.
