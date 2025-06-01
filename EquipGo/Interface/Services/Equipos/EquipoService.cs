@@ -1,6 +1,6 @@
-﻿using OUT_OS_APP.EQUIPGO.DTO.DTOs;
-using OUT_DOMAIN_EQUIPGO.Entities.Procesos;
-using OUT_DOMAIN_EQUIPGO.Entities.Configuracion;
+﻿using OUT_DOMAIN_EQUIPGO.Entities.Configuracion;
+using OUT_OS_APP.EQUIPGO.DTO.DTOs;
+using OUT_DOMAIN_EQUIPGO.Entities.Smart;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,7 +29,6 @@ namespace Interface.Services.Equipos
                 return null;
             }
 
-            // Log de equipo
             Console.WriteLine($"✅ Equipo encontrado: {equipo.Marca} - {equipo.Modelo}");
 
             // Consultar el usuario
@@ -44,11 +43,32 @@ namespace Interface.Services.Equipos
                 Console.WriteLine($"✅ Usuario: {usuario.Nombres} {usuario.Apellidos} - Documento: {usuario.NumeroDocumento}");
             }
 
+            // Obtener nombres de área y campaña
+            string nombreArea = "N/A";
+            string nombreCampaña = "N/A";
+
+            if (usuario != null)
+            {
+                var area = await _unit.Area.GetByIdAsync(usuario.IdArea);
+                if (area != null)
+                {
+                    nombreArea = area.NombreArea;
+                }
+
+                var campaña = await _unit.Campaña.GetByIdAsync(usuario.IdCampaña);
+                if (campaña != null)
+                {
+                    nombreCampaña = campaña.NombreCampaña;
+                }
+            }
+
             // Consultar historial de transacciones
             var historial = (await _unit.Transacciones
-     .FindAsync(t => t.CodigoBarras == codigoBarras))
-     .ToList();
-
+                .FindAsync(t => t.CodigoBarras == codigoBarras))
+                .OrderByDescending(t => t.FechaHora)
+                .Take(5)
+                .Select(t => $"{t.FechaHora:G} - {t.Usuario}")
+                .ToList();
 
             Console.WriteLine($"✅ Historial de transacciones: {historial.Count} registros");
 
@@ -63,16 +83,15 @@ namespace Interface.Services.Equipos
 
                 NombreUsuario = usuario != null ? $"{usuario.Nombres} {usuario.Apellidos}" : "No asignado",
                 DocumentoUsuario = usuario?.NumeroDocumento ?? "N/A",
-                Area = usuario?.IdArea.ToString() ?? "N/A",
-                Campaña = usuario?.IdCampaña.ToString() ?? "N/A",
-
-
+                Area = nombreArea,
+                Campaña = nombreCampaña,
                 HistorialTransacciones = historial
-                    .OrderByDescending(t => t.FechaHora)
-                    .Take(5)
-                    .Select(t => $"{t.FechaHora:G} - {t.Usuario}")
-                    .ToList()
             };
+        }
+
+        public async Task<List<OUT_DOMAIN_EQUIPGO.Entities.Configuracion.Equipos>> ObtenerTodosLosEquiposAsync()
+        {
+            return await _unit.Equipos.ObtenerTodosLosEquiposAsync();
         }
     }
 }

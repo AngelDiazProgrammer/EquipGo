@@ -13,16 +13,24 @@ namespace OUT_PERSISTENCE_EQUIPGO.UnitOfWork
     public class UnitOfWork : IUnitOfWork
     {
         private readonly EquipGoDbContext _context;
+        public UnitOfWork(EquipGoDbContext context)
+        {
+            _context = context;
+            Equipos = new EquiposRepository(_context);
+            UsuariosInformacion = new UsuariosInformacionRepository(_context);
+            Transacciones = new TransaccionesRepository(_context);
+            Area = new AreaRepository(_context);
+            Campaña = new CampañaRepository(_context);
+        }
 
         public IEquiposRepository Equipos { get; }
         public IUsuariosInformacionRepository UsuariosInformacion { get; }
         public ITransaccionesRepository Transacciones { get; }
 
-        public UnitOfWork(EquipGoDbContext context)
-        {
-            _context = context;
-            Equipos = new EquiposRepository(_context);
-        }
+        public IAreaRepository Area { get; private set; }
+        public ICampañaRepository Campaña { get; private set; }
+
+       
 
         public async Task<int> CompleteAsync() => await _context.SaveChangesAsync();
 

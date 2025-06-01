@@ -1,4 +1,5 @@
 ﻿using OUT_OS_APP.EQUIPGO.DTO.DTOs;
+using OUT_DOMAIN_EQUIPGO.Entities.Configuracion;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,6 @@ namespace Interface.Services.Equipos
     public interface IEquipoService
     {
         Task<EquipoEscaneadoDto?> ConsultarPorCodigoBarrasAsync(string codigoBarras);
-
-
+        Task<List<OUT_DOMAIN_EQUIPGO.Entities.Configuracion.Equipos>> ObtenerTodosLosEquiposAsync();
     }
 }

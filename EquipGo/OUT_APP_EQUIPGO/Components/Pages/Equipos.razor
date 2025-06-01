@@ -1,0 +1,83 @@
+﻿@page "/equipos"
+@inject Interface.Services.Equipos.IEquipoService EquipoService
+
+<h3>Listado de Equipos</h3>
+
+@if (equipos == null)
+{
+    <p>Cargando equipos...</p>
+}
+else if (!equipos.Any())
+{
+    <p>No hay equipos registrados.</p>
+}
+else
+{
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Marca</th>
+                <th>Modelo</th>
+                <th>Serial</th>
+                <th>Código Barras</th>
+                <th>Ubicación</th>
+                <th>Usuario Info ID</th>
+                <th>Estado ID</th>
+                <th>Equipo Personal ID</th>
+                <th>Sede ID</th>
+                <th>Tipo Dispositivo ID</th>
+                <th>Latitud</th>
+                <th>Longitud</th>
+                <th>Sistema Operativo</th>
+                <th>MAC Equipo</th>
+                <th>Versión Software</th>
+                <th>Fecha Creación</th>
+                <th>Última Modificación</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var equipo in equipos)
+            {
+                <tr>
+                    <td>@equipo.Id</td>
+                    <td>@equipo.Marca</td>
+                    <td>@equipo.Modelo</td>
+                    <td>@equipo.Serial</td>
+                    <td>@equipo.CodigoBarras</td>
+                    <td>@equipo.Ubicacion</td>
+                    <td>@equipo.IdUsuarioInfo</td>
+                    <td>@equipo.IdEstado</td>
+                    <td>@equipo.IdEquipoPersonal</td>
+                    <td>@equipo.IdSede</td>
+                    <td>@equipo.IdTipoDispositivo</td>
+                    <td>@equipo.Latitud</td>
+                    <td>@equipo.Longitud</td>
+                    <td>@equipo.SistemaOperativo</td>
+                    <td>@equipo.MacEquipo</td>
+                    <td>@equipo.VersionSoftware</td>
+                    <td>@(equipo.FechaCreacion.HasValue? equipo.FechaCreacion.Value.ToShortDateString() : "N/A")</td>
+                    <td>@(equipo.UltimaModificacion.HasValue? equipo.UltimaModificacion.Value.ToShortDateString() : "N/A")</td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<OUT_DOMAIN_EQUIPGO.Entities.Configuracion.Equipos> equipos;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            equipos = await EquipoService.ObtenerTodosLosEquiposAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"❌ Error al cargar equipos: {ex.Message}");
+            equipos = new List<OUT_DOMAIN_EQUIPGO.Entities.Configuracion.Equipos>();
+        }
+    }
+}

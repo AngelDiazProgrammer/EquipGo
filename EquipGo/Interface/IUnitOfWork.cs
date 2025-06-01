@@ -12,6 +12,8 @@ namespace Interface
         IEquiposRepository Equipos { get; }
         IUsuariosInformacionRepository UsuariosInformacion { get; }
         ITransaccionesRepository Transacciones { get; }
+        IAreaRepository Area { get; }
+        ICampañaRepository Campaña { get; }
         Task<int> CompleteAsync(); // Guarda cambios
     }
 }

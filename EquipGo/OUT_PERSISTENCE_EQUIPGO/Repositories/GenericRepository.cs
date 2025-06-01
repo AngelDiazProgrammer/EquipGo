@@ -23,7 +23,11 @@ namespace OUT_PERSISTENCE_EQUIPGO.Repositories
 
         public async Task<T?> GetByIdAsync(int id) => await _dbSet.FindAsync(id); //busqueda por id
 
-        public async Task<IEnumerable<T>> GetAllAsync() => await _dbSet.ToListAsync(); //Listar todos
+        public async Task<IEnumerable<T>> GetAllAsync()
+        {
+            return await _context.Set<T>().ToListAsync();
+        }
+        //Listar todos
 
         public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate) => //filtro
             await _dbSet.Where(predicate).ToListAsync();

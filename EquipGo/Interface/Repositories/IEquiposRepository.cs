@@ -10,5 +10,6 @@ namespace Interface.Repositories
     public interface IEquiposRepository : IGenericRepository<Equipos>
     {
         Task<Equipos?> GetByCodigoBarrasAsync(string codigoBarras);
+        Task<List<Equipos>> ObtenerTodosLosEquiposAsync();
     }
 }

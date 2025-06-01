@@ -19,5 +19,9 @@ namespace OUT_PERSISTENCE_EQUIPGO.Repositories
             return await _context.Equipos.FirstOrDefaultAsync(e => e.CodigoBarras == codigoBarras);
         }
 
+        public async Task<List<Equipos>> ObtenerTodosLosEquiposAsync()
+        {
+            return await _context.Equipos.ToListAsync();
+        }
     }
 }

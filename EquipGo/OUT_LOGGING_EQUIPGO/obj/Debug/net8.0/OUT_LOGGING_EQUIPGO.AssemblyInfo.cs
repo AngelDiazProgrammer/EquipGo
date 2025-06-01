@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("OUT_LOGGING_EQUIPGO")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+84e836a488109a2012cdc46cda2fec0d530926bb")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c3cd81302703bc23eb23c75dbcf7e2feb4d9c352")]
 [assembly: System.Reflection.AssemblyProductAttribute("OUT_LOGGING_EQUIPGO")]
 [assembly: System.Reflection.AssemblyTitleAttribute("OUT_LOGGING_EQUIPGO")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
