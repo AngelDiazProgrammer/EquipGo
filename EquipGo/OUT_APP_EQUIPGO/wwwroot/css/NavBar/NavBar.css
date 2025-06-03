@@ -1,0 +1,50 @@
+﻿/* Sidebar vertical */
+.navbar {
+    background-color: #FFFFFF; /* Fondo blanco */
+    width: 250px;
+    min-height: 100vh;
+    padding: 20px 0;
+    border-right: 1px solid #E0E0E0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Logo o nombre de la app */
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #E9002B; /* Rojo corporativo */
+    margin-bottom: 20px;
+    text-decoration: none;
+}
+
+/* Links de navegación */
+.nav-link {
+    color: #555555; /* Gris oscuro */
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    width: 100%;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-weight: 500;
+}
+
+    /* Íconos */
+    .nav-link span {
+        margin-right: 10px;
+        font-size: 1.2rem;
+    }
+
+    /* Link activo */
+    .nav-link.active {
+        background-color: #E9002B; /* Fondo rojo para activo */
+        color: #FFFFFF !important;
+    }
+
+    /* Hover */
+    .nav-link:hover {
+        background-color: rgba(233, 0, 43, 0.1);
+    }

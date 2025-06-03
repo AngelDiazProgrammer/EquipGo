@@ -39,12 +39,12 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Auth
                     }
                     else if (usuario.Rol.NombreRol.Equals("Administrador", StringComparison.OrdinalIgnoreCase))
                     {
-                        Navigation.NavigateTo("/equipos");
+                        Navigation.NavigateTo("/");
                     }
                     else
                     {
                         // Redirección por defecto
-                        Navigation.NavigateTo("/equipos");
+                        Navigation.NavigateTo("/");
                     }
                 }
                 else
