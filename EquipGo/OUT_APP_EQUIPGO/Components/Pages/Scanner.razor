@@ -1,0 +1,98 @@
+﻿@page "/scanner"
+@using Interface.Services.Equipos
+@using Interface.Services.Transacciones
+@using OUT_OS_APP.EQUIPGO.DTO.DTOs
+@inject IEquipoService EquipoService
+@inject ITransaccionService TransaccionService
+@inject IJSRuntime JS
+@attribute [Authorize(Roles = "Guarda")]
+
+<h3>Escáner de Códigos de Barras</h3>
+
+<div id="video" style="width: 400px; height: 300px;"></div>
+
+
+
+@if (equipoEscaneado != null)
+{
+    <!-- Modal de Bootstrap -->
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Información del Equipo</h5>
+                    <button type="button" class="btn-close" @onclick="CerrarModal"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Marca:</strong> @equipoEscaneado.Marca</p>
+                    <p><strong>Modelo:</strong> @equipoEscaneado.Modelo</p>
+                    <p><strong>Serial:</strong> @equipoEscaneado.Serial</p>
+                    <p><strong>Ubicación:</strong> @equipoEscaneado.Ubicacion</p>
+                    <hr />
+                    <p><strong>Usuario:</strong> @equipoEscaneado.NombreUsuario</p>
+                    <p><strong>Documento:</strong> @equipoEscaneado.DocumentoUsuario</p>
+                    <p><strong>Área:</strong> @equipoEscaneado.Area</p>
+                    <p><strong>Campaña:</strong> @equipoEscaneado.Campaña</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success" @onclick="AprobarTransaccion">Aprobar</button>
+                    <button class="btn btn-danger" @onclick="CerrarModal">Rechazar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private EquipoEscaneadoDto? equipoEscaneado;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("startScanner", DotNetObjectReference.Create(this));
+        }
+    }
+
+    [JSInvokable]
+    public async Task ProcesarCodigo(string codigoBarras)
+    {
+        equipoEscaneado = await EquipoService.ConsultarPorCodigoBarrasAsync(codigoBarras);
+        StateHasChanged();
+    }
+
+    private async Task AprobarTransaccion()
+    {
+        if (equipoEscaneado == null) return;
+
+        var transaccion = new TransaccionRequest
+        {
+            CodigoBarras = equipoEscaneado.CodigoBarras,
+            TipoTransaccion = 1, // 1=Entrada, 2=Salida (ajústalo)
+            IdEquipoPersonal = 0, // (opcional, si aplica)
+            IdUsuarioInfo = 0, // (rellena con el usuario asignado)
+            IdUsuarioSession = 0, // (rellena con el usuario logueado)
+            SedeOs = 0, // (rellena con la sede)
+            Usuario = "GUARDA_APP"
+        };
+
+        var result = await TransaccionService.RegistrarTransaccionAsync(transaccion);
+
+        if (result)
+        {
+            await JS.InvokeVoidAsync("alert", "Transacción registrada correctamente.");
+        }
+        else
+        {
+            await JS.InvokeVoidAsync("alert", "Error al registrar la transacción.");
+        }
+
+        equipoEscaneado = null;
+        StateHasChanged();
+    }
+
+    private void CerrarModal()
+    {
+        equipoEscaneado = null;
+    }
+}

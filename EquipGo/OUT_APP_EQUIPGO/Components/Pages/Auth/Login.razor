@@ -1,0 +1,42 @@
+﻿@page "/login"
+@using OUT_APP_EQUIPGO.Components.Layout
+@layout SinNavLayout
+@inherits LoginBase
+
+<link href="css/Auth/login.css" rel="stylesheet" />
+<div class="login-container">
+    <div class="login-box">
+        <div class="login-header">
+            <img src="img/logoOutsourcing.png" alt="Outsourcing" class="logo" />
+            <h2>EquipGO</h2>
+            <h4>Iniciar sesión</h4>
+        </div>
+
+        <EditForm Model="@loginModel" OnValidSubmit="IniciarSesion">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="form-group">
+                <label for="numeroDocumento">Numero De Documento</label>
+                <InputText id="numeroDocumento" class="form-control" placeholder="Ingrese su nombre de usuario" @bind-Value="loginModel.NumeroDocumento" />
+            </div>
+
+            <div class="form-group">
+                <label for="contraseña">Contraseña</label>
+                <InputText id="contraseña" type="password" class="form-control" placeholder="Ingrese su contraseña" @bind-Value="loginModel.Contraseña" />
+            </div>
+
+            <div class="form-options">
+                <label>
+                    <InputCheckbox @bind-Value="loginModel.RecordarContrasena" />
+                    Recordar contraseña
+                </label>
+                <a href="#">¿Olvidó su contraseña?</a>
+            </div>
+
+            <button class="btn-login">Ingresar</button>
+        </EditForm>
+
+        <p class="mensaje">@mensaje</p>
+    </div>
+</div>

@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\OUT_DOMAIN_EQUIPGO\OUT_DOMAIN_EQUIPGO.csproj" />
     <ProjectReference Include="..\OUT_OS_APP.EQUIPGO.DTO\OUT_OS_APP.EQUIPGO.DTO.csproj" />
   </ItemGroup>

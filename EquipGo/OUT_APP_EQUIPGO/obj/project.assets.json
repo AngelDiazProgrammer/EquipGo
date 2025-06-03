@@ -1008,6 +1008,7 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v8.0",
         "dependencies": {
+          "Microsoft.EntityFrameworkCore": "9.0.5",
           "OUT_DOMAIN_EQUIPGO": "1.0.0",
           "OUT_OS_APP.EQUIPGO.DTO": "1.0.0"
         },
@@ -1045,7 +1046,8 @@
           "Interface": "1.0.0",
           "Microsoft.EntityFrameworkCore": "9.0.5",
           "Microsoft.EntityFrameworkCore.SqlServer": "9.0.5",
-          "OUT_DOMAIN_EQUIPGO": "1.0.0"
+          "OUT_DOMAIN_EQUIPGO": "1.0.0",
+          "OUT_OS_APP.EQUIPGO.DTO": "1.0.0"
         },
         "compile": {
           "bin/placeholder/OUT_PERSISTENCE_EQUIPGO.dll": {}

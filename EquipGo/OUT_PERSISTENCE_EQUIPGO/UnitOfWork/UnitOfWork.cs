@@ -1,5 +1,6 @@
 ﻿using Interface;
 using Interface.Repositories;
+using OUT_DOMAIN_EQUIPGO.Entities.Configuracion;
 using OUT_PERSISTENCE_EQUIPGO.Context;
 using OUT_PERSISTENCE_EQUIPGO.Repositories;
 using System;
@@ -13,6 +14,7 @@ namespace OUT_PERSISTENCE_EQUIPGO.UnitOfWork
     public class UnitOfWork : IUnitOfWork
     {
         private readonly EquipGoDbContext _context;
+
         public UnitOfWork(EquipGoDbContext context)
         {
             _context = context;
@@ -21,19 +23,25 @@ namespace OUT_PERSISTENCE_EQUIPGO.UnitOfWork
             Transacciones = new TransaccionesRepository(_context);
             Area = new AreaRepository(_context);
             Campaña = new CampañaRepository(_context);
+            UsuariosSession = new UsuariosSessionRepository(_context);
         }
 
         public IEquiposRepository Equipos { get; }
         public IUsuariosInformacionRepository UsuariosInformacion { get; }
         public ITransaccionesRepository Transacciones { get; }
+        public IAreaRepository Area { get; }
+        public ICampañaRepository Campaña { get; }
 
-        public IAreaRepository Area { get; private set; }
-        public ICampañaRepository Campaña { get; private set; }
+        public IUsuariosSessionRepository  UsuariosSession { get; }
 
-       
+        public async Task<int> CompleteAsync()
+        {
+            return await _context.SaveChangesAsync();
+        }
 
-        public async Task<int> CompleteAsync() => await _context.SaveChangesAsync();
-
-        public void Dispose() => _context.Dispose();
+        public void Dispose()
+        {
+            _context.Dispose();
+        }
     }
 }

@@ -9,6 +9,7 @@ namespace Interface.Repositories
 {
     public interface IGenericRepository<T> where T : class
     {
+        IQueryable<T> Query(); //Para usar Include y ThenInclude
         Task<T?> GetByIdAsync(int id); //busqueda por id
         Task<IEnumerable<T>> GetAllAsync(); //Listar todos los registros
         Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate); //Filtrar

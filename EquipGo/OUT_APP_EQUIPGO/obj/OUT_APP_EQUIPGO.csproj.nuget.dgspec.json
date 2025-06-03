@@ -57,6 +57,12 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[9.0.5, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
@@ -319,6 +325,9 @@
               },
               "C:\\Users\\Angel\\source\\repos\\EquipGo\\EquipGo\\OUT_DOMAIN_EQUIPGO\\OUT_DOMAIN_EQUIPGO.csproj": {
                 "projectPath": "C:\\Users\\Angel\\source\\repos\\EquipGo\\EquipGo\\OUT_DOMAIN_EQUIPGO\\OUT_DOMAIN_EQUIPGO.csproj"
+              },
+              "C:\\Users\\Angel\\source\\repos\\EquipGo\\EquipGo\\OUT_OS_APP.EQUIPGO.DTO\\OUT_OS_APP.EQUIPGO.DTO.csproj": {
+                "projectPath": "C:\\Users\\Angel\\source\\repos\\EquipGo\\EquipGo\\OUT_OS_APP.EQUIPGO.DTO\\OUT_OS_APP.EQUIPGO.DTO.csproj"
               }
             }
           }

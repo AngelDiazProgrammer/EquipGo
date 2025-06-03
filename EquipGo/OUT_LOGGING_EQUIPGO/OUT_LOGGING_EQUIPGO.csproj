@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\OUT_APP_EQUIPGO\OUT_APP_EQUIPGO.csproj" />
+  </ItemGroup>
+
 </Project>

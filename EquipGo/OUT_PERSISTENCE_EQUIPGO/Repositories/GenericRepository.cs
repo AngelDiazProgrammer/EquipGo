@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace OUT_PERSISTENCE_EQUIPGO.Repositories
@@ -13,7 +12,7 @@ namespace OUT_PERSISTENCE_EQUIPGO.Repositories
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         protected readonly EquipGoDbContext _context;
-        private readonly DbSet<T> _dbSet; // Obtiene dinámicamente el DbSet<T> de la entidad T
+        private readonly DbSet<T> _dbSet;
 
         public GenericRepository(EquipGoDbContext context)
         {
@@ -21,21 +20,39 @@ namespace OUT_PERSISTENCE_EQUIPGO.Repositories
             _dbSet = _context.Set<T>();
         }
 
-        public async Task<T?> GetByIdAsync(int id) => await _dbSet.FindAsync(id); //busqueda por id
+        public async Task<T?> GetByIdAsync(int id)
+        {
+            return await _dbSet.FindAsync(id);
+        }
 
         public async Task<IEnumerable<T>> GetAllAsync()
         {
-            return await _context.Set<T>().ToListAsync();
+            return await _dbSet.AsNoTracking().ToListAsync();
         }
-        //Listar todos
 
-        public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate) => //filtro
-            await _dbSet.Where(predicate).ToListAsync();
+        public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await _dbSet.AsNoTracking().Where(predicate).ToListAsync();
+        }
 
-        public async Task AddAsync(T entity) => await _dbSet.AddAsync(entity);
+        public IQueryable<T> Query()
+        {
+            return _dbSet.AsQueryable();
+        }
 
-        public void Update(T entity) => _dbSet.Update(entity);
+        public async Task AddAsync(T entity)
+        {
+            await _dbSet.AddAsync(entity);
+        }
 
-        public void Remove(T entity) => _dbSet.Remove(entity);
+        public void Update(T entity)
+        {
+            _dbSet.Update(entity);
+        }
+
+        public void Remove(T entity)
+        {
+            _dbSet.Remove(entity);
+        }
     }
 }

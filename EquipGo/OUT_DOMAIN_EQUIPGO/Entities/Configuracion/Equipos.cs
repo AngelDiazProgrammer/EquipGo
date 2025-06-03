@@ -1,4 +1,6 @@
-﻿using System;
+﻿using OUT_DOMAIN_EQUIPGO.Entities.Procesos;
+using OUT_DOMAIN_EQUIPGO.Entities.Smart;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -49,5 +51,21 @@ namespace OUT_DOMAIN_EQUIPGO.Entities.Configuracion
 
         [Column("ultima_modificacion")]
         public DateTime? UltimaModificacion { get; set; }
+
+        // 🔥 AGREGAR ESTAS PROPIEDADES DE NAVEGACIÓN:
+        [ForeignKey("IdUsuarioInfo")]
+        public virtual UsuariosInformacion IdUsuarioInfoNavigation { get; set; }
+
+        [ForeignKey("IdEstado")]
+        public virtual Estado Estado { get; set; }
+
+        [ForeignKey("IdEquipoPersonal")]
+        public virtual EquiposPersonal IdEquipoPersonalNavigation { get; set; }
+
+        [ForeignKey("IdSede")]
+        public virtual Sedes IdSedeNavigation { get; set; }
+
+        [ForeignKey("IdTipoDispositivo")]
+        public virtual TiposDispositivos IdTipoDispositivoNavigation { get; set; }
     }
 }

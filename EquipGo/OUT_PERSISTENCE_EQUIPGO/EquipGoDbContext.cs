@@ -39,7 +39,7 @@ namespace OUT_PERSISTENCE_EQUIPGO.Context
 
         // SEGURIDAD
         public DbSet<UsuariosSession> UsuariosSession { get; set; }
-        public DbSet<Roles> Roles { get; set; }
+        public DbSet<Rol> Roles { get; set; }
         public DbSet<Paginas> Paginas { get; set; }
         public DbSet<PermisosRolPaginas> PermisosRolPaginas { get; set; }
 

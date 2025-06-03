@@ -1,6 +1,10 @@
 ﻿@page "/escaneo"
+@layout SinNavLayout
+@using Microsoft.AspNetCore.Authorization
+@using OUT_APP_EQUIPGO.Components.Layout
 @inject IJSRuntime JS
 @inject Interface.Services.Equipos.IEquipoService EquipoService
+@attribute [Authorize(Roles = "Guarda")]
 
 
 <h3>Módulo de Escaneo</h3>
