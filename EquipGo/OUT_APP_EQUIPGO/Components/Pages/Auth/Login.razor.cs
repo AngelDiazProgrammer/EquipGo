@@ -37,14 +37,14 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Auth
                     {
                         Navigation.NavigateTo("/scanner");
                     }
-                    else if (usuario.Rol.NombreRol.Equals("Administrador", StringComparison.OrdinalIgnoreCase))
+                    else if (usuario.Rol.NombreRol.Equals("Admin", StringComparison.OrdinalIgnoreCase))
                     {
-                        Navigation.NavigateTo("/");
+                        Navigation.NavigateTo("/AdminDashboard");
                     }
                     else
                     {
                         // Redirección por defecto
-                        Navigation.NavigateTo("/");
+                        Navigation.NavigateTo("/AdminDashboard");
                     }
                 }
                 else

@@ -1,0 +1,109 @@
+﻿@page "/AdminDashboard"
+@attribute [Authorize(Roles = "Admin")]
+<PageTitle>AdminDashboard</PageTitle>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link href="css/Dashboard/dashboard.css" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard EquipGo</title>
+</head>
+<body>
+    <div class="equipos-container">
+        <h3>Dashboard</h3>
+
+        <!-- Contadores superiores -->
+        <div class="dashboard-counters" style="display: flex; gap: 20px; margin-bottom: 20px;">
+            <div style="flex: 1; background-color: #000; color: #fff; border-radius: 12px; padding: 20px; text-align: center;  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5)">
+                <h4 style="margin: 0; font-size: 24px;">150</h4>
+                <p>Equipos Registrados</p>
+            </div>
+            <div style="flex: 1; background-color: #555; color: #fff; border-radius: 12px; padding: 20px; text-align: center;  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5)">
+                <h4 style="margin: 0; font-size: 24px;">90</h4>
+                <p>Usuarios Registrados</p>
+            </div>
+            <div style="flex: 1; background-color: #E9002B; color: #fff; border-radius: 12px; padding: 20px; text-align: center;  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5)">
+                <h4 style="margin: 0; font-size: 24px;">20</h4>
+                <p>Equipos No Autorizados</p>
+            </div>
+        </div>
+
+        <!-- Filtros superiores -->
+        <div class="dashboard-filters" style="display: flex; gap: 20px; margin-bottom: 20px;">
+            <input type="text" placeholder="Asignado" style="flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 8px;">
+            <input type="text" placeholder="Número de serie" style="flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 8px;">
+            <select style="flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 8px;">
+                <option value="">Todas las Alertas</option>
+                <option value="alta">Prioridad alta</option>
+                <option value="media">Prioridad media</option>
+                <option value="baja">Prioridad baja</option>
+            </select>
+        </div>
+
+        <!-- Tabla -->
+        <div class="table-wrapper" style="border: 1px solid #E9002B; border-radius: 10px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Asignado</th>
+                        <th>Número de serie</th>
+                        <th>Tiempo de uso</th>
+                        <th>Alerta</th>
+                        <th>Ubicación</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Sofía Montenegro Suárez</td>
+                        <td>EQP-142</td>
+                        <td>3h 25min</td>
+                        <td style="color: red;">Prioridad alta</td>
+                        <td><button style="padding: 6px 12px; border: none; background-color: #ccc; border-radius: 8px; cursor: pointer;">Ver ubicación</button></td>
+                    </tr>
+                    <tr>
+                        <td>Andrés Rivas Castillo</td>
+                        <td>EQP-145</td>
+                        <td>1h 18min</td>
+                        <td style="color: orange;">Prioridad media</td>
+                        <td><button style="padding: 6px 12px; border: none; background-color: #ccc; border-radius: 8px; cursor: pointer;">Ver ubicación</button></td>
+                    </tr>
+                    <tr>
+                        <td>Alejandra Salgado Muñoz</td>
+                        <td>EQP-144</td>
+                        <td>38min</td>
+                        <td style="color: green;">Prioridad baja</td>
+                        <td><button style="padding: 6px 12px; border: none; background-color: #ccc; border-radius: 8px; cursor: pointer;">Ver ubicación</button></td>
+                    </tr>
+                    <tr>
+                        <td>Sebastián Tomás Herrera Cifuentes</td>
+                        <td>EQP-150</td>
+                        <td>15min</td>
+                        <td style="color: green;">Prioridad baja</td>
+                        <td><button style="padding: 6px 12px; border: none; background-color: #ccc; border-radius: 8px; cursor: pointer;">Ver ubicación</button></td>
+                    </tr>
+                    <tr>
+                        <td>Ricardo Manuel Peñaloza Ortega</td>
+                        <td>EQP-147</td>
+                        <td>5h 59min</td>
+                        <td style="color: red;">Prioridad alta</td>
+                        <td><button style="padding: 6px 12px; border: none; background-color: #ccc; border-radius: 8px; cursor: pointer;">Ver ubicación</button></td>
+                    </tr>
+                    <tr>
+                        <td>Luciana Beatriz Torres Valenzuela</td>
+                        <td>EQP-143</td>
+                        <td>30min</td>
+                        <td style="color: green;">Prioridad baja</td>
+                        <td><button style="padding: 6px 12px; border: none; background-color: #ccc; border-radius: 8px; cursor: pointer;">Ver ubicación</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
+
+@code {
+
+}

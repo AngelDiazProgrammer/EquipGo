@@ -40,8 +40,12 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xDb3VudGVyLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Angel/source/repos/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/Pages/Equipos.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFcXVpcG9zLnJhem9y
+[C:/Users/Angel/source/repos/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/Pages/Dashboard/AdminDashboard.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xEYXNoYm9hcmRcQWRtaW5EYXNoYm9hcmQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Angel/source/repos/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/Pages/Equipos/Equipos.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFcXVpcG9zXEVxdWlwb3MucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Angel/source/repos/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/Pages/Error.razor]

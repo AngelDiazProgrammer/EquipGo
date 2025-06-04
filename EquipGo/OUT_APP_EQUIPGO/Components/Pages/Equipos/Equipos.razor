@@ -1,24 +1,24 @@
 ﻿@page "/equipos"
 @using Microsoft.AspNetCore.Authorization
 @using OUT_OS_APP.EQUIPGO.DTO.DTOs.Equipo
-@inject Interface.Services.Equipos.IEquipoService EquipoService
 @attribute [Authorize(Roles = "Admin")]
 
 <link href="css/Dashboard/dashboard.css" rel="stylesheet" />
+
 <div class="equipos-container">
     <h3>Listado de Equipos</h3>
 
     <!-- Contadores superiores -->
     <div class="target-counters" style="display: flex; gap: 20px; margin-bottom: 20px;">
-        <div style="flex: 1; background-color: #000; color: #fff; border-radius: 12px; padding: 20px; text-align: center;  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5)">
+        <div style="flex: 1; background-color: #000; color: #fff; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5)">
             <h4 style="margin: 0; font-size: 24px;">150</h4>
             <p>Equipos Registrados</p>
         </div>
-        <div style="flex: 1; background-color: #555; color: #fff; border-radius: 12px; padding: 20px; text-align: center;  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5)">
+        <div style="flex: 1; background-color: #555; color: #fff; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5)">
             <h4 style="margin: 0; font-size: 24px;">90</h4>
             <p>Equipos Personales</p>
         </div>
-        <div style="flex: 1; background-color: #E9002B; color: #fff; border-radius: 12px; padding: 20px; text-align: center;  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5)">
+        <div style="flex: 1; background-color: #E9002B; color: #fff; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5)">
             <h4 style="margin: 0; font-size: 24px;">20</h4>
             <p>Equipos Corporativos</p>
         </div>
@@ -101,53 +101,3 @@
         </div>
     }
 </div>
-
-@code {
-    private List<OUT_OS_APP.EQUIPGO.DTO.DTOs.Equipo.EquipoDto> equipos;
-    private List<OUT_OS_APP.EQUIPGO.DTO.DTOs.Equipo.EquipoDto> equiposFiltrados = new List<OUT_OS_APP.EQUIPGO.DTO.DTOs.Equipo.EquipoDto>();
-
-    // Filtros
-    private string filtroMarca = "";
-    private string filtroModelo = "";
-    private string filtroSerial = "";
-    private string filtroEstado = "";
-
-    protected override async Task OnInitializedAsync()
-    {
-        try
-        {
-            equipos = await EquipoService.ObtenerTodosLosEquiposAsync();
-            equiposFiltrados = equipos.ToList();
-        }
-        catch (Exception ex)
-        {
-            Console.Error.WriteLine($"❌ Error al cargar equipos: {ex.Message}");
-            equipos = new List<OUT_OS_APP.EQUIPGO.DTO.DTOs.Equipo.EquipoDto>();
-            equiposFiltrados = new List<OUT_OS_APP.EQUIPGO.DTO.DTOs.Equipo.EquipoDto>();
-        }
-    }
-
-    private void Filtrar()
-    {
-        if (equipos != null)
-        {
-            equiposFiltrados = equipos
-                .Where(e =>
-                    (string.IsNullOrWhiteSpace(filtroMarca) || (e.Marca?.Contains(filtroMarca, StringComparison.OrdinalIgnoreCase) ?? false)) &&
-                    (string.IsNullOrWhiteSpace(filtroModelo) || (e.Modelo?.Contains(filtroModelo, StringComparison.OrdinalIgnoreCase) ?? false)) &&
-                    (string.IsNullOrWhiteSpace(filtroSerial) || (e.Serial?.Contains(filtroSerial, StringComparison.OrdinalIgnoreCase) ?? false)) &&
-                    (string.IsNullOrWhiteSpace(filtroEstado) || (e.EstadoNombre?.Contains(filtroEstado, StringComparison.OrdinalIgnoreCase) ?? false))
-                )
-                .ToList();
-        }
-    }
-
-    private void LimpiarFiltros()
-    {
-        filtroMarca = "";
-        filtroModelo = "";
-        filtroSerial = "";
-        filtroEstado = "";
-        equiposFiltrados = equipos?.ToList() ?? new List<OUT_OS_APP.EQUIPGO.DTO.DTOs.Equipo.EquipoDto>();
-    }
-}
