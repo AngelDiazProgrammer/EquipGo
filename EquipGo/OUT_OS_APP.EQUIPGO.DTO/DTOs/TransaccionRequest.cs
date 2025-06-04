@@ -14,6 +14,5 @@ namespace OUT_OS_APP.EQUIPGO.DTO.DTOs
         public int IdUsuarioInfo { get; set; }
         public int IdUsuarioSession { get; set; }
         public int SedeOs { get; set; }
-        public string Usuario { get; set; }
     }
 }

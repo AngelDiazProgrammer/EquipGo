@@ -1,0 +1,180 @@
+﻿@page "/scanner"
+@layout SinNavLayout
+@inject AuthenticationStateProvider AuthProvider
+@using Interface.Services.Equipos
+@using Interface.Services.Transacciones
+@using OUT_APP_EQUIPGO.Components.Layout
+@using OUT_OS_APP.EQUIPGO.DTO.DTOs
+@inject IEquipoService EquipoService
+@inject ITransaccionService TransaccionService
+@inject IJSRuntime JS
+@implements IDisposable
+@attribute [Authorize(Roles = "Guarda")]
+
+<div class="container text-center p-3 border rounded shadow" style="max-width: 400px;">
+    <h2 class="text-danger mb-3">Bienvenido(a)</h2>
+
+    <div class="mb-3">
+        <h5 class="fw-bold">Módulo de escaneo</h5>
+        <p class="text-muted">
+            El Módulo de Escaneo permite registrar la entrada y salida de equipos mediante la lectura de códigos de barras.
+        </p>
+    </div>
+
+    <div class="mb-3">
+        <h6 class="fw-bold">Escaneo de código</h6>
+        <div class="bg-light p-3 rounded">
+            <div class="bg-dark rounded overflow-hidden" style="width: 100%; height: 300px; position: relative;">
+                <div id="scanner-video" style="width: 100%; height: 100%;"></div>
+            </div>
+        </div>
+    </div>
+
+ @if (equipoEscaneado != null)
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog" style="background: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content" style="border-radius: 1rem; overflow: hidden;">
+                <div class="modal-header text-center" style="background-color: #FFC107;">
+                    <h5 class="modal-title w-100" style="margin: 0;">
+                        ⚠️ <strong>Requiere validación</strong>
+                    </h5>
+                </div>
+                <div class="modal-body text-start px-4 py-3">
+                    <p><strong>📌 Área:</strong> @equipoEscaneado.Area</p>
+                    <p><strong>👤 Usuario:</strong> @equipoEscaneado.NombreUsuario</p>
+                    <p><strong>🆔 Documento:</strong> @equipoEscaneado.DocumentoUsuario</p>
+                    <p><strong>💻 Modelo:</strong> @equipoEscaneado.Modelo</p>
+                    <p><strong>🏷️ Serial:</strong> @equipoEscaneado.Serial</p>
+                    <p><strong>📍 Ubicación:</strong> @equipoEscaneado.Ubicacion</p>
+                    <p><strong>🔖 Asset:</strong> @equipoEscaneado.CodigoBarras</p>
+
+                    <div class="mb-3">
+                        <label for="tipoTransaccionSelect" class="form-label">
+                            <strong>🚥 Tipo de Transacción:</strong>
+                        </label>
+                        <select id="tipoTransaccionSelect" class="form-select" @bind="tipoTransaccionSeleccionado">
+                            <option value="1">Entrada</option>
+                            <option value="2">Salida</option>
+                        </select>
+                    </div>
+
+                    @if (equipoEscaneado.HistorialTransacciones?.Any() == true)
+                    {
+                        <hr />
+                        <h6 class="mt-3">🕒 Historial de Transacciones:</h6>
+                        <ul class="list-group">
+                            @foreach (var item in equipoEscaneado.HistorialTransacciones)
+                            {
+                                <li class="list-group-item">@item</li>
+                            }
+                        </ul>
+                    }
+                </div> <!-- 🔥 CIERRE CORRECTO DEL modal-body -->
+
+                <div class="modal-footer d-flex justify-content-between">
+                    <button class="btn btn-danger flex-fill me-2" @onclick="CerrarModal" style="border-radius: 20px;">❌ Denegar</button>
+                    <button class="btn btn-success flex-fill ms-2" @onclick="AprobarTransaccion" style="border-radius: 20px;">✅ Aprobar</button>
+                </div>
+            </div> <!-- 🔥 CIERRE CORRECTO DEL modal-content -->
+        </div> <!-- 🔥 CIERRE CORRECTO DEL modal-dialog -->
+    </div> <!-- 🔥 CIERRE CORRECTO DEL modal fade show -->
+}
+</div>
+
+@code {
+    private EquipoEscaneadoDto? equipoEscaneado;
+    private DotNetObjectReference<Scanner>? dotNetRef;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            dotNetRef = DotNetObjectReference.Create(this);
+            await Task.Delay(100); // Da tiempo al DOM de renderizar
+            await IniciarEscaneo();
+        }
+    }
+
+    private async Task IniciarEscaneo()
+    {
+        if (dotNetRef != null)
+        {
+            await JS.InvokeVoidAsync("startScanner", dotNetRef);
+        }
+    }
+
+    [JSInvokable]
+    public async Task ProcesarCodigo(string codigoBarras)
+{
+    Console.WriteLine($"⚡️ ProcesarCodigo ejecutándose con código: {codigoBarras}");
+
+    equipoEscaneado = await EquipoService.ConsultarPorCodigoBarrasAsync(codigoBarras);
+
+    if (equipoEscaneado != null)
+    {
+        Console.WriteLine("✅ Equipo encontrado y cargado en equipoEscaneado.");
+    }
+    else
+    {
+        Console.WriteLine("❌ No se encontró el equipo con ese código.");
+        await JS.InvokeVoidAsync("alert", "⚠️ Equipo no encontrado.");
+        await IniciarEscaneo(); // Reiniciar el escáner
+        return;
+    }
+
+    await InvokeAsync(StateHasChanged);
+}
+
+
+    private int tipoTransaccionSeleccionado = 2; // Por defecto 'Salida'
+    private async Task AprobarTransaccion()
+    {
+        if (equipoEscaneado == null) return;
+
+        var authState = await AuthProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var idUsuarioSessionClaim = user.Claims.FirstOrDefault(c => c.Type == "id_usuarioSession");
+        var idUsuarioSession = idUsuarioSessionClaim != null
+        ? int.Parse(idUsuarioSessionClaim.Value)
+        : 1;
+
+        var transaccion = new TransaccionRequest
+        {
+            CodigoBarras = equipoEscaneado.CodigoBarras,
+            TipoTransaccion = tipoTransaccionSeleccionado, // Usamos el valor seleccionado por el guarda
+            IdEquipoPersonal = equipoEscaneado.IdEquipoPersonal,
+            IdUsuarioInfo = equipoEscaneado.IdUsuarioInfo,
+            IdUsuarioSession = idUsuarioSession,
+            SedeOs = equipoEscaneado.IdSedeOs
+        };
+
+        var result = await TransaccionService.RegistrarTransaccionAsync(transaccion);
+
+        if (result)
+        {
+            await JS.InvokeVoidAsync("alert", "Transacción registrada correctamente.");
+        }
+        else
+        {
+            await JS.InvokeVoidAsync("alert", "Error al registrar la transacción.");
+        }
+
+        equipoEscaneado = null;
+        await InvokeAsync(StateHasChanged);
+        await IniciarEscaneo();
+    }
+
+
+    private async Task CerrarModal()
+    {
+        equipoEscaneado = null;
+        await InvokeAsync(StateHasChanged);
+        await IniciarEscaneo();
+    }
+
+    public void Dispose()
+    {
+        dotNetRef?.Dispose();
+    }
+}

@@ -35,6 +35,14 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Equipos
 
             var usuario = equipo.IdUsuarioInfoNavigation;
 
+            // ✅ Historial de transacciones
+            var historial = await _unitOfWork.Transacciones.Query()
+                .Where(t => t.CodigoBarras == codigoBarras)
+                .OrderByDescending(t => t.FechaHora)
+                .Take(5) // Últimas 5 transacciones
+                .Select(t => $"🔖 [{t.FechaHora}] Tipo: {(t.IdTipoTransaccion == 1 ? "Entrada" : "Salida")}")
+                .ToListAsync();
+
             return new EquipoEscaneadoDto
             {
                 Marca = equipo.Marca,
@@ -45,9 +53,14 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Equipos
                 NombreUsuario = $"{usuario.Nombres} {usuario.Apellidos}",
                 DocumentoUsuario = usuario.NumeroDocumento,
                 Area = usuario.IdAreaNavigation?.NombreArea,
-                Campaña = usuario.IdCampañaNavigation?.NombreCampaña
+                Campaña = usuario.IdCampañaNavigation?.NombreCampaña,
+                IdEquipoPersonal = equipo.IdEquipoPersonal,
+                IdUsuarioInfo = equipo.IdUsuarioInfo,
+                IdSedeOs = equipo.IdSede,
+                HistorialTransacciones = historial
             };
         }
+
 
         public async Task<List<EquipoDto>> ObtenerTodosLosEquiposAsync()
         {

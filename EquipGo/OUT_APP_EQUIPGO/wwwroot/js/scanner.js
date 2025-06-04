@@ -1,41 +1,57 @@
-﻿function startScanner(dotnetHelper) {
+﻿window.startScanner = function (dotNetHelper) {
     console.log("🚀 startScanner() ejecutándose");
 
-    const videoElement = document.querySelector('#video');
+    const videoContainerId = 'scanner-video';
+    const videoElement = document.getElementById(videoContainerId);
+
     if (!videoElement) {
-        console.error("❌ El contenedor #video no se encontró.");
+        console.error(`❌ El contenedor #${videoContainerId} no se encontró.`);
         return;
     }
-    console.log("✅ Contenedor #video encontrado");
+
+    if (Quagga.initialized) {
+        Quagga.stop(); // Para evitar múltiples instancias
+    }
 
     Quagga.init({
         inputStream: {
-            name: "Live",
             type: "LiveStream",
-            target: videoElement
+            target: videoElement,
+            constraints: {
+                facingMode: "environment" // Usa la cámara trasera si está disponible
+            }
         },
         decoder: {
-            readers: ["code_128_reader", "ean_reader", "ean_8_reader"]
-        }
+            readers: ["code_128_reader", "ean_reader", "ean_8_reader", "code_39_reader"]
+        },
+        locate: true
     }, function (err) {
         if (err) {
-            console.error("❌ Error en Quagga.init:", err);
+            console.error(err);
+            alert("Error al iniciar el escáner.");
             return;
         }
-        console.log("✅ Quagga iniciado correctamente");
+
+        Quagga.initialized = true;
         Quagga.start();
-    });
+        console.log("✅ QuaggaJS iniciado correctamente.");
 
-    Quagga.onProcessed(function (result) {
-        console.log("🎥 Quagga procesando frame...");
-    });
+        Quagga.onDetected(function (data) {
+            if (data && data.codeResult && data.codeResult.code) {
+                const scannedCode = data.codeResult.code;
+                console.log("📦 Código detectado:", scannedCode);
 
-    Quagga.onDetected(function (result) {
-        console.log("🔎 Código detectado:", result.codeResult.code);
-        Quagga.stop();
-        dotnetHelper.invokeMethodAsync('ProcesarCodigo', result.codeResult.code);
-    });
-}
+                Quagga.stop();
 
-// 👇 Esto asegura que la función esté disponible globalmente
-window.startScanner = startScanner;
+                // Llama a Blazor con logs para detectar errores
+                dotNetHelper.invokeMethodAsync('ProcesarCodigo', scannedCode)
+                    .then(() => {
+                        console.log("✅ ProcesarCodigo invocado exitosamente.");
+                    })
+                    .catch(err => {
+                        console.error("❌ Error al invocar ProcesarCodigo:", err);
+                    });
+            }
+        });
+    });
+};

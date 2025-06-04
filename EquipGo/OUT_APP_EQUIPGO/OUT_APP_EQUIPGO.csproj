@@ -7,22 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Components\Pages\Escaneo.razor.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Components\Pages\Escaneo.razor.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Interface\Interface.csproj" />
     <ProjectReference Include="..\OUT_PERSISTENCE_EQUIPGO\OUT_PERSISTENCE_EQUIPGO.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Update="wwwroot\js\scan.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
 
 </Project>

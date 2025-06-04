@@ -13,6 +13,7 @@ namespace OUT_DOMAIN_EQUIPGO.Entities.Procesos
     public class Transacciones
     {
         [Column("id")]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         [Column("codigoBarras")]
@@ -36,10 +37,20 @@ namespace OUT_DOMAIN_EQUIPGO.Entities.Procesos
         [Column("fechaHora")]
         public DateTime FechaHora { get; set; }
 
+        // Propiedades de navegación con ForeignKey explícito
+        [ForeignKey(nameof(IdTipoTransaccion))]
         public virtual TiposTransaccion IdTipoTransaccionNavigation { get; set; }
+
+        [ForeignKey(nameof(IdEquipoPersonal))]
         public virtual EquiposPersonal IdEquipoPersonalNavigation { get; set; }
+
+        [ForeignKey(nameof(IdUsuarioInfo))]
         public virtual UsuariosInformacion IdUsuarioInfoNavigation { get; set; }
+
+        [ForeignKey(nameof(IdUsuarioSession))]
         public virtual UsuariosSession IdUsuarioSessionNavigation { get; set; }
+
+        [ForeignKey(nameof(SedeOs))]
         public virtual Sedes SedeOsNavigation { get; set; }
     }
 }
