@@ -30,17 +30,12 @@ builder.Services.AddScoped<IEquipoService, EquipoService>();
 builder.Services.AddScoped<ITransaccionService, TransaccionService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
+
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<CookieService>();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie();
-// Configurar autenticación con un esquema de cookies
-builder.Services.AddAuthentication("FakeScheme")
-    .AddCookie("FakeScheme", options =>
-    {
-        //options.LoginPath = "/login"; // tu ruta de login
-    });
+
 
 // Configurar la autorización
 builder.Services.AddAuthorizationCore();
@@ -48,7 +43,8 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddSessionExtension();
 
 
-
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession();
 
 
 var app = builder.Build();
@@ -59,21 +55,25 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
     app.UseHsts();
 }
-app.MapControllers();
+
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
-app.UseAuthentication();
-app.UseAuthorization();
 
 app.UseSession();
 
 app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapControllers();
+app.UseAntiforgery(); 
+
 app.UseEndpoints(endpoints =>
 {
+    endpoints.MapControllers(); 
 });
-
 
 app.UseAntiforgery();
 app.MapRazorComponents<App>()
