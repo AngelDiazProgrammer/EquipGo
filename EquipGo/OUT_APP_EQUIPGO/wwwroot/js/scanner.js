@@ -1,4 +1,4 @@
-﻿window.startScanner = function (dotNetHelper) {
+﻿function startScanner (dotNetHelper) {
     console.log("🚀 startScanner() ejecutándose");
 
     const videoContainerId = 'scanner-video';

@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.JSInterop;
 using OUT_APP_EQUIPGO.Modules;
 using OUT_OS_APP.EQUIPGO.DTO.DTOs;
-using OUT_PERSISTENCE_EQUIPGO.Services.Equipos;
-using OUT_PERSISTENCE_EQUIPGO.Services.Transacciones;
 
 namespace OUT_APP_EQUIPGO.Components.Pages.Escaneo
 {

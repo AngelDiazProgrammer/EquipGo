@@ -33,6 +33,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<CookieService>();
+
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie();
 
@@ -56,7 +57,10 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.MapRazorComponents<App>()
+    .AddInteractiveServerRenderMode();
 
+app.MapControllers();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -67,17 +71,15 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapControllers();
-app.UseAntiforgery(); 
+
+
+app.UseAntiforgery();
 
 app.UseEndpoints(endpoints =>
 {
-    endpoints.MapControllers(); 
 });
 
-app.UseAntiforgery();
-app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
+
 
 
 using (var scope = app.Services.CreateScope())
