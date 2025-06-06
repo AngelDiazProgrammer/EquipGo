@@ -9,73 +9,71 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = OUT_APP_EQUIPGO
 build_property.RootNamespace = OUT_APP_EQUIPGO
-build_property.ProjectDir = C:\Users\Angel\source\repos\EquipGo\EquipGo\OUT_APP_EQUIPGO\
+build_property.ProjectDir = D:\GITHUB\EquipGo\EquipGo\OUT_APP_EQUIPGO\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 8.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = C:\Users\Angel\source\repos\EquipGo\EquipGo\OUT_APP_EQUIPGO
+build_property.MSBuildProjectDirectory = D:\GITHUB\EquipGo\EquipGo\OUT_APP_EQUIPGO
 build_property._RazorSourceGeneratorDebug = 
-build_property.EffectiveAnalysisLevelStyle = 8.0
-build_property.EnableCodeStyleSeverity = 
 
-[C:/Users/Angel/source/repos/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/App.razor]
+[D:/GITHUB/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/App.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBcHAucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Angel/source/repos/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/Layout/SinNavLayout.razor]
+[D:/GITHUB/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/Layout/SinNavLayout.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcU2luTmF2TGF5b3V0LnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Angel/source/repos/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/Pages/Auth/Login.razor]
+[D:/GITHUB/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/Pages/Auth/Login.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBdXRoXExvZ2luLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Angel/source/repos/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/Pages/Component.razor]
+[D:/GITHUB/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/Pages/Component.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xDb21wb25lbnQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Angel/source/repos/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/Pages/Counter.razor]
+[D:/GITHUB/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/Pages/Counter.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xDb3VudGVyLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Angel/source/repos/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/Pages/Dashboard/AdminDashboard.razor]
+[D:/GITHUB/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/Pages/Dashboard/AdminDashboard.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xEYXNoYm9hcmRcQWRtaW5EYXNoYm9hcmQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Angel/source/repos/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/Pages/Equipos/Equipos.razor]
+[D:/GITHUB/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/Pages/Equipos/Equipos.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFcXVpcG9zXEVxdWlwb3MucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Angel/source/repos/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/Pages/Error.razor]
+[D:/GITHUB/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/Pages/Error.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFcnJvci5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Angel/source/repos/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/Pages/Escaneo/Scanner.razor]
+[D:/GITHUB/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/Pages/Escaneo/Scanner.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFc2NhbmVvXFNjYW5uZXIucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Angel/source/repos/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/Pages/Home.razor]
+[D:/GITHUB/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/Pages/Home.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xIb21lLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Angel/source/repos/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/Pages/Weather.razor]
+[D:/GITHUB/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/Pages/Weather.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xXZWF0aGVyLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Angel/source/repos/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/Routes.razor]
+[D:/GITHUB/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/Routes.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xSb3V0ZXMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Angel/source/repos/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/_Imports.razor]
+[D:/GITHUB/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/_Imports.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xfSW1wb3J0cy5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Angel/source/repos/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/Layout/MainLayout.razor]
+[D:/GITHUB/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/Layout/MainLayout.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcTWFpbkxheW91dC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = b-7x8wq724vq
 
-[C:/Users/Angel/source/repos/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/Layout/NavMenu.razor]
+[D:/GITHUB/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/Layout/NavMenu.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcTmF2TWVudS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = b-k1wpo2cjwy
