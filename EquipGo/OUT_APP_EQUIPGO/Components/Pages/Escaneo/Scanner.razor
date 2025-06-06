@@ -9,6 +9,7 @@
 @inject ITransaccionService TransaccionService
 @inject IJSRuntime JS
 @implements IDisposable
+@attribute [Authorize(Roles = "Guarda")]
 
 <div class="scanner-wrapper d-flex align-items-center justify-content-center py-5">
     <div class="container bg-white text-center p-4 border rounded shadow w-100" style="max-width: 400px;">

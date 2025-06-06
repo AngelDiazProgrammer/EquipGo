@@ -36,7 +36,7 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Escaneo
             }
             else
             {
-                _navigator.NavigateTo("/", true);
+                _navigator.NavigateTo("/login", true);
             }            
         }
 
