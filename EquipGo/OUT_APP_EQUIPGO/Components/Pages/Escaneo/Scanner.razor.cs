@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.JSInterop;
+using OUT_APP_EQUIPGO.Modules;
 using OUT_OS_APP.EQUIPGO.DTO.DTOs;
 using OUT_PERSISTENCE_EQUIPGO.Services.Equipos;
 using OUT_PERSISTENCE_EQUIPGO.Services.Transacciones;
@@ -8,19 +10,49 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Escaneo
 {
     public partial class Scanner : ComponentBase, IDisposable
     {
+        #region Injections
+        [Inject]
+        private CookieService _CookieService { get; set; }
+        [Inject]
+        private NavigationManager _navigator { get; set; }
+
+        #endregion
+
+
         private EquipoEscaneadoDto? equipoEscaneado;
         private DotNetObjectReference<Scanner>? dotNetRef;
         private int tipoTransaccionSeleccionado = 2; // Por defecto 'Salida'
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (firstRender)
+            if (!firstRender)
             {
-                dotNetRef = DotNetObjectReference.Create(this);
-                await Task.Delay(100); // Da tiempo al DOM de renderizar
+                return;             
+            }
+
+            if (await EsSesionValida())
+            {
                 await IniciarEscaneo();
             }
+            else
+            {
+                _navigator.NavigateTo("/login", true);
+            }            
         }
+
+        #region ValidarSesion
+        private async Task<bool> CheckCookie()
+        {
+            await _CookieService.ValidarSesion();
+            return _CookieService.CookieValida;
+        }
+        private async Task<bool> EsSesionValida()
+        {
+            return await CheckCookie();
+        }
+
+        #endregion
+
 
         private async Task IniciarEscaneo()
         {

@@ -1,13 +1,17 @@
-﻿<nav class="navbar navbar-light bg-white flex-column align-items-start p-3 rounded shadow-sm" style="min-height: 100vh;">
-    <a class="navbar-brand mb-3 fs-4 fw-bold text-dark" href="#">EquipGO</a>
-    <hr class="w-100" />
+﻿<nav class="navbar navbar-light flex-column align-items-start p-3 shadow-sm"
+     style="border-radius: 25px; padding: 20px; box-shadow: 0px 4px 6px rgba(0,0,0,0.1); background-color: rgba(255,255,255,0.95); height: 100%;">
+    <div style="width: 100%; text-align: center; border-bottom: 2px solid #ccc; padding-bottom: 4px; margin-bottom: 20px;">
+        <a class="navbar-brand fs-4 fw-bold text-dark text-center"
+           style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 700; font-size: 1.5rem; line-height: 40px; margin: 0; padding: 0;"
+           href="#">EquipGO</a>
+    </div>
 
     <ul class="nav nav-pills flex-column w-100">
         <li class="nav-item w-100 mb-2">
             <NavLink class="nav-link w-100 d-flex align-items-center"
                      activeClass="active bg-danger text-white"
                      href="/AdminDashboard">
-                <i class="bi bi-house-door-fill me-2"></i> Dashboard
+                <i class="bi bi-house-door-fill me-2 text-dark"></i>🚀 Dashboard
             </NavLink>
         </li>
 
@@ -18,7 +22,7 @@
                role="button"
                aria-expanded="false"
                aria-controls="collapseEquipos">
-                <i class="bi bi-laptop me-2"></i> Administrar
+                <i class="bi bi-laptop me-2"></i> 💼 Administrar
             </a>
             <!--Div desplegable para equipos-->
             <div class="collapse ps-4" id="collapseEquipos">
@@ -27,22 +31,21 @@
                         <NavLink class="nav-link text-dark w-100"
                                  activeClass="active bg-danger text-white"
                                  href="/equipos/">
-                            Equipos
+                            💻 Equipos
+                        </NavLink>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link text-dark w-100"
+                                 activeClass="active bg-danger text-white"
+                                 href="/#/">
+                            👨‍💼 Usuarios
                         </NavLink>
                     </li>
                 </ul>
             </div>
             <!--Div desplegable para usuuriaos-->
             <div class="collapse ps-4" id="collapseEquipos">
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <NavLink class="nav-link text-dark w-100"
-                                 activeClass="active bg-danger text-white"
-                                 href="/#/">
-                            Usuarios
-                        </NavLink>
-                    </li>
-                </ul>
+                
             </div>
         </li>
     </ul>

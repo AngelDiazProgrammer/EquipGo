@@ -4,10 +4,11 @@
 @inherits LoginBase
 
 <link href="css/Auth/login.css" rel="stylesheet" />
-<div class="login-container">
-    <div class="login-box">
-        <div class="login-header">
-            <img src="img/logoOutsourcing.png" alt="Outsourcing" class="logo" />
+<body class="login-background">
+<div class="container d-flex justify-content-center align-items-center min-vh-100 login-background">
+    <div class="login-box p-4 shadow rounded bg-white w-100" style="max-width: 400px;">
+        <div class="login-header text-center mb-4">
+            <img src="img/logoOutsourcing.png" alt="Outsourcing" class="img-fluid mb-2" style="max-width: 150px;" />
             <h2>EquipGO</h2>
             <h4>Iniciar sesión</h4>
         </div>
@@ -16,17 +17,17 @@
             <DataAnnotationsValidator />
             <ValidationSummary />
 
-            <div class="form-group">
-                <label for="numeroDocumento">Numero De Documento</label>
+            <div class="form-group mb-3">
+                <label for="numeroDocumento">Número de Documento</label>
                 <InputText id="numeroDocumento" class="form-control" placeholder="Ingrese su nombre de usuario" @bind-Value="loginModel.NumeroDocumento" />
             </div>
 
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label for="contraseña">Contraseña</label>
                 <InputText id="contraseña" type="password" class="form-control" placeholder="Ingrese su contraseña" @bind-Value="loginModel.Contraseña" />
             </div>
 
-            <div class="form-options">
+            <div class="form-options d-flex justify-content-between align-items-center mb-3 flex-wrap">
                 <label>
                     <InputCheckbox @bind-Value="loginModel.RecordarContrasena" />
                     Recordar contraseña
@@ -34,9 +35,15 @@
                 <a href="#">¿Olvidó su contraseña?</a>
             </div>
 
-            <button class="btn-login">Ingresar</button>
+            <button class="btn btn-danger w-100">Ingresar</button>
         </EditForm>
 
-        <p class="mensaje">@mensaje</p>
+        <p class="mensaje mt-3 text-center">@mensaje</p>
     </div>
 </div>
+</body>
+<style>
+    .login-background {
+        background: linear-gradient(to right, #000000, #2b2b2b);
+    }
+</style>
