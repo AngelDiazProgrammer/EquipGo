@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Angel\\source\\repos\\EquipGo\\EquipGo\\UseCases\\UseCases.csproj": {}
+    "C:\\Users\\Angel\\Documents\\GITHUB\\EquipGo\\EquipGo\\UseCases\\UseCases.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Angel\\source\\repos\\EquipGo\\EquipGo\\UseCases\\UseCases.csproj": {
+    "C:\\Users\\Angel\\Documents\\GITHUB\\EquipGo\\EquipGo\\UseCases\\UseCases.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Angel\\source\\repos\\EquipGo\\EquipGo\\UseCases\\UseCases.csproj",
+        "projectUniqueName": "C:\\Users\\Angel\\Documents\\GITHUB\\EquipGo\\EquipGo\\UseCases\\UseCases.csproj",
         "projectName": "UseCases",
-        "projectPath": "C:\\Users\\Angel\\source\\repos\\EquipGo\\EquipGo\\UseCases\\UseCases.csproj",
+        "projectPath": "C:\\Users\\Angel\\Documents\\GITHUB\\EquipGo\\EquipGo\\UseCases\\UseCases.csproj",
         "packagesPath": "C:\\Users\\Angel\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Angel\\source\\repos\\EquipGo\\EquipGo\\UseCases\\obj\\",
+        "outputPath": "C:\\Users\\Angel\\Documents\\GITHUB\\EquipGo\\EquipGo\\UseCases\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
