@@ -20,7 +20,7 @@ using OUT_PERSISTENCE_EQUIPGO.UnitOfWork;
 // 📌 Builder
 // ====================
 var builder = WebApplication.CreateBuilder(args);
-
+builder.WebHost.UseUrls("http://0.0.0.0:5000", "https://0.0.0.0:7096");
 // ====================
 // 📌 Configuración de Base de Datos
 // ====================

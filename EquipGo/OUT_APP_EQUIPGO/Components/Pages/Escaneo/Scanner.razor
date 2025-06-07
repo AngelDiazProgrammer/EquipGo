@@ -7,7 +7,6 @@
 @using OUT_OS_APP.EQUIPGO.DTO.DTOs
 @inject IEquipoService EquipoService
 @inject ITransaccionService TransaccionService
-@inject IJSRuntime JS
 @implements IDisposable
 
 <div class="scanner-wrapper d-flex align-items-center justify-content-center py-5">
@@ -79,6 +78,11 @@
                 </div>
             </div>
         }
+        <div class="mt-4 text-center">
+            <button class="btn btn-danger btn-lg w-75" @onclick="CerrarSesion" style="border-radius: 20px;">
+                <i class="bi bi-box-arrow-left me-2"></i> Cerrar sesión
+            </button>
+        </div>
     </div>
 </div>
 

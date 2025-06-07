@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.JSInterop;
 using OUT_OS_APP.EQUIPGO.DTO.DTOs;
 using OUT_PERSISTENCE_EQUIPGO.Services.Equipos;
@@ -8,9 +9,13 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Escaneo
 {
     public partial class Scanner : ComponentBase, IDisposable
     {
+
         private EquipoEscaneadoDto? equipoEscaneado;
         private DotNetObjectReference<Scanner>? dotNetRef;
         private int tipoTransaccionSeleccionado = 2; // Por defecto 'Salida'
+
+        [Inject] public IJSRuntime JS { get; set; }
+        [Inject] public NavigationManager Navigation { get; set; }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -94,6 +99,19 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Escaneo
             equipoEscaneado = null;
             await InvokeAsync(StateHasChanged);
             await IniciarEscaneo();
+        }
+
+        private async Task CerrarSesion()
+        {
+            try
+            {
+                await JS.InvokeVoidAsync("authInterop.logout");
+                Navigation.NavigateTo("/login");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al cerrar sesión: {ex.Message}");
+            }
         }
 
         public void Dispose()
