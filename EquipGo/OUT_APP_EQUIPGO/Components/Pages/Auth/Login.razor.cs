@@ -1,62 +1,66 @@
-﻿using Interface.Services.Autenticacion;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Authorization;
-using System;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace OUT_APP_EQUIPGO.Components.Pages.Auth
 {
-    public partial class LoginBase : ComponentBase
+    public partial class Login : ComponentBase
     {
-        [Inject] public IAuthService AuthService { get; set; }
-        [Inject] public AuthenticationStateProvider AuthProvider { get; set; }
+        [Inject] public IJSRuntime JS { get; set; }
         [Inject] public NavigationManager Navigation { get; set; }
 
         protected LoginModel loginModel { get; set; } = new();
         protected string mensaje { get; set; } = string.Empty;
 
+        private bool _circuitReady = false;
+
+        protected override void OnAfterRender(bool firstRender)
+        {
+            if (firstRender)
+            {
+                _circuitReady = true;
+            }
+        }
+
         protected async Task IniciarSesion()
         {
+            if (!_circuitReady)
+            {
+                mensaje = "⚠️ Por favor espera a que la conexión con el servidor esté lista.";
+                return;
+            }
+
             try
             {
-                Console.WriteLine("🚨 IniciarSesion() llamado");
-                mensaje = "Método ejecutado correctamente.";
+                mensaje = "Procesando...";
 
-                var usuario = await AuthService.LoginAsync(loginModel.NumeroDocumento, loginModel.Contraseña);
-                if (usuario != null)
+                var resultado = await JS.InvokeAsync<LoginRespuesta>("authInterop.login", loginModel);
+
+                mensaje = resultado.Mensaje;
+
+                // Redirección según el rol
+                if (resultado.Rol?.Equals("Admin", StringComparison.OrdinalIgnoreCase) == true)
                 {
-                    if (AuthProvider is CustomAuthenticationStateProvider customAuth)
-                    {
-                        await customAuth.SetUsuarioAutenticadoAsync(usuario);
-                    }
-
-                    mensaje = $"Bienvenido, {usuario.Nombre} {usuario.Apellido} (Rol: {usuario.Rol.NombreRol})";
-
-                    // 👇 Redirección según el rol
-                    if (usuario.Rol.NombreRol.Equals("Guarda", StringComparison.OrdinalIgnoreCase))
-                    {
-                        Navigation.NavigateTo("/scanner");
-                    }
-                    else if (usuario.Rol.NombreRol.Equals("Admin", StringComparison.OrdinalIgnoreCase))
-                    {
-                        Navigation.NavigateTo("/AdminDashboard");
-                    }
-                    else
-                    {
-                        // Redirección por defecto
-                        Navigation.NavigateTo("/AdminDashboard");
-                    }
+                    Navigation.NavigateTo("/AdminDashboard");
+                }
+                else if (resultado.Rol?.Equals("Guarda", StringComparison.OrdinalIgnoreCase) == true)
+                {
+                    Navigation.NavigateTo("/scanner");
                 }
                 else
                 {
-                    mensaje = "Usuario o contraseña incorrectos.";
+                    Navigation.NavigateTo("/AdminDashboard");
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ Error al iniciar sesión: {ex.Message}");
                 mensaje = $"Error al iniciar sesión: {ex.Message}";
             }
+        }
+
+        public class LoginRespuesta
+        {
+            public string Mensaje { get; set; }
+            public string Rol { get; set; }
         }
     }
 
@@ -64,6 +68,6 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Auth
     {
         public string NumeroDocumento { get; set; } = string.Empty;
         public string Contraseña { get; set; } = string.Empty;
-        public bool RecordarContrasena { get; set; } 
+        public bool RecordarContrasena { get; set; }
     }
 }

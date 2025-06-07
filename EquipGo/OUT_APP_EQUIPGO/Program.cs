@@ -1,8 +1,12 @@
-﻿using Interface;
+﻿// ====================
+// 📌 Usings ordenados
+// ====================
+using Interface;
 using Interface.Services;
 using Interface.Services.Autenticacion;
 using Interface.Services.Equipos;
 using Interface.Services.Transacciones;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
 using OUT_APP_EQUIPGO.Components;
@@ -12,40 +16,63 @@ using OUT_PERSISTENCE_EQUIPGO.Services.Seguridad;
 using OUT_PERSISTENCE_EQUIPGO.Services.Transacciones;
 using OUT_PERSISTENCE_EQUIPGO.UnitOfWork;
 
+// ====================
+// 📌 Builder
+// ====================
 var builder = WebApplication.CreateBuilder(args);
 
-// Configuración de conexión a la base de datos
+// ====================
+// 📌 Configuración de Base de Datos
+// ====================
 builder.Services.AddDbContext<EquipGoDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("EquipGoConnection")));
 
-// Add services to the container
+// ====================
+// 📌 Registro de Servicios
+// ====================
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
-// Agregar después de AddRazorComponents()
+
 builder.Services.AddScoped<EquipGoDbContext>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IEquipoService, EquipoService>();
 builder.Services.AddScoped<ITransaccionService, TransaccionService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
-// Configurar autenticación con un esquema de cookies
-builder.Services.AddAuthentication("FakeScheme")
-    .AddCookie("FakeScheme", options =>
+
+// ====================
+// 📌 Autenticación (Cookies)
+// ====================
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
     {
-        //options.LoginPath = "/login"; // tu ruta de login
+        options.LoginPath = "/login"; // ruta de login
+        options.AccessDeniedPath = "/accessdenied"; // página de acceso denegado
+        options.LogoutPath = "/api/auth/logout"; // ruta de logout
+        options.Cookie.HttpOnly = true;
+        options.ExpireTimeSpan = TimeSpan.FromDays(7);
     });
 
-// Configurar la autorización
+// ====================
+// 📌 HTTP Client para JS Interop (llamadas fetch)
+// ====================
+builder.Services.AddHttpClient();
+builder.Services.AddControllers();
+// ====================
+// 📌 Autorización
+// ====================
 builder.Services.AddAuthorizationCore(); // para Blazor
 builder.Services.AddAuthorization();     // para el servidor
-
-
-
-
+builder.Services.AddServerSideBlazor()
+    .AddCircuitOptions(options => { options.DetailedErrors = true; }); // 🔥 habilita errores detallados
+// ====================
+// 📌 Build App
+// ====================
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// ====================
+// 📌 Configuración del Pipeline
+// ====================
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
@@ -53,14 +80,23 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
+
+app.UseRouting();
+
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseStaticFiles();
+
 app.UseAntiforgery();
+
+app.MapControllers(); // 📌 Habilita endpoints API
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 
+// ====================
+// 📌 Verificar Conexión Base de Datos
+// ====================
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<EquipGoDbContext>();
@@ -81,5 +117,7 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-
+// ====================
+// 📌 Ejecutar la Aplicación
+// ====================
 app.Run();
