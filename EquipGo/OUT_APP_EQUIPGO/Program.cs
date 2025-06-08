@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
 using OUT_APP_EQUIPGO.Components;
 using OUT_PERSISTENCE_EQUIPGO.Context;
+using OUT_PERSISTENCE_EQUIPGO.Hubs;
 using OUT_PERSISTENCE_EQUIPGO.Services.Equipos;
 using OUT_PERSISTENCE_EQUIPGO.Services.Seguridad;
 using OUT_PERSISTENCE_EQUIPGO.Services.Transacciones;
@@ -39,6 +40,8 @@ builder.Services.AddScoped<IEquipoService, EquipoService>();
 builder.Services.AddScoped<ITransaccionService, TransaccionService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddSignalR();
+
 
 // ====================
 // 📌 Autenticación (Cookies)
@@ -78,7 +81,7 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
     app.UseHsts();
 }
-
+app.MapHub<DashboardHub>("/dashboardHub");
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 

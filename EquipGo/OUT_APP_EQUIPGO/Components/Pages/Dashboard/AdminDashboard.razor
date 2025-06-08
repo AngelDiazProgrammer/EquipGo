@@ -2,23 +2,25 @@
 <PageTitle>AdminDashboard</PageTitle>
 
 <div class="equipos-container">
-    <!--Encabezado-->
+    <!-- Encabezado -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #ccc; padding-bottom: 4px;">
-        <h4 style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 700; font-size: 1.5rem; line-height: 40px; margin: 0; padding: 0; color: #000;">Dashboard</h4>
+        <h4 style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 700; font-size: 1.5rem; line-height: 40px; margin: 0; padding: 0; color: #000;">
+            Dashboard
+        </h4>
         <img src="img/logoOutsourcing.png" alt="Logo" style="height: 40px;" />
     </div>
 
     <!-- Contadores superiores -->
     <div class="dashboard-counters" style="display: flex; gap: 20px; margin-bottom: 20px;">
-        <div style="flex: 1; background-color: #000; color: #fff; border-radius: 12px; padding: 20px; text-align: center;  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5)">
+        <div style="flex: 1; background-color: #000; color: #fff; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);">
             <h4 style="margin: 0; font-size: 24px;">150</h4>
             <p>Equipos Registrados</p>
         </div>
-        <div style="flex: 1; background-color: #555; color: #fff; border-radius: 12px; padding: 20px; text-align: center;  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5)">
+        <div style="flex: 1; background-color: #555; color: #fff; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);">
             <h4 style="margin: 0; font-size: 24px;">90</h4>
             <p>Usuarios Registrados</p>
         </div>
-        <div style="flex: 1; background-color: #E9002B; color: #fff; border-radius: 12px; padding: 20px; text-align: center;  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5)">
+        <div style="flex: 1; background-color: #E9002B; color: #fff; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);">
             <h4 style="margin: 0; font-size: 24px;">20</h4>
             <p>Equipos No Autorizados</p>
         </div>
@@ -36,63 +38,23 @@
         </select>
     </div>
 
-    <!-- Tabla -->
+    <!-- Tabla dinámica -->
     <div class="table-wrapper" style="border: 1px solid #E9002B; border-radius: 10px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);">
         <table>
             <thead>
                 <tr>
-                    <th>Asignado</th>
-                    <th>Número de serie</th>
-                    <th>Tiempo de uso</th>
-                    <th>Alerta</th>
-                    <th>Ubicación</th>
+                    <th>IdUsuarioInfo</th>
+                    <th>Código de Barras</th>
+                    <th>Tipo Transacción</th>
+                    <th>IdEquipoPersonal</th>
+                    <th>IdUsuarioSession</th>
+                    <th>SedeOs</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>Sofía Montenegro Suárez</td>
-                    <td>EQP-142</td>
-                    <td>3h 25min</td>
-                    <td style="color: red;">Prioridad alta</td>
-                    <td><button style="padding: 6px 12px; border: none; background-color: #ccc; border-radius: 8px; cursor: pointer;">Ver ubicación</button></td>
-                </tr>
-                <tr>
-                    <td>Andrés Rivas Castillo</td>
-                    <td>EQP-145</td>
-                    <td>1h 18min</td>
-                    <td style="color: orange;">Prioridad media</td>
-                    <td><button style="padding: 6px 12px; border: none; background-color: #ccc; border-radius: 8px; cursor: pointer;">Ver ubicación</button></td>
-                </tr>
-                <tr>
-                    <td>Alejandra Salgado Muñoz</td>
-                    <td>EQP-144</td>
-                    <td>38min</td>
-                    <td style="color: green;">Prioridad baja</td>
-                    <td><button style="padding: 6px 12px; border: none; background-color: #ccc; border-radius: 8px; cursor: pointer;">Ver ubicación</button></td>
-                </tr>
-                <tr>
-                    <td>Sebastián Tomás Herrera Cifuentes</td>
-                    <td>EQP-150</td>
-                    <td>15min</td>
-                    <td style="color: green;">Prioridad baja</td>
-                    <td><button style="padding: 6px 12px; border: none; background-color: #ccc; border-radius: 8px; cursor: pointer;">Ver ubicación</button></td>
-                </tr>
-                <tr>
-                    <td>Ricardo Manuel Peñaloza Ortega</td>
-                    <td>EQP-147</td>
-                    <td>5h 59min</td>
-                    <td style="color: red;">Prioridad alta</td>
-                    <td><button style="padding: 6px 12px; border: none; background-color: #ccc; border-radius: 8px; cursor: pointer;">Ver ubicación</button></td>
-                </tr>
-                <tr>
-                    <td>Luciana Beatriz Torres Valenzuela</td>
-                    <td>EQP-143</td>
-                    <td>30min</td>
-                    <td style="color: green;">Prioridad baja</td>
-                    <td><button style="padding: 6px 12px; border: none; background-color: #ccc; border-radius: 8px; cursor: pointer;">Ver ubicación</button></td>
-                </tr>
+                <!-- Aquí el JavaScript insertará las filas -->
             </tbody>
         </table>
     </div>
 </div>
-

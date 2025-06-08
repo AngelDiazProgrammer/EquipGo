@@ -63,6 +63,8 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Escaneo
 
             var authState = await AuthProvider.GetAuthenticationStateAsync();
             var user = authState.User;
+
+            // 👇 Extraer el ID de la sesión (id_usuarioSession) — asumiendo que este es el guarda aprobador.
             var idUsuarioSessionClaim = user.Claims.FirstOrDefault(c => c.Type == "id_usuarioSession");
             var idUsuarioSession = idUsuarioSessionClaim != null
                 ? int.Parse(idUsuarioSessionClaim.Value)
@@ -74,7 +76,8 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Escaneo
                 TipoTransaccion = tipoTransaccionSeleccionado,
                 IdEquipoPersonal = equipoEscaneado.IdEquipoPersonal,
                 IdUsuarioInfo = equipoEscaneado.IdUsuarioInfo,
-                IdUsuarioSession = idUsuarioSession,
+                IdUsuarioSession = idUsuarioSession, // Usuario que está generando la transacción
+                IdUsuarioAprobador = idUsuarioSession, // 🔥 Usuario que la aprueba (el mismo que la dispara)
                 SedeOs = equipoEscaneado.IdSedeOs
             };
 
