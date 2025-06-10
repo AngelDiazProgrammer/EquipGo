@@ -41,6 +41,14 @@ namespace OUT_APP_EQUIPGO.Modules
             }
         }
 
+        [HttpGet("GetConteosDashboard")]
+        public async Task<IActionResult> GetConteosDashboard()
+        {
+            var conteos = await _transaccionService.ObtenerConteosDashboardAsync();
+            return Ok(conteos);
+        }
+
+
         private int ObtenerIdUsuarioSessionActual()
         {
             var userIdClaim = User.Claims

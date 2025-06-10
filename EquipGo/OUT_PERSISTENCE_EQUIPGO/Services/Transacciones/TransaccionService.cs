@@ -91,6 +91,39 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Transacciones
             return transacciones;
         }
 
+        public async Task<ConteoTransaccionesDto> ObtenerConteosDashboardAsync()
+        {
+            var hoy = DateTime.Today;
+
+            // Transacciones de hoy (todas)
+            var totalHoy = await _context.Transacciones
+                .CountAsync(t => t.FechaHora.Date == hoy);
+
+            // Transacciones de equipos personales (Id = 1)
+            var totalPersonales = await _context.Transacciones
+                .Include(t => t.IdEquipoPersonalNavigation)
+                .CountAsync(t => t.FechaHora.Date == hoy && t.IdEquipoPersonalNavigation.Id == 1);
+
+            // Transacciones de equipos corporativos (Id = 2)
+            var totalCorporativos = await _context.Transacciones
+                .Include(t => t.IdEquipoPersonalNavigation)
+                .CountAsync(t => t.FechaHora.Date == hoy && t.IdEquipoPersonalNavigation.Id == 2);
+
+            // Transacciones de equipos corporativos (Id =3)
+            var totalProveedores = await _context.Transacciones
+                .Include(t => t.IdEquipoPersonalNavigation)
+                .CountAsync(t => t.FechaHora.Date == hoy && t.IdEquipoPersonalNavigation.Id == 3);
+
+            return new ConteoTransaccionesDto
+            {
+                TotalHoy = totalHoy,
+                TotalPersonales = totalPersonales,
+                TotalCorporativos = totalCorporativos,
+                TotalProveedores = totalProveedores
+            };
+        }
+
+
 
         private int ObtenerIdUsuarioSessionActual()
         {

@@ -10,6 +10,8 @@ namespace OUT_DOMAIN_EQUIPGO.Entities.Smart
     [Table("equiposPersonal", Schema = "smart")]
     public class EquiposPersonal
     {
+        public readonly string TipoEquipo;
+
         [Column("id")]
         public int Id { get; set; }
 
