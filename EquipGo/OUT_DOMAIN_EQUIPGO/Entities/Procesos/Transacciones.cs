@@ -37,9 +37,6 @@ namespace OUT_DOMAIN_EQUIPGO.Entities.Procesos
         [Column("fechaHora")]
         public DateTime FechaHora { get; set; }
 
-        [Column("id_usuarioAprobador")]
-        public int? IdUsuarioAprobador { get; set; }
-
         // Propiedades de navegación con ForeignKey explícito
         [ForeignKey(nameof(IdTipoTransaccion))]
         public virtual TiposTransaccion IdTipoTransaccionNavigation { get; set; }
@@ -55,8 +52,5 @@ namespace OUT_DOMAIN_EQUIPGO.Entities.Procesos
 
         [ForeignKey(nameof(SedeOs))]
         public virtual Sedes SedeOsNavigation { get; set; }
-
-        [ForeignKey(nameof(IdUsuarioAprobador))]
-        public virtual UsuariosSession UsuarioAprobadorNavigation { get; set; }
     }
 }

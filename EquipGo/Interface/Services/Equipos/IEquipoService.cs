@@ -1,5 +1,4 @@
 ﻿using OUT_DOMAIN_EQUIPGO.Entities.Configuracion;
-using OUT_OS_APP.EQUIPGO.DTO.DTOs;
 using OUT_OS_APP.EQUIPGO.DTO.DTOs.Equipo;
 using System.Collections.Generic;
 using System.Threading.Tasks;

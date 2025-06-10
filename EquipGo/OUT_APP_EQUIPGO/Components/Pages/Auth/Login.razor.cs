@@ -40,15 +40,15 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Auth
                 // Redirección según el rol
                 if (resultado.Rol?.Equals("Admin", StringComparison.OrdinalIgnoreCase) == true)
                 {
-                    Navigation.NavigateTo("/AdminDashboard");
+                    Navigation.NavigateTo("/AdminDashboard", forceLoad: true); // Forced
                 }
                 else if (resultado.Rol?.Equals("Guarda", StringComparison.OrdinalIgnoreCase) == true)
                 {
-                    Navigation.NavigateTo("/scanner");
+                    Navigation.NavigateTo("/scanner", forceLoad: true); // Forced
                 }
                 else
                 {
-                    Navigation.NavigateTo("/AdminDashboard");
+                    Navigation.NavigateTo("/AdminDashboard", forceLoad: true); // Forced
                 }
             }
             catch (Exception ex)

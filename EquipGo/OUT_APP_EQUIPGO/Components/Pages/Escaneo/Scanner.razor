@@ -1,12 +1,7 @@
 ﻿@page "/scanner"
-@layout SinNavLayout
-@inject AuthenticationStateProvider AuthProvider
-@using Interface.Services.Equipos
-@using Interface.Services.Transacciones
 @using OUT_APP_EQUIPGO.Components.Layout
-@using OUT_OS_APP.EQUIPGO.DTO.DTOs
-@inject IEquipoService EquipoService
-@inject ITransaccionService TransaccionService
+@attribute [Authorize(Roles = "Guarda")]
+@layout SinNavLayout
 @implements IDisposable
 
 <div class="scanner-wrapper d-flex align-items-center justify-content-center py-5">
@@ -78,6 +73,7 @@
                 </div>
             </div>
         }
+
         <div class="mt-4 text-center">
             <button class="btn btn-danger btn-lg w-75" @onclick="CerrarSesion" style="border-radius: 20px;">
                 <i class="bi bi-box-arrow-left me-2"></i> Cerrar sesión
@@ -99,20 +95,11 @@
         padding-bottom: 20px;
     }
 
-
-    {
-        max-width: 100% !important;
-        margin: 0 10px;
-        padding: 15px !important;
-    }
-
     .modal-dialog {
         max-width: 90% !important;
     }
 
     .modal-content {
         border-radius: 0.5rem;
-    }
-
     }
 </style>

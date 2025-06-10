@@ -1,21 +1,27 @@
-﻿using Microsoft.AspNetCore.Components;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
+﻿using Interface.Services.Equipos;
+using Interface.Services.Transacciones;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
 using OUT_OS_APP.EQUIPGO.DTO.DTOs;
+using OUT_OS_APP.EQUIPGO.DTO.DTOs.Equipo;
 using OUT_PERSISTENCE_EQUIPGO.Services.Equipos;
 using OUT_PERSISTENCE_EQUIPGO.Services.Transacciones;
+using System.Security.Claims;
 
 namespace OUT_APP_EQUIPGO.Components.Pages.Escaneo
 {
     public partial class Scanner : ComponentBase, IDisposable
     {
-
         private EquipoEscaneadoDto? equipoEscaneado;
         private DotNetObjectReference<Scanner>? dotNetRef;
         private int tipoTransaccionSeleccionado = 2; // Por defecto 'Salida'
 
         [Inject] public IJSRuntime JS { get; set; }
         [Inject] public NavigationManager Navigation { get; set; }
+        [Inject] public IEquipoService EquipoService { get; set; }
+        [Inject] public ITransaccionService TransaccionService { get; set; }
+        [Inject] public AuthenticationStateProvider AuthProvider { get; set; }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -64,11 +70,14 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Escaneo
             var authState = await AuthProvider.GetAuthenticationStateAsync();
             var user = authState.User;
 
-            // 👇 Extraer el ID de la sesión (id_usuarioSession) — asumiendo que este es el guarda aprobador.
             var idUsuarioSessionClaim = user.Claims.FirstOrDefault(c => c.Type == "id_usuarioSession");
-            var idUsuarioSession = idUsuarioSessionClaim != null
-                ? int.Parse(idUsuarioSessionClaim.Value)
-                : 1;
+            if (idUsuarioSessionClaim == null)
+            {
+                await JS.InvokeVoidAsync("alert", "⚠️ No se pudo determinar el usuario de sesión. Por favor, inicia sesión nuevamente.");
+                return;
+            }
+
+            var idUsuarioSession = int.Parse(idUsuarioSessionClaim.Value);
 
             var transaccion = new TransaccionRequest
             {
@@ -76,8 +85,7 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Escaneo
                 TipoTransaccion = tipoTransaccionSeleccionado,
                 IdEquipoPersonal = equipoEscaneado.IdEquipoPersonal,
                 IdUsuarioInfo = equipoEscaneado.IdUsuarioInfo,
-                IdUsuarioSession = idUsuarioSession, // Usuario que está generando la transacción
-                IdUsuarioAprobador = idUsuarioSession, // 🔥 Usuario que la aprueba (el mismo que la dispara)
+                IdUsuarioSession = idUsuarioSession,
                 SedeOs = equipoEscaneado.IdSedeOs
             };
 
@@ -85,11 +93,11 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Escaneo
 
             if (result)
             {
-                await JS.InvokeVoidAsync("alert", "Transacción registrada correctamente.");
+                await JS.InvokeVoidAsync("alert", "✅ Transacción registrada correctamente.");
             }
             else
             {
-                await JS.InvokeVoidAsync("alert", "Error al registrar la transacción.");
+                await JS.InvokeVoidAsync("alert", "❌ Error al registrar la transacción.");
             }
 
             equipoEscaneado = null;

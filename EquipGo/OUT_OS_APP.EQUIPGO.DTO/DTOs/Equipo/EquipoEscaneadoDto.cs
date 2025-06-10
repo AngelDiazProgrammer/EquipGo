@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace OUT_OS_APP.EQUIPGO.DTO.DTOs
+namespace OUT_OS_APP.EQUIPGO.DTO.DTOs.Equipo
 {
     public class EquipoEscaneadoDto
     {

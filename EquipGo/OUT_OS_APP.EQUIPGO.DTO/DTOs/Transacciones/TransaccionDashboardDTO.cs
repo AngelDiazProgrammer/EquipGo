@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OUT_OS_APP.EQUIPGO.DTO.DTOs.Transacciones
 {
-    public class TransaccionDashboardDTO
+    public class TransaccionDashboardDto
     {
         public string CodigoBarras { get; set; }
         public string NombreUsuarioInfo { get; set; }
@@ -14,7 +14,7 @@ namespace OUT_OS_APP.EQUIPGO.DTO.DTOs.Transacciones
         public string NombreEquipoPersonal { get; set; }
         public string NombreUsuarioSession { get; set; }
         public string NombreSedeOs { get; set; }
-
-        public int IdUsuarioAprobador { get; set; }
     }
+
+
 }

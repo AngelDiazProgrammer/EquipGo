@@ -36,14 +36,14 @@ function agregarFilaNueva() {
 
             const row = document.createElement("tr");
             row.innerHTML = `
-                <td>${nueva.nombreUsuarioInfo}</td>
-                <td>${nueva.codigoBarras}</td>
-                <td>${nueva.nombreTipoTransaccion}</td>
-                <td>${nueva.nombreEquipoPersonal}</td>
-                <td>${nueva.nombreUsuarioSession}</td>
-                <td>${nueva.nombreSedeOs}</td>
-                <td><button>Ver ubicación</button></td>
-            `;
+    <td>${nueva.nombreUsuarioInfo}</td>
+    <td>${nueva.codigoBarras}</td>
+    <td>${nueva.nombreTipoTransaccion}</td>
+    <td>${nueva.nombreEquipoPersonal}</td>
+    <td>${nueva.nombreUsuarioSession}</td>
+    <td>${nueva.nombreSedeOs}</td>
+    <td><button>Ver ubicación</button></td>
+`;
 
             row.style.backgroundColor = rowColor;
             tbody.insertBefore(row, tbody.firstChild); // Insertar arriba

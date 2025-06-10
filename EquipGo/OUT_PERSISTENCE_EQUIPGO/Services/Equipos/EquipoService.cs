@@ -2,7 +2,6 @@
 using Interface.Services.Equipos;
 using Microsoft.EntityFrameworkCore;
 using OUT_DOMAIN_EQUIPGO.Entities.Configuracion;
-using OUT_OS_APP.EQUIPGO.DTO.DTOs;
 using OUT_OS_APP.EQUIPGO.DTO.DTOs.Equipo;
 using System.Linq;
 using System.Threading.Tasks;

@@ -25,12 +25,12 @@ public class AuthController : ControllerBase
         if (usuario != null)
         {
             var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.Name, $"{usuario.Nombre} {usuario.Apellido}"),
-            new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
-            new Claim(ClaimTypes.Role, usuario.Rol?.NombreRol ?? "Usuario")
-        };
-
+            {
+                new Claim(ClaimTypes.Name, $"{usuario.Nombre} {usuario.Apellido}"),
+                new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
+                new Claim("id_usuarioSession", usuario.Id.ToString()),  // llamada al id del usuario!
+                new Claim(ClaimTypes.Role, usuario.Rol?.NombreRol ?? "Usuario")
+            };
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);
 

@@ -1,10 +1,6 @@
 ﻿using Interface.Services.Transacciones;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using OUT_OS_APP.EQUIPGO.DTO.DTOs;
-using OUT_OS_APP.EQUIPGO.DTO.DTOs.Transacciones;
-using OUT_PERSISTENCE_EQUIPGO.Context;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -14,43 +10,17 @@ namespace OUT_APP_EQUIPGO.Modules
     [Route("api/[controller]")]
     public class TransaccionesController : ControllerBase
     {
-        private readonly EquipGoDbContext _context;
         private readonly ITransaccionService _transaccionService;
 
-        public TransaccionesController(EquipGoDbContext context, ITransaccionService transaccionService)
+        public TransaccionesController(ITransaccionService transaccionService)
         {
-            _context = context;
             _transaccionService = transaccionService;
         }
 
         [HttpGet("GetTransaccionesHoy")]
         public async Task<IActionResult> GetTransaccionesHoy()
         {
-            var hoy = DateTime.Today;
-
-            var transacciones = await _context.Transacciones
-                .Where(t => t.FechaHora.Date == hoy)
-                .Include(t => t.IdTipoTransaccionNavigation)
-                .Include(t => t.IdEquipoPersonalNavigation)
-                .Include(t => t.IdUsuarioInfoNavigation)
-                .Include(t => t.IdUsuarioSessionNavigation)
-                .Include(t => t.UsuarioAprobadorNavigation) // 👈 Nuevo include
-                .Include(t => t.SedeOsNavigation)
-                .OrderByDescending(t => t.FechaHora)
-                .Take(12)
-                .Select(t => new TransaccionDashboardDTO
-                {
-                    CodigoBarras = t.CodigoBarras,
-                    NombreUsuarioInfo = t.IdUsuarioInfoNavigation.Nombres + " " + t.IdUsuarioInfoNavigation.Apellidos,
-                    NombreTipoTransaccion = t.IdTipoTransaccionNavigation.NombreTransaccion,
-                    NombreEquipoPersonal = t.IdEquipoPersonalNavigation.NombrePersonal,
-                    NombreUsuarioSession = t.UsuarioAprobadorNavigation != null
-                        ? t.UsuarioAprobadorNavigation.Nombre + " " + t.UsuarioAprobadorNavigation.Apellido
-                        : "Sin aprobar", // Evitar nulos
-                    NombreSedeOs = t.SedeOsNavigation.NombreSede
-                })
-                .ToListAsync();
-
+            var transacciones = await _transaccionService.ObtenerTransaccionesHoyAsync();
             return Ok(transacciones);
         }
 

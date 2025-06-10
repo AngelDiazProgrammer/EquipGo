@@ -5,8 +5,12 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using OUT_DOMAIN_EQUIPGO.Entities.Procesos;
 using OUT_OS_APP.EQUIPGO.DTO.DTOs;
+using OUT_OS_APP.EQUIPGO.DTO.DTOs.Transacciones;
+using OUT_PERSISTENCE_EQUIPGO.Context;
 using OUT_PERSISTENCE_EQUIPGO.Hubs;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -17,38 +21,39 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Transacciones
         private readonly IUnitOfWork _unitOfWork;
         private readonly IHubContext<DashboardHub> _hubContext;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly EquipGoDbContext _context;
 
-        public TransaccionService(IUnitOfWork unitOfWork, IHubContext<DashboardHub> hubContext, IHttpContextAccessor httpContextAccessor)
+        public TransaccionService(
+            IUnitOfWork unitOfWork,
+            IHubContext<DashboardHub> hubContext,
+            IHttpContextAccessor httpContextAccessor,
+            EquipGoDbContext context)
         {
             _unitOfWork = unitOfWork;
             _hubContext = hubContext;
             _httpContextAccessor = httpContextAccessor;
+            _context = context;
         }
-
 
         public async Task<bool> RegistrarTransaccionAsync(TransaccionRequest request)
         {
             try
             {
-                // 👇 Aquí suponemos que el usuario aprobador es el usuario actual de sesión
-                var idUsuarioAprobador = ObtenerIdUsuarioSessionActual(); // Ajusta este método
-
                 var transaccion = new OUT_DOMAIN_EQUIPGO.Entities.Procesos.Transacciones
                 {
                     CodigoBarras = request.CodigoBarras,
                     IdTipoTransaccion = request.TipoTransaccion,
                     IdEquipoPersonal = request.IdEquipoPersonal,
                     IdUsuarioInfo = request.IdUsuarioInfo,
-                    IdUsuarioSession = request.IdUsuarioSession, // El usuario que registra la transacción
-                    IdUsuarioAprobador = request.IdUsuarioAprobador, // ✅ Nuevo campo
+                    IdUsuarioSession = request.IdUsuarioSession,      // el usuario que dispara
                     SedeOs = request.SedeOs,
-                    FechaHora = DateTime.Now,
+                    FechaHora = DateTime.Now
                 };
 
                 await _unitOfWork.Transacciones.AddAsync(transaccion);
                 await _unitOfWork.CompleteAsync();
 
-                // 🚨 Emitir la señal al frontend
+                // Emitir señal al frontend
                 await _hubContext.Clients.All.SendAsync("NuevaTransaccion");
                 return true;
             }
@@ -58,6 +63,35 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Transacciones
                 return false;
             }
         }
+
+        public async Task<List<TransaccionDashboardDto>> ObtenerTransaccionesHoyAsync()
+        {
+            var hoy = DateTime.Today;
+
+            var transacciones = await _context.Transacciones
+                .Include(t => t.IdTipoTransaccionNavigation)
+                .Include(t => t.IdEquipoPersonalNavigation)
+                .Include(t => t.IdUsuarioInfoNavigation)
+                .Include(t => t.IdUsuarioSessionNavigation)
+                .Include(t => t.SedeOsNavigation)
+                .Where(t => t.FechaHora.Date == hoy)
+                .OrderByDescending(t => t.FechaHora)
+                .Take(12)
+                .Select(t => new TransaccionDashboardDto
+                {
+                    CodigoBarras = t.CodigoBarras,
+                    NombreUsuarioInfo = t.IdUsuarioInfoNavigation.Nombres + " " + t.IdUsuarioInfoNavigation.Apellidos,
+                    NombreTipoTransaccion = t.IdTipoTransaccionNavigation.NombreTransaccion,
+                    NombreEquipoPersonal = t.IdEquipoPersonalNavigation.NombrePersonal,
+                    NombreUsuarioSession = t.IdUsuarioSessionNavigation.Nombre + " " + t.IdUsuarioSessionNavigation.Apellido,
+                    NombreSedeOs = t.SedeOsNavigation.NombreSede
+                })
+                .ToListAsync();
+
+            return transacciones;
+        }
+
+
         private int ObtenerIdUsuarioSessionActual()
         {
             var userIdClaim = _httpContextAccessor.HttpContext?.User.Claims
