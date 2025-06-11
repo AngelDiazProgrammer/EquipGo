@@ -64,7 +64,7 @@
     </div>
 <!-- Modal para crear equipo -->
 <div class="modal fade" id="modalCrearEquipo" tabindex="-1" aria-labelledby="modalCrearEquipoLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-xl"> <!-- Cambié a xl para más espacio -->
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="modalCrearEquipoLabel">Registrar Equipo</h5>
@@ -72,80 +72,89 @@
             </div>
             <div class="modal-body">
                 <form id="formCrearEquipo">
-                    <!-- Marca -->
-                    <div class="mb-3">
-                        <label for="marca" class="form-label">Marca</label>
-                        <input type="text" class="form-control" id="marca" name="marca" required />
-                    </div>
-                    <!-- Modelo -->
-                    <div class="mb-3">
-                        <label for="modelo" class="form-label">Modelo</label>
-                        <input type="text" class="form-control" id="modelo" name="modelo" required />
-                    </div>
-                    <!-- Serial -->
-                    <div class="mb-3">
-                        <label for="serial" class="form-label">Serial</label>
-                        <input type="text" class="form-control" id="serial" name="serial" />
-                    </div>
-                    <!-- Código de Barras -->
-                    <div class="mb-3">
-                        <label for="codigoBarras" class="form-label">Código de Barras</label>
-                        <input type="text" class="form-control" id="codigoBarras" name="codigoBarras" />
-                    </div>
-                    <!-- Ubicación -->
-                    <div class="mb-3">
-                        <label for="ubicacion" class="form-label">Ubicación</label>
-                        <input type="text" class="form-control" id="ubicacion" name="ubicacion" />
-                    </div>
-                    <!-- Usuario -->
-                    <div class="mb-3">
-                        <label for="usuarioInfo" class="form-label">Asignado a</label>
-                        <select class="form-select" id="usuarioInfo" name="usuarioInfo" required></select>
-                    </div>
-                    <!-- Estado -->
-                    <div class="mb-3">
-                        <label for="estado" class="form-label">Estado</label>
-                        <select class="form-select" id="estado" name="estado"></select>
-                    </div>
-                    <!-- Equipo Personal -->
-                    <div class="mb-3">
-                        <label for="equipoPersonal" class="form-label">Equipo Personal</label>
-                        <select class="form-select" id="equipoPersonal" name="equipoPersonal"></select>
-                    </div>
-                    <!-- Sede -->
-                    <div class="mb-3">
-                        <label for="sede" class="form-label">Sede</label>
-                        <select class="form-select" id="sede" name="sede"></select>
-                    </div>
-                    <!-- Tipo Dispositivo -->
-                    <div class="mb-3">
-                        <label for="tipoDispositivo" class="form-label">Tipo de Dispositivo</label>
-                        <select class="form-select" id="tipoDispositivo" name="tipoDispositivo"></select>
-                    </div>
-                    <!-- Latitud -->
-                    <div class="mb-3">
-                        <label for="latitud" class="form-label">Latitud</label>
-                        <input type="number" step="any" class="form-control" id="latitud" name="latitud" />
-                    </div>
-                    <!-- Longitud -->
-                    <div class="mb-3">
-                        <label for="longitud" class="form-label">Longitud</label>
-                        <input type="number" step="any" class="form-control" id="longitud" name="longitud" />
-                    </div>
-                    <!-- Sistema Operativo -->
-                    <div class="mb-3">
-                        <label for="sistemaOperativo" class="form-label">Sistema Operativo</label>
-                        <input type="text" class="form-control" id="sistemaOperativo" name="sistemaOperativo" />
-                    </div>
-                    <!-- MAC Equipo -->
-                    <div class="mb-3">
-                        <label for="macEquipo" class="form-label">MAC Equipo</label>
-                        <input type="text" class="form-control" id="macEquipo" name="macEquipo" />
-                    </div>
-                    <!-- Versión Software -->
-                    <div class="mb-3">
-                        <label for="versionSoftware" class="form-label">Versión Software</label>
-                        <input type="text" class="form-control" id="versionSoftware" name="versionSoftware" />
+                    <div class="row g-3">
+                        <!-- Columna izquierda -->
+                        <div class="col-md-6">
+                            <!-- Marca -->
+                            <div>
+                                <label for="marca" class="form-label">Marca</label>
+                                <input type="text" class="form-control" id="marca" name="marca" required />
+                            </div>
+                            <!-- Modelo -->
+                            <div>
+                                <label for="modelo" class="form-label">Modelo</label>
+                                <input type="text" class="form-control" id="modelo" name="modelo" required />
+                            </div>
+                            <!-- Serial -->
+                            <div>
+                                <label for="serial" class="form-label">Serial</label>
+                                <input type="text" class="form-control" id="serial" name="serial" />
+                            </div>
+                            <!-- Código de Barras -->
+                            <div>
+                                <label for="codigoBarras" class="form-label">Código de Barras</label>
+                                <input type="text" class="form-control" id="codigoBarras" name="codigoBarras" />
+                            </div>
+                            <!-- Ubicación -->
+                            <div>
+                                <label for="ubicacion" class="form-label">Ubicación</label>
+                                <input type="text" class="form-control" id="ubicacion" name="ubicacion" />
+                            </div>
+                            <!-- Usuario -->
+                            <div>
+                                <label for="usuarioInfo" class="form-label">Asignado a</label>
+                                <select class="form-select" id="usuarioInfo" name="usuarioInfo" required></select>
+                            </div>
+                            <!-- Estado -->
+                            <div>
+                                <label for="estado" class="form-label">Estado</label>
+                                <select class="form-select" id="estado" name="estado"></select>
+                            </div>
+                        </div>
+
+                        <!-- Columna derecha -->
+                        <div class="col-md-6">
+                            <!-- Equipo Personal -->
+                            <div>
+                                <label for="equipoPersonal" class="form-label">Equipo Personal</label>
+                                <select class="form-select" id="equipoPersonal" name="equipoPersonal"></select>
+                            </div>
+                            <!-- Sede -->
+                            <div>
+                                <label for="sede" class="form-label">Sede</label>
+                                <select class="form-select" id="sede" name="sede"></select>
+                            </div>
+                            <!-- Tipo Dispositivo -->
+                            <div>
+                                <label for="tipoDispositivo" class="form-label">Tipo de Dispositivo</label>
+                                <select class="form-select" id="tipoDispositivo" name="tipoDispositivo"></select>
+                            </div>
+                            <!-- Latitud -->
+                            <div>
+                                <label for="latitud" class="form-label">Latitud</label>
+                                <input type="number" step="any" class="form-control" id="latitud" name="latitud" />
+                            </div>
+                            <!-- Longitud -->
+                            <div>
+                                <label for="longitud" class="form-label">Longitud</label>
+                                <input type="number" step="any" class="form-control" id="longitud" name="longitud" />
+                            </div>
+                            <!-- Sistema Operativo -->
+                            <div>
+                                <label for="sistemaOperativo" class="form-label">Sistema Operativo</label>
+                                <input type="text" class="form-control" id="sistemaOperativo" name="sistemaOperativo" />
+                            </div>
+                            <!-- MAC Equipo -->
+                            <div>
+                                <label for="macEquipo" class="form-label">MAC Equipo</label>
+                                <input type="text" class="form-control" id="macEquipo" name="macEquipo" />
+                            </div>
+                            <!-- Versión Software -->
+                            <div>
+                                <label for="versionSoftware" class="form-label">Versión Software</label>
+                                <input type="text" class="form-control" id="versionSoftware" name="versionSoftware" />
+                            </div>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -156,7 +165,6 @@
         </div>
     </div>
 </div>
-
 
 
     <!-- Tabla -->

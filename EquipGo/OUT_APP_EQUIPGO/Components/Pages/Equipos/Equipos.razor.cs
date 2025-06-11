@@ -27,7 +27,7 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
 
         // Paginación
         private int paginaActual = 1;
-        private int tamanoPagina = 10;
+        private int tamanoPagina = 7;
 
         protected override async Task OnInitializedAsync()
         {
