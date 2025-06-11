@@ -1,62 +1,74 @@
 ﻿<nav class="navbar navbar-light flex-column align-items-start p-3 shadow-sm"
-     style="border-radius: 25px; padding: 20px; box-shadow: 0px 4px 6px rgba(0,0,0,0.1); background-color: rgba(255,255,255,0.95); height: 90%;">
+     style="border-radius: 25px; padding: 20px; box-shadow: 0px 4px 6px rgba(0,0,0,0.1); background-color: rgba(255,255,255,0.95); height: 90%; width: 100%; max-width: 300px;">
     <div style="width: 100%; text-align: center; border-bottom: 2px solid #ccc; padding-bottom: 4px; margin-bottom: 20px;">
         <a class="navbar-brand fs-4 fw-bold text-dark text-center"
            style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 700; font-size: 1.5rem; line-height: 40px; margin: 0; padding: 0;"
            href="#">EquipGO</a>
     </div>
-
     <ul class="nav nav-pills flex-column w-100">
+        <!-- Dashboard -->
         <li class="nav-item w-100 mb-2">
-            <NavLink class="nav-link w-100 d-flex align-items-center"
+            <NavLink class="nav-link w-100 d-flex align-items-center text-dark"
                      activeClass="active bg-danger text-white"
-                     href="/AdminDashboard">
-                <i class="bi bi-house-door-fill me-2"></i> Dashboard
+                     href="/AdminDashboard"
+                     style="transition: background-color 0.3s ease;"
+                     onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)'"
+                     onmouseout="this.style.backgroundColor='transparent'">
+                <i class="bi bi-house-door-fill me-2"></i> <span style="color: black;">📊 Dashboard</span>
             </NavLink>
         </li>
 
+        <!-- Administrar -->
         <li class="nav-item w-100 mb-2">
-            <a class="nav-link text-dark w-100 d-flex align-items-center"
+            <a class="nav-link text-dark w-100 d-flex align-items-center justify-content-between"
+               style="transition: background-color 0.3s ease;"
+               onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)'"
+               onmouseout="this.style.backgroundColor='transparent'"
                data-bs-toggle="collapse"
-               href="#collapseEquipos"
+               href="#collapseAdministrar"
                role="button"
                aria-expanded="false"
-               aria-controls="collapseEquipos">
-                <i class="bi bi-laptop me-2"></i> Administrar
+               aria-controls="collapseAdministrar">
+                <span><i class="bi bi-laptop me-2"></i>🗃️ Administrar</span>
+                <i class="bi bi-caret-down-fill"></i>
             </a>
-            <!--Div desplegable para equipos-->
-            <div class="collapse ps-4" id="collapseEquipos">
+            <div class="collapse ps-3 ms-3" id="collapseAdministrar" style="padding: 8px 0;">
                 <ul class="nav flex-column">
-                    <li class="nav-item">
+                    <li class="nav-item mb-1">
                         <NavLink class="nav-link text-dark w-100"
                                  activeClass="active bg-danger text-white"
-                                 href="/equipos/">
-                            Equipos
+                                 href="/equipos/"
+                                 style="transition: background-color 0.3s ease;"
+                                 onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)'"
+                                 onmouseout="this.style.backgroundColor='transparent'">
+                            💻 Equipos
                         </NavLink>
                     </li>
-                </ul>
-            </div>
-            <!--Div desplegable para usuuriaos-->
-            <div class="collapse ps-4" id="collapseEquipos">
-                <ul class="nav flex-column">
-                    <li class="nav-item">
+                    <li class="nav-item mb-1">
                         <NavLink class="nav-link text-dark w-100"
                                  activeClass="active bg-danger text-white"
-                                 href="/#/">
-                            Usuarios
+                                 href="/usuarios/"
+                                 style="transition: background-color 0.3s ease;"
+                                 onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)'"
+                                 onmouseout="this.style.backgroundColor='transparent'">
+                            🪪 Usuarios
                         </NavLink>
                     </li>
                 </ul>
             </div>
         </li>
     </ul>
-
     <div class="mt-auto w-100">
-        <button class="nav-link text-dark w-100 d-flex align-items-center mt-3 btn btn-link" @onclick="CerrarSesion">
+        <button class="nav-link text-dark w-100 d-flex align-items-center mt-3 btn btn-link"
+                @onclick="CerrarSesion"
+                style="transition: background-color 0.3s ease;"
+                onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)'"
+                onmouseout="this.style.backgroundColor='transparent'">
             <i class="bi bi-box-arrow-left me-2"></i> Cerrar sesión
         </button>
     </div>
 </nav>
+
 @code {
     [Inject] public IJSRuntime JS { get; set; }
     [Inject] public NavigationManager Navigation { get; set; }
@@ -71,7 +83,6 @@
         catch (Exception ex)
         {
             Console.WriteLine($"Error al cerrar sesión: {ex.Message}");
-            // Opcional: Mostrar alerta al usuario
         }
     }
 }

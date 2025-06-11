@@ -76,7 +76,7 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Transacciones
                 .Include(t => t.SedeOsNavigation)
                 .Where(t => t.FechaHora.Date == hoy)
                 .OrderByDescending(t => t.FechaHora)
-                .Take(12)
+                .Take(10)
                 .Select(t => new TransaccionDashboardDto
                 {
                     CodigoBarras = t.CodigoBarras,
@@ -99,20 +99,20 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Transacciones
             var totalHoy = await _context.Transacciones
                 .CountAsync(t => t.FechaHora.Date == hoy);
 
-            // Transacciones de equipos personales (Id = 1)
+            // Transacciones de equipos corporativos (Id = 1)
             var totalPersonales = await _context.Transacciones
                 .Include(t => t.IdEquipoPersonalNavigation)
-                .CountAsync(t => t.FechaHora.Date == hoy && t.IdEquipoPersonalNavigation.Id == 1);
+                .CountAsync(t => t.FechaHora.Date == hoy && t.IdEquipoPersonalNavigation.NombrePersonal == "Corporativo");
 
-            // Transacciones de equipos corporativos (Id = 2)
+            // Transacciones de equipos proveedor (Id = 2)
             var totalCorporativos = await _context.Transacciones
                 .Include(t => t.IdEquipoPersonalNavigation)
-                .CountAsync(t => t.FechaHora.Date == hoy && t.IdEquipoPersonalNavigation.Id == 2);
+                .CountAsync(t => t.FechaHora.Date == hoy && t.IdEquipoPersonalNavigation.NombrePersonal == "Proveedor");
 
-            // Transacciones de equipos corporativos (Id =3)
+            // Transacciones de equipos Personal (Id =3)
             var totalProveedores = await _context.Transacciones
                 .Include(t => t.IdEquipoPersonalNavigation)
-                .CountAsync(t => t.FechaHora.Date == hoy && t.IdEquipoPersonalNavigation.Id == 3);
+                .CountAsync(t => t.FechaHora.Date == hoy && t.IdEquipoPersonalNavigation.NombrePersonal == "Personal");
 
             return new ConteoTransaccionesDto
             {

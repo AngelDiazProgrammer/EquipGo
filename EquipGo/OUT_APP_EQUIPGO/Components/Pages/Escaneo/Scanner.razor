@@ -5,7 +5,7 @@
 @implements IDisposable
 
 <div class="scanner-wrapper d-flex align-items-center justify-content-center py-5">
-    <div class="container bg-white text-center p-4 border rounded shadow w-100" style="max-width: 400px;">
+    <div class="container bg-white text-center p-4 border rounded shadow w-100" style="max-width: 400px; padding: 1rem;">
         <h2 class="text-danger mb-3">Bienvenido(a)</h2>
 
         <div class="mb-3">
@@ -73,6 +73,138 @@
                 </div>
             </div>
         }
+
+
+        <div class="mt-4 text-center">
+            <button class="btn btn-success btn-lg w-75 mb-2" @onclick="AbrirModalRegistroEquipo" style="border-radius: 20px;">
+                ➕ Registrar equipo
+            </button>
+        </div>
+        @if (mostrarModalRegistroEquipo)
+        {
+            <div class="modal fade show d-block" tabindex="-1" role="dialog" style="background: rgba(0,0,0,0.5);">
+                <div class="modal-dialog">
+                    <div class="modal-content" style="border-radius: 1rem; overflow: hidden;">
+                        <div class="modal-header text-center" style="background-color: #28A745;">
+                            <h5 class="modal-title w-100 m-0">
+                                ➕ <strong>Registrar equipo</strong>
+                            </h5>
+                        </div>
+
+                        <div class="modal-body text-start px-4 py-3">
+                           <!-- Número de Documento -->
+                            <div class="mb-3">
+                                <label for="documentoUsuario" class="form-label">
+                                    <strong>🆔 Número de Documento:</strong>
+                                </label>
+                                <input type="text" id="documentoUsuario" class="form-control"
+                                       @bind="documentoUsuario"
+                                       @onblur="BuscarUsuarioPorDocumento" />
+                            </div>
+
+                            <!-- Tipo de Documento -->
+                            <div class="mb-3">
+                                <label for="tipoDocumento" class="form-label">
+                                    <strong>🆔 Tipo de Documento:</strong>
+                                </label>
+                                <select id="tipoDocumento" class="form-select" @bind="idTipodocumentoSeleccionado">
+                                    <option value="0">Seleccione un tipo de documento...</option>
+                                    @foreach (var tipo in listaTiposDocumento)
+                                    {
+                                        <option value="@tipo.Id">@tipo.NombreDocumento</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <!-- Nombre(s) y Apellido(s) -->
+                            <div class="mb-3">
+                                <label><strong>👤 Nombre(s):</strong></label>
+                                <input type="text" class="form-control" @bind="usuarioNombres" />
+                            </div>
+                            <div class="mb-3">
+                                <label><strong>👤 Apellido(s):</strong></label>
+                                <input type="text" class="form-control" @bind="usuarioApellidos" />
+                            </div>
+
+                            <!-- Área y Campaña -->
+                            <div class="mb-3">
+                                <label><strong>📌 Área:</strong></label>
+                                <select class="form-select" @bind="idAreaSeleccionada">
+                                    <option value="0">Seleccione un área...</option>
+                                    @foreach (var area in listaAreas)
+                                    {
+                                        <option value="@area.Id">@area.NombreArea</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label><strong>📢 Campaña:</strong></label>
+                                <select class="form-select" @bind="idCampañaSeleccionada">
+                                    <option value="0">Seleccione una campaña...</option>
+                                    @foreach (var campaña in listaCampañas)
+                                    {
+                                        <option value="@campaña.Id">@campaña.NombreCampaña</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <!-- Equipo Personal -->
+                            <div class="mb-3">
+                                <label><strong>💼 Equipo Personal:</strong></label>
+                                <select class="form-select" @bind="idEquipoPersonalSeleccionado">
+                                    <option value="0">Seleccione un equipo personal...</option>
+                                    @foreach (var equipoPersonal in listaEquiposPersonales)
+                                    {
+                                        <option value="@equipoPersonal.Id">@equipoPersonal.NombrePersonal</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <!-- Datos del equipo -->
+                            <hr />
+                            <div class="mb-3">
+                                <label><strong>💻 Marca:</strong></label>
+                                <input type="text" class="form-control" @bind="equipoMarca" />
+                            </div>
+                            <div class="mb-3">
+                                <label><strong>💻 Modelo:</strong></label>
+                                <input type="text" class="form-control" @bind="equipoModelo" />
+                            </div>
+                            <div class="mb-3">
+                                <label><strong>🏷️ Serial:</strong></label>
+                                <input type="text" class="form-control" @bind="equipoSerial" />
+                            </div>
+                            <div class="mb-3">
+                                <label><strong>📍 Ubicación:</strong></label>
+                                <input type="text" class="form-control" @bind="equipoUbicacion" />
+                            </div>
+
+                            <!-- Tipo de Transacción -->
+                            <div class="mb-3">
+                                <label for="tipoTransaccionSelect" class="form-label">
+                                    <strong>🚥 Tipo de Transacción:</strong>
+                                </label>
+                                <select id="tipoTransaccionSelect" class="form-select" @bind="tipoTransaccionSeleccionado">
+                                    <option value="1">Entrada</option>
+                                    <option value="2">Salida</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer d-flex justify-content-between">
+                            <button class="btn btn-danger flex-fill me-2" @onclick="CerrarModalRegistroEquipo" style="border-radius: 20px;">
+                                ❌ Cancelar
+                            </button>
+                            <button class="btn btn-success flex-fill ms-2" @onclick="AprobarRegistroEquipo" style="border-radius: 20px;">
+                                ✅ Aprobar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+
 
         <div class="mt-4 text-center">
             <button class="btn btn-danger btn-lg w-75" @onclick="CerrarSesion" style="border-radius: 20px;">

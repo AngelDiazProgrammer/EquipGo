@@ -20,7 +20,7 @@ namespace OUT_PERSISTENCE_EQUIPGO.Context
         public DbSet<EquiposPersonal> EquiposPersonales { get; set; }
         public DbSet<Sedes> Sedes { get; set; }
         public DbSet<TipoAlerta> TiposAlerta { get; set; }
-        public DbSet<TipoDocumento> TiposDocumento { get; set; }
+        public DbSet<TipoDocumento> TipoDocumento { get; set; }
         public DbSet<TiposDispositivos> TiposDispositivos { get; set; }
         public DbSet<TiposTransaccion> TiposTransaccion { get; set; }
 

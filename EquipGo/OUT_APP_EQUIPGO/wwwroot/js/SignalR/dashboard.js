@@ -63,7 +63,7 @@ function agregarFilaNueva() {
                 row.style.backgroundColor = "";
             }, 3000);
 
-            while (tbody.rows.length > 12) {
+            while (tbody.rows.length > 10) {
                 tbody.deleteRow(tbody.rows.length - 1);
             }
         })

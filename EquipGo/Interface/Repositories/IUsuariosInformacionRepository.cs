@@ -9,6 +9,7 @@ namespace Interface.Repositories
 {
     public interface IUsuariosInformacionRepository : IGenericRepository<UsuariosInformacion>
     {
-        // métodos personalizados si los necesitas
+        IQueryable<UsuariosInformacion> Query();
+        Task AddAsync(UsuariosInformacion entity);
     }
 }

@@ -5,7 +5,11 @@ using Interface;
 using Interface.Services;
 using Interface.Services.Autenticacion;
 using Interface.Services.Equipos;
+using Interface.Services.Estados;
+using Interface.Services.Sedes;
+using Interface.Services.TipoDispositivos;
 using Interface.Services.Transacciones;
+using Interface.Services.Usuarios;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -13,8 +17,12 @@ using OUT_APP_EQUIPGO.Components;
 using OUT_PERSISTENCE_EQUIPGO.Context;
 using OUT_PERSISTENCE_EQUIPGO.Hubs;
 using OUT_PERSISTENCE_EQUIPGO.Services.Equipos;
+using OUT_PERSISTENCE_EQUIPGO.Services.Estados;
+using OUT_PERSISTENCE_EQUIPGO.Services.Sedes;
 using OUT_PERSISTENCE_EQUIPGO.Services.Seguridad;
+using OUT_PERSISTENCE_EQUIPGO.Services.TipoDispositivos;
 using OUT_PERSISTENCE_EQUIPGO.Services.Transacciones;
+using OUT_PERSISTENCE_EQUIPGO.Services.Usuarios;
 using OUT_PERSISTENCE_EQUIPGO.UnitOfWork;
 
 // ====================
@@ -37,6 +45,10 @@ builder.Services.AddRazorComponents()
 builder.Services.AddScoped<EquipGoDbContext>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IEquipoService, EquipoService>();
+builder.Services.AddScoped<IUsuariosInformacionService, UsuariosInformacionService>();
+builder.Services.AddScoped<IEstadoService, EstadoService>();
+builder.Services.AddScoped<ISedesService, SedesService>();
+builder.Services.AddScoped<ITipoDispositivosService, TipoDispositivosService>();
 builder.Services.AddScoped<ITransaccionService, TransaccionService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IAuthService, AuthService>();

@@ -18,7 +18,15 @@ namespace OUT_PERSISTENCE_EQUIPGO.Repositories
             return await _context.UsuariosInformacion
                 .FirstOrDefaultAsync(u => u.Id == id);
         }
+        public IQueryable<UsuariosInformacion> Query()
+        {
+            return _context.UsuariosInformacion.AsQueryable();
+        }
 
+        public async Task AddAsync(UsuariosInformacion entity)
+        {
+            await _context.UsuariosInformacion.AddAsync(entity);
+        }
 
     }
 }

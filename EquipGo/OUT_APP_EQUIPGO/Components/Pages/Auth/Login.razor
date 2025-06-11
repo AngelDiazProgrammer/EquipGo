@@ -3,41 +3,49 @@
 @using OUT_APP_EQUIPGO.Components.Layout
 @layout SinNavLayout
 <body class="login-body">
-<div class="container d-flex justify-content-center align-items-center min-vh-100 login-background">
-    <div class="login-box p-4 shadow rounded bg-white w-100" style="max-width: 400px;">
-        <div class="login-header text-center mb-4">
-            <img src="img/logoOutsourcing.png" alt="Outsourcing" class="img-fluid mb-2" style="max-width: 150px;" />
-            <h2>EquipGO</h2>
-            <h4>Iniciar sesión</h4>
+    <div class="container d-flex justify-content-center align-items-center min-vh-100 login-background text-center flex-wrap">
+        <div class="login-box p-4 shadow rounded bg-white w-100" style="max-width: 400px;">
+            <div class="login-header text-center mb-4">
+                <img src="img/logoOutsourcing.png" alt="Outsourcing" class="img-fluid mb-2" style="max-width: 150px;" />
+                <h2>EquipGO</h2>
+                <h4>Iniciar sesión</h4>
+            </div>
+
+            <EditForm Model="@loginModel" OnValidSubmit="IniciarSesion" FormName="loginForm">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="form-group mb-3">
+                    <label for="numeroDocumento">Número de Documento</label>
+                    <InputText id="numeroDocumento"
+                               class="form-control"
+                               placeholder="Ingrese su nombre de usuario"
+                               @bind-Value="loginModel.NumeroDocumento"
+                               required />
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="contraseña">Contraseña</label>
+                    <InputText id="contraseña"
+                               type="password"
+                               class="form-control"
+                               placeholder="Ingrese su contraseña"
+                               @bind-Value="loginModel.Contraseña"
+                               required />
+                </div>
+
+                <div class="form-options d-flex justify-content-between align-items-center mb-3 flex-wrap">
+                    <label>
+                        <InputCheckbox @bind-Value="loginModel.RecordarContrasena" /> Recordar contraseña
+                    </label>
+                    <a href="#">¿Olvidó su contraseña?</a>
+                </div>
+
+                <button class="btn btn-danger w-100" type="submit">Ingresar</button>
+            </EditForm>
+
+            <p class="mensaje mt-3 text-center">@mensaje</p>
         </div>
-
-        <EditForm Model="@loginModel" OnValidSubmit="IniciarSesion" FormName="loginForm">
-            <DataAnnotationsValidator />
-            <ValidationSummary />
-
-            <div class="form-group mb-3">
-                <label for="numeroDocumento">Número de Documento</label>
-                <InputText id="numeroDocumento" class="form-control" placeholder="Ingrese su nombre de usuario" @bind-Value="loginModel.NumeroDocumento" />
-            </div>
-
-            <div class="form-group mb-3">
-                <label for="contraseña">Contraseña</label>
-                <InputText id="contraseña" type="password" class="form-control" placeholder="Ingrese su contraseña" @bind-Value="loginModel.Contraseña" />
-            </div>
-
-            <div class="form-options d-flex justify-content-between align-items-center mb-3 flex-wrap">
-                <label>
-                    <InputCheckbox @bind-Value="loginModel.RecordarContrasena" />
-                    Recordar contraseña
-                </label>
-                <a href="#">¿Olvidó su contraseña?</a>
-            </div>
-
-            <button class="btn btn-danger w-100">Ingresar</button>
-        </EditForm>
-
-        <p class="mensaje mt-3 text-center">@mensaje</p>
-    </div>
     </div>
 </body>
 

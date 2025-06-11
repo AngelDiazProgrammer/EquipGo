@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using OUT_OS_APP.EQUIPGO.DTO.DTOs.Equipo;
 using System;
 using System.Collections.Generic;
@@ -12,8 +13,23 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
         [Inject]
         private Interface.Services.Equipos.IEquipoService EquipoService { get; set; }
 
+        [Inject]
+        private IJSRuntime JSRuntime { get; set; }
+
         private List<EquipoDto> equipos;
         private List<EquipoDto> equiposFiltrados = new();
+
+        // Paginación
+        private int paginaActual = 1;
+        private int tamanioPagina = 10;
+
+        private IEnumerable<EquipoDto> EquiposPaginados =>
+            equiposFiltrados
+                .Skip((paginaActual - 1) * tamanioPagina)
+                .Take(tamanioPagina);
+
+        private int TotalPaginas =>
+            (int)Math.Ceiling((double)(equiposFiltrados?.Count ?? 0) / tamanioPagina);
 
         // Filtros
         private string filtroMarca = "";
@@ -36,6 +52,14 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
             }
         }
 
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                await JSRuntime.InvokeVoidAsync("cargarSelects");
+            }
+        }
+
         private void Filtrar()
         {
             if (equipos != null)
@@ -48,6 +72,8 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
                         (string.IsNullOrWhiteSpace(filtroEstado) || (e.EstadoNombre?.Contains(filtroEstado, StringComparison.OrdinalIgnoreCase) ?? false))
                     )
                     .ToList();
+
+                paginaActual = 1;
             }
         }
 
@@ -58,6 +84,38 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
             filtroSerial = "";
             filtroEstado = "";
             equiposFiltrados = equipos?.ToList() ?? new List<EquipoDto>();
+            paginaActual = 1;
+        }
+
+        private void SiguientePagina()
+        {
+            if (paginaActual < TotalPaginas)
+            {
+                paginaActual++;
+            }
+        }
+
+        private void AnteriorPagina()
+        {
+            if (paginaActual > 1)
+            {
+                paginaActual--;
+            }
+        }
+
+        [JSInvokable]
+        public async Task RefrescarListaEquipos()
+        {
+            try
+            {
+                equipos = await EquipoService.ObtenerTodosLosEquiposAsync();
+                equiposFiltrados = equipos.ToList();
+                StateHasChanged();
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"❌ Error al refrescar equipos: {ex.Message}");
+            }
         }
     }
 }

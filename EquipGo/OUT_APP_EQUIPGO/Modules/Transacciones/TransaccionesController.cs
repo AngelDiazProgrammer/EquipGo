@@ -4,7 +4,7 @@ using OUT_OS_APP.EQUIPGO.DTO.DTOs;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace OUT_APP_EQUIPGO.Modules
+namespace OUT_APP_EQUIPGO.Modules.Transacciones
 {
     [ApiController]
     [Route("api/[controller]")]

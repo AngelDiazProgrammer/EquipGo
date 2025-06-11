@@ -1,13 +1,8 @@
 ﻿using Interface;
 using Interface.Repositories;
-using OUT_DOMAIN_EQUIPGO.Entities.Configuracion;
+using OUT_DOMAIN_EQUIPGO.Entities.Smart;
 using OUT_PERSISTENCE_EQUIPGO.Context;
 using OUT_PERSISTENCE_EQUIPGO.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OUT_PERSISTENCE_EQUIPGO.UnitOfWork
 {
@@ -24,6 +19,11 @@ namespace OUT_PERSISTENCE_EQUIPGO.UnitOfWork
             Area = new AreaRepository(_context);
             Campaña = new CampañaRepository(_context);
             UsuariosSession = new UsuariosSessionRepository(_context);
+            EquiposPersonal = new EquipoPersonalRepository(_context); 
+            TipoDocumento = new TipoDocumentoRepository(_context);
+            Estados = new EstadosRepository(_context);
+            Sedes = new SedesRepository(_context);
+            TipoDispositivo = new TipoDispositivoRepository(_context);
         }
 
         public IEquiposRepository Equipos { get; }
@@ -31,9 +31,12 @@ namespace OUT_PERSISTENCE_EQUIPGO.UnitOfWork
         public ITransaccionesRepository Transacciones { get; }
         public IAreaRepository Area { get; }
         public ICampañaRepository Campaña { get; }
-
-        public IUsuariosSessionRepository  UsuariosSession { get; }
-
+        public IUsuariosSessionRepository UsuariosSession { get; }
+        public IEquipoPersonalRepositoy EquiposPersonal { get; }
+        public ITipoDocumentoRepository TipoDocumento { get; }
+        public IEstadosRepository Estados { get; }
+        public ISedesRepository Sedes { get; }
+        public ITipoDispositivoRepository TipoDispositivo { get; }
         public async Task<int> CompleteAsync()
         {
             return await _context.SaveChangesAsync();
