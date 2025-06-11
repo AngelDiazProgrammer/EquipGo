@@ -19,23 +19,15 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
         private List<EquipoDto> equipos;
         private List<EquipoDto> equiposFiltrados = new();
 
-        // Paginación
-        private int paginaActual = 1;
-        private int tamanioPagina = 10;
-
-        private IEnumerable<EquipoDto> EquiposPaginados =>
-            equiposFiltrados
-                .Skip((paginaActual - 1) * tamanioPagina)
-                .Take(tamanioPagina);
-
-        private int TotalPaginas =>
-            (int)Math.Ceiling((double)(equiposFiltrados?.Count ?? 0) / tamanioPagina);
-
         // Filtros
         private string filtroMarca = "";
         private string filtroModelo = "";
         private string filtroSerial = "";
         private string filtroEstado = "";
+
+        // Paginación
+        private int paginaActual = 1;
+        private int tamanoPagina = 10;
 
         protected override async Task OnInitializedAsync()
         {
@@ -56,7 +48,7 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
         {
             if (firstRender)
             {
-                await JSRuntime.InvokeVoidAsync("cargarSelects");
+                
             }
         }
 
@@ -103,19 +95,31 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
             }
         }
 
+        private IEnumerable<EquipoDto> EquiposPaginados =>
+            equiposFiltrados
+                .Skip((paginaActual - 1) * tamanoPagina)
+                .Take(tamanoPagina);
+
+        private int TotalPaginas =>
+            (int)Math.Ceiling((double)(equiposFiltrados.Count) / tamanoPagina);
+
         [JSInvokable]
-        public async Task RefrescarListaEquipos()
+        public async Task<string> RefrescarListaEquipos()
         {
             try
             {
                 equipos = await EquipoService.ObtenerTodosLosEquiposAsync();
                 equiposFiltrados = equipos.ToList();
+                paginaActual = 1;
                 StateHasChanged();
+                return "ok";
             }
             catch (Exception ex)
             {
                 Console.Error.WriteLine($"❌ Error al refrescar equipos: {ex.Message}");
+                return $"error: {ex.Message}";
             }
         }
+
     }
 }

@@ -25,28 +25,34 @@
         });
 
         if (response.ok) {
-            try {
-                const data = await response.json();
-                alert('✅ ' + (data.message || 'Equipo registrado correctamente.'));
-            } catch {
-                alert('✅ Equipo registrado correctamente.');
-            }
+            alert('✅ Equipo registrado correctamente.');
             document.getElementById('formCrearEquipo').reset();
-            const modal = bootstrap.Modal.getInstance(document.getElementById('modalCrearEquipo'));
-            modal.hide();
-            await DotNet.invokeMethodAsync('OUT_OS_APP.EQUIPGO', 'RefrescarListaEquipos');
+
+            const modalElement = document.getElementById('modalCrearEquipo');
+            const modalInstance = bootstrap.Modal.getInstance(modalElement);
+            modalInstance.hide();
+
+            modalElement.addEventListener('hidden.bs.modal', async () => {
+                try {
+                    await DotNet.invokeMethodAsync('OUT_OS_APP.EQUIPGO', 'RefrescarListaEquipos');
+                } catch (ex) {
+                    console.error("❌ Excepción capturada:", ex);
+                    window.location.reload();
+                }
+            }, { once: true });
+
         } else {
-            try {
-                const error = await response.json();
-                alert('❌ Error: ' + (error.error || 'No se pudo registrar el equipo.'));
-            } catch {
-                alert('❌ Error desconocido al guardar el equipo.');
-            }
+            const error = await response.json();
+            alert('❌ Error: ' + (error.error || 'No se pudo registrar el equipo.'));
         }
     } catch (error) {
+        console.error(error);
         alert('❌ Error de red o servidor.');
     }
 };
+
+
+
 
 window.cargarSelects = async function () {
     try {
@@ -73,17 +79,14 @@ window.llenarSelect = function (selectId, lista, valueField, textField) {
         return;
     }
     select.innerHTML = '';
-
     lista.forEach(item => {
         const option = document.createElement('option');
         option.value = item[valueField];
-
         if (selectId === 'usuarioInfo') {
             option.text = `${item.nombres} ${item.apellidos}`;
         } else {
             option.text = item[textField];
         }
-
         select.appendChild(option);
     });
 };
