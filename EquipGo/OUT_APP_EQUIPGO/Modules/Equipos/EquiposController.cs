@@ -40,6 +40,40 @@ public class EquiposController : ControllerBase
         }
     }
 
+    [HttpGet("{id}")]
+    public async Task<IActionResult> ObtenerPorId(int id)
+    {
+        var equipo = await _equipoService.ObtenerPorIdAsync(id);
+        if (equipo == null)
+            return NotFound();
+
+        return Ok(equipo);
+    }
+
+    [HttpPut("Admin/{id}")]
+    public async Task<IActionResult> ActualizarEquipoAdmin(int id, [FromBody] CrearEquipoDto equipoDto)
+    {
+        try
+        {
+            var actualizado = await _equipoService.ActualizarEquipoAdminAsync(id, equipoDto);
+            if (!actualizado)
+                return NotFound(new { error = "Equipo no encontrado para actualizar." });
+
+            return Ok(new { message = "Equipo actualizado correctamente." });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
+
+    [HttpDelete("admin/{id}")]
+    public async Task<IActionResult> Eliminar(int id)
+    {
+        var resultado = await _equipoService.EliminarAsync(id);
+        return resultado ? Ok() : NotFound();
+    }
+
     [HttpGet("admin/form-data")]
     public async Task<IActionResult> ObtenerFormData()
     {

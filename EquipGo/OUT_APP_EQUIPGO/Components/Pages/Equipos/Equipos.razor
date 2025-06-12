@@ -194,6 +194,7 @@
                         <th>Sistema Operativo</th>
                         <th>MAC Equipo</th>
                         <th>Versión Software</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -212,11 +213,134 @@
                             <td>@equipo.SistemaOperativo</td>
                             <td>@equipo.MacEquipo</td>
                             <td>@equipo.VersionSoftware</td>
+                            <td>
+<button class="btn btn-sm btn-outline-primary"
+            onclick="editarEquipo(@equipo.Id)">
+        ✏️
+    </button>
+    <button class="btn btn-danger btn-sm" onclick="abrirModalEliminar(@equipo.Id)">
+    🗑️
+</button>
+
+</td>
                         </tr>
                     }
                 </tbody>
             </table>
         </div>
+
+        <!-- Modal para editar equipo -->
+<div class="modal fade" id="modalEditarEquipo" tabindex="-1" aria-labelledby="modalEditarEquipoLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalEditarEquipoLabel">Editar Equipo</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form id="formEditarEquipo">
+          <input type="hidden" id="editarId" />
+
+          <div class="row">
+            <!-- Columna izquierda -->
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="editarMarca" class="form-label">Marca</label>
+                <input type="text" class="form-control" id="editarMarca" />
+              </div>
+              <div class="mb-3">
+                <label for="editarModelo" class="form-label">Modelo</label>
+                <input type="text" class="form-control" id="editarModelo" />
+              </div>
+              <div class="mb-3">
+                <label for="editarSerial" class="form-label">Serial</label>
+                <input type="text" class="form-control" id="editarSerial" />
+              </div>
+              <div class="mb-3">
+                <label for="editarCodigoBarras" class="form-label">Código de Barras</label>
+                <input type="text" class="form-control" id="editarCodigoBarras" />
+              </div>
+              <div class="mb-3">
+                <label for="editarUbicacion" class="form-label">Ubicación</label>
+                <input type="text" class="form-control" id="editarUbicacion" />
+              </div>
+              <div class="mb-3">
+                <label for="editarUsuarioInfo" class="form-label">Asignado a</label>
+                <select class="form-select" id="editarUsuarioInfo"></select>
+              </div>
+              <div class="mb-3">
+                <label for="editarEstado" class="form-label">Estado</label>
+                <select class="form-select" id="editarEstado"></select>
+              </div>
+            </div>
+
+            <!-- Columna derecha -->
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="editarEquipoPersonal" class="form-label">Equipo Personal</label>
+                <select class="form-select" id="editarEquipoPersonal"></select>
+              </div>
+              <div class="mb-3">
+                <label for="editarSede" class="form-label">Sede</label>
+                <select class="form-select" id="editarSede"></select>
+              </div>
+              <div class="mb-3">
+                <label for="editarTipoDispositivo" class="form-label">Tipo de Dispositivo</label>
+                <select class="form-select" id="editarTipoDispositivo"></select>
+              </div>
+              <div class="mb-3">
+                <label for="editarLatitud" class="form-label">Latitud</label>
+                <input type="number" step="any" class="form-control" id="editarLatitud" />
+              </div>
+              <div class="mb-3">
+                <label for="editarLongitud" class="form-label">Longitud</label>
+                <input type="number" step="any" class="form-control" id="editarLongitud" />
+              </div>
+              <div class="mb-3">
+                <label for="editarSistemaOperativo" class="form-label">Sistema Operativo</label>
+                <input type="text" class="form-control" id="editarSistemaOperativo" />
+              </div>
+              <div class="mb-3">
+                <label for="editarMacEquipo" class="form-label">MAC Equipo</label>
+                <input type="text" class="form-control" id="editarMacEquipo" />
+              </div>
+              <div class="mb-3">
+                <label for="editarVersionSoftware" class="form-label">Versión Software</label>
+                <input type="text" class="form-control" id="editarVersionSoftware" />
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" onclick="guardarCambiosEquipo()">Guardar Cambios</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!--Modal eliminar equipo-->
+<div class="modal fade" id="modalEliminarEquipo" tabindex="-1" aria-labelledby="modalEliminarEquipoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalEliminarEquipoLabel">Confirmar eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de que deseas eliminar este equipo?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" onclick="confirmarEliminarEquipo()">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
 
         <div class="d-flex justify-content-between align-items-center mt-2">
     <button class="btn btn-outline-secondary" @onclick="AnteriorPagina" disabled="@(paginaActual == 1)">Anterior</button>

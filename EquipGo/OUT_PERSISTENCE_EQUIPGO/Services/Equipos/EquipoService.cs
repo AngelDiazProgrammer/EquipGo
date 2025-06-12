@@ -5,6 +5,7 @@ using OUT_DOMAIN_EQUIPGO.Entities.Configuracion;
 using OUT_DOMAIN_EQUIPGO.Entities.Procesos;
 using OUT_DOMAIN_EQUIPGO.Entities.Smart;
 using OUT_OS_APP.EQUIPGO.DTO.DTOs.Equipo;
+using OUT_PERSISTENCE_EQUIPGO.Context;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,10 +15,13 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Equipos
     public class EquipoService : IEquipoService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly EquipGoDbContext _context;
         #region UnitofWork y Metodos propios de los equipos
-        public EquipoService(IUnitOfWork unitOfWork)
+        public EquipoService(IUnitOfWork unitOfWork, EquipGoDbContext context)
         {
             _unitOfWork = unitOfWork;
+            _context = context;
+
         }
 
         public async Task<EquipoEscaneadoDto?> ConsultarPorCodigoBarrasAsync(string codigoBarras)
@@ -129,6 +133,85 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Equipos
             await _unitOfWork.Equipos.AddAsync(equipo);
             await _unitOfWork.CompleteAsync();
             return true;
+        }
+
+        public async Task<EquipoDto?> ObtenerPorIdAsync(int id)
+        {
+            var equipo = await _unitOfWork.Equipos.Query()
+                .Include(e => e.IdUsuarioInfoNavigation)
+                .Include(e => e.Estado)
+                .Include(e => e.IdEquipoPersonalNavigation)
+                .Include(e => e.IdSedeNavigation)
+                .Include(e => e.IdTipoDispositivoNavigation)
+                .FirstOrDefaultAsync(e => e.Id == id);
+
+            if (equipo == null)
+                return null;
+
+            return new EquipoDto
+            {
+                Id = equipo.Id,
+                Marca = equipo.Marca,
+                Modelo = equipo.Modelo,
+                Serial = equipo.Serial,
+                CodigoBarras = equipo.CodigoBarras,
+                Ubicacion = equipo.Ubicacion,
+                Latitud = equipo.Latitud,
+                Longitud = equipo.Longitud,
+                SistemaOperativo = equipo.SistemaOperativo,
+                MacEquipo = equipo.MacEquipo,
+                VersionSoftware = equipo.VersionSoftware,
+                IdUsuarioInfo = equipo.IdUsuarioInfo,
+                IdEstado = equipo.IdEstado,
+                IdEquipoPersonal = equipo.IdEquipoPersonal,
+                IdSede = equipo.IdSede,
+                IdTipoDispositivo = equipo.IdTipoDispositivo
+            };
+        }
+
+        public async Task<bool> ActualizarEquipoAdminAsync(int id, CrearEquipoDto dto)
+        {
+            var equipo = await _unitOfWork.Equipos.Query().FirstOrDefaultAsync(e => e.Id == id);
+            if (equipo == null)
+                return false;
+
+            equipo.Marca = dto.Marca;
+            equipo.Modelo = dto.Modelo;
+            equipo.Serial = dto.Serial;
+            equipo.CodigoBarras = dto.CodigoBarras;
+            equipo.Ubicacion = dto.Ubicacion;
+            equipo.IdUsuarioInfo = dto.IdUsuarioInfo;
+            equipo.IdEstado = dto.IdEstado;
+            equipo.IdEquipoPersonal = dto.IdEquipoPersonal;
+            equipo.IdSede = dto.IdSede;
+            equipo.IdTipoDispositivo = dto.IdTipoDispositivo;
+            equipo.Latitud = dto.Latitud;
+            equipo.Longitud = dto.Longitud;
+            equipo.SistemaOperativo = dto.SistemaOperativo;
+            equipo.MacEquipo = dto.MacEquipo;
+            equipo.VersionSoftware = dto.VersionSoftware;
+            equipo.UltimaModificacion = DateTime.UtcNow;
+
+            await _unitOfWork.CompleteAsync();
+            return true;
+        }
+
+        public async Task<bool> EliminarAsync(int id)
+        {
+            try
+            {
+                var equipo = await _context.Equipos.FindAsync(id);
+                if (equipo == null) return false;
+
+                _context.Equipos.Remove(equipo);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error al eliminar equipo: {ex.Message}");
+                return false;
+            }
         }
 
         #endregion

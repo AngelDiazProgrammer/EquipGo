@@ -1,4 +1,7 @@
 ﻿window.guardarEquipo = async function () {
+    const form = document.getElementById('formCrearEquipo');
+    const equipoId = form.getAttribute('data-id'); // puede ser null o string
+
     const equipoDto = {
         marca: document.getElementById('marca').value,
         modelo: document.getElementById('modelo').value,
@@ -17,16 +20,22 @@
         versionSoftware: document.getElementById('versionSoftware').value
     };
 
+    const url = equipoId
+        ? `/api/equipos/admin/${equipoId}`
+        : `/api/equipos/admin`;
+    const method = equipoId ? 'PUT' : 'POST';
+
     try {
-        const response = await fetch('/api/equipos/admin', {
-            method: 'POST',
+        const response = await fetch(url, {
+            method,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(equipoDto)
         });
 
         if (response.ok) {
-            alert('✅ Equipo registrado correctamente.');
-            document.getElementById('formCrearEquipo').reset();
+            alert(`✅ Equipo ${equipoId ? 'actualizado' : 'registrado'} correctamente.`);
+            form.reset();
+            form.removeAttribute('data-id');
 
             const modalElement = document.getElementById('modalCrearEquipo');
             const modalInstance = bootstrap.Modal.getInstance(modalElement);
@@ -34,16 +43,15 @@
 
             modalElement.addEventListener('hidden.bs.modal', async () => {
                 try {
-                    await DotNet.invokeMethodAsync('OUT_OS_APP.EQUIPGO', 'RefrescarListaEquipos');
+                    await DotNet.invokeMethodAsync('OUT_APP_EQUIPGO', 'RefrescarListaEquipos');
                 } catch (ex) {
                     console.error("❌ Excepción capturada:", ex);
                     window.location.reload();
                 }
             }, { once: true });
-
         } else {
             const error = await response.json();
-            alert('❌ Error: ' + (error.error || 'No se pudo registrar el equipo.'));
+            alert('❌ Error: ' + (error.error || 'No se pudo guardar el equipo.'));
         }
     } catch (error) {
         console.error(error);
@@ -51,8 +59,77 @@
     }
 };
 
+window.abrirModalEditar = async function (idEquipo) {
+    try {
+        const response = await fetch(`/api/equipos/${idEquipo}`);
+        if (!response.ok) throw new Error("No se pudo obtener el equipo");
 
+        const equipo = await response.json();
 
+        // Llenar los campos del modal
+        document.getElementById('editarId').value = equipo.id;
+        document.getElementById('editarMarca').value = equipo.marca || "";
+        document.getElementById('editarModelo').value = equipo.modelo || "";
+        document.getElementById('editarSerial').value = equipo.serial || "";
+        document.getElementById('editarCodigoBarras').value = equipo.codigoBarras || "";
+        document.getElementById('editarUbicacion').value = equipo.ubicacion || "";
+        document.getElementById('editarLatitud').value = equipo.latitud || "";
+        document.getElementById('editarLongitud').value = equipo.longitud || "";
+        document.getElementById('editarSistemaOperativo').value = equipo.sistemaOperativo || "";
+        document.getElementById('editarMacEquipo').value = equipo.macEquipo || "";
+        document.getElementById('editarVersionSoftware').value = equipo.versionSoftware || "";
+
+        document.getElementById('editarUsuarioInfo').value = equipo.idUsuarioInfo;
+        document.getElementById('editarEstado').value = equipo.idEstado || "";
+        document.getElementById('editarEquipoPersonal').value = equipo.idEquipoPersonal || "";
+        document.getElementById('editarSede').value = equipo.idSede || "";
+        document.getElementById('editarTipoDispositivo').value = equipo.idTipoDispositivo || "";
+
+        // Mostrar modal
+        const modal = new bootstrap.Modal(document.getElementById('modalEditarEquipo'));
+        modal.show();
+    } catch (error) {
+        console.error("Error al abrir modal de edición:", error);
+        alert("❌ No se pudo cargar la información del equipo.");
+    }
+};
+
+window.editarEquipo = async function (id) {
+    try {
+        await cargarSelects(); 
+        const response = await fetch(`/api/equipos/${id}`);
+        if (!response.ok) throw new Error("No se pudo obtener el equipo");
+
+        const equipo = await response.json();
+
+        // Llenar los campos del modal
+        document.getElementById('marca').value = equipo.marca || "";
+        document.getElementById('modelo').value = equipo.modelo || "";
+        document.getElementById('serial').value = equipo.serial || "";
+        document.getElementById('codigoBarras').value = equipo.codigoBarras || "";
+        document.getElementById('ubicacion').value = equipo.ubicacion || "";
+        document.getElementById('usuarioInfo').value = equipo.idUsuarioInfo || "";
+        document.getElementById('estado').value = equipo.idEstado || "";
+        document.getElementById('equipoPersonal').value = equipo.idEquipoPersonal || "";
+        document.getElementById('sede').value = equipo.idSede || "";
+        document.getElementById('tipoDispositivo').value = equipo.idTipoDispositivo || "";
+        document.getElementById('latitud').value = equipo.latitud || "";
+        document.getElementById('longitud').value = equipo.longitud || "";
+        document.getElementById('sistemaOperativo').value = equipo.sistemaOperativo || "";
+        document.getElementById('macEquipo').value = equipo.macEquipo || "";
+        document.getElementById('versionSoftware').value = equipo.versionSoftware || "";
+
+        // Guardar el ID en un atributo
+        document.getElementById('formCrearEquipo').setAttribute('data-id', id);
+
+        // Mostrar modal
+        const modal = new bootstrap.Modal(document.getElementById('modalCrearEquipo'));
+        modal.show();
+    } catch (error) {
+        alert("❌ Error al cargar el equipo.");
+        console.error(error);
+    }
+};
 
 window.cargarSelects = async function () {
     try {
@@ -90,3 +167,40 @@ window.llenarSelect = function (selectId, lista, valueField, textField) {
         select.appendChild(option);
     });
 };
+
+let equipoIdAEliminar = null;
+
+window.abrirModalEliminar = function (id) {
+    equipoIdAEliminar = id;
+    const modal = new bootstrap.Modal(document.getElementById('modalEliminarEquipo'));
+    modal.show();
+};
+
+window.confirmarEliminarEquipo = async function () {
+    if (!equipoIdAEliminar) return;
+
+    try {
+        const response = await fetch(`/api/equipos/admin/${equipoIdAEliminar}`, {
+            method: 'DELETE'
+        });
+
+        if (response.ok) {
+            alert("✅ Equipo eliminado correctamente.");
+            equipoIdAEliminar = null;
+
+            const modal = bootstrap.Modal.getInstance(document.getElementById('modalEliminarEquipo'));
+            modal.hide();
+
+            setTimeout(() => {
+                DotNet.invokeMethodAsync('OUT_OS_APP.EQUIPGO', 'RefrescarListaEquipos');
+            }, 300);
+        } else {
+            alert("❌ Error al eliminar el equipo.");
+        }
+    } catch (error) {
+        console.error(error);
+        alert("❌ Error de red o servidor.");
+    }
+};
+
+

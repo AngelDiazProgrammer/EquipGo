@@ -12,6 +12,12 @@ namespace Interface.Services.Equipos
         Task<List<EquipoDto>> ObtenerTodosLosEquiposAsync();
         Task<EquipoEscaneadoDto?> ConsultarPorCodigoBarrasAsync(string codigoBarras);
         Task<bool> CrearEquipoAdminAsync(CrearEquipoDto equipoDto);
+
+        Task<EquipoDto?> ObtenerPorIdAsync(int id);
+        Task<bool> ActualizarEquipoAdminAsync(int id, CrearEquipoDto dto);
+        Task<bool> EliminarAsync(int id);
+
+
         //RegistrarEquipoNoCorporativo
         Task<List<TipoDocumento>> ObtenerTipoDocumentoAsync();
         Task<UsuariosInformacion?> ConsultarUsuarioPorDocumentoAsync(string documento);
