@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OUT_COMMON_EQUIPGO", "OUT_C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OUT_LOGGING_EQUIPGO", "OUT_LOGGING_EQUIPGO\OUT_LOGGING_EQUIPGO.csproj", "{843AFCED-DB9F-43AD-A870-EF3390E60AF6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EquipGo.Agent", "EquipGo.Agent\EquipGo.Agent.csproj", "{D1FBC2BD-F3E4-44E5-B99D-2E3376DD71A5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,6 +69,10 @@ Global
 		{843AFCED-DB9F-43AD-A870-EF3390E60AF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{843AFCED-DB9F-43AD-A870-EF3390E60AF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{843AFCED-DB9F-43AD-A870-EF3390E60AF6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1FBC2BD-F3E4-44E5-B99D-2E3376DD71A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1FBC2BD-F3E4-44E5-B99D-2E3376DD71A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1FBC2BD-F3E4-44E5-B99D-2E3376DD71A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1FBC2BD-F3E4-44E5-B99D-2E3376DD71A5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

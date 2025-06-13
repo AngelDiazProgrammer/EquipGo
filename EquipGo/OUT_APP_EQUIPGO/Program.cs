@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
 using OUT_APP_EQUIPGO.Components;
+using OUT_APP_EQUIPGO.Middlewares;
 using OUT_PERSISTENCE_EQUIPGO.Context;
 using OUT_PERSISTENCE_EQUIPGO.Hubs;
 using OUT_PERSISTENCE_EQUIPGO.Services.Equipos;
@@ -101,6 +102,9 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+//Uso de middleware para app.client
+app.UseMiddleware<EmpresaTokenMiddleware>();
 
 app.UseAntiforgery();
 
