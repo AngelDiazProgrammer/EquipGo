@@ -20,7 +20,7 @@ namespace OUT_DOMAIN_EQUIPGO.Entities.Configuracion
         public string? Ubicacion { get; set; }
 
         [Column("id_usuarioInfo")]
-        public int IdUsuarioInfo { get; set; }
+        public int? IdUsuarioInfo { get; set; }
 
         [Column("id_estado")]
         public int? IdEstado { get; set; }

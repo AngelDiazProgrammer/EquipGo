@@ -13,7 +13,7 @@ namespace OUT_OS_APP.EQUIPGO.DTO.DTOs.Equipo
         public string? Serial { get; set; }
         public string? CodigoBarras { get; set; }
         public string? Ubicacion { get; set; }
-        public int IdUsuarioInfo { get; set; }
+        public int? IdUsuarioInfo { get; set; }
         public int? IdEstado { get; set; }
         public int? IdEquipoPersonal { get; set; }
         public int? IdSede { get; set; }

@@ -27,13 +27,15 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
 
         // Paginación
         private int paginaActual = 1;
-        private int tamanoPagina = 7;
+        private int tamanoPagina = 5;
 
         protected override async Task OnInitializedAsync()
         {
             try
             {
-                equipos = await EquipoService.ObtenerTodosLosEquiposAsync();
+                equipos = (await EquipoService.ObtenerTodosLosEquiposAsync())
+                            .OrderByDescending(e => e.FechaCreacion)
+                            .ToList();
                 equiposFiltrados = equipos.ToList();
             }
             catch (Exception ex)
@@ -43,6 +45,7 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
                 equiposFiltrados = new List<EquipoDto>();
             }
         }
+
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -63,11 +66,13 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
                         (string.IsNullOrWhiteSpace(filtroSerial) || (e.Serial?.Contains(filtroSerial, StringComparison.OrdinalIgnoreCase) ?? false)) &&
                         (string.IsNullOrWhiteSpace(filtroEstado) || (e.EstadoNombre?.Contains(filtroEstado, StringComparison.OrdinalIgnoreCase) ?? false))
                     )
+                    .OrderByDescending(e => e.FechaCreacion)
                     .ToList();
 
                 paginaActual = 1;
             }
         }
+
 
         private void LimpiarFiltros()
         {
@@ -75,9 +80,12 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
             filtroModelo = "";
             filtroSerial = "";
             filtroEstado = "";
-            equiposFiltrados = equipos?.ToList() ?? new List<EquipoDto>();
+            equiposFiltrados = equipos
+                .OrderByDescending(e => e.FechaCreacion)
+                .ToList();
             paginaActual = 1;
         }
+
 
         private void SiguientePagina()
         {
@@ -108,7 +116,9 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
         {
             try
             {
-                equipos = await EquipoService.ObtenerTodosLosEquiposAsync();
+                equipos = (await EquipoService.ObtenerTodosLosEquiposAsync())
+                            .OrderByDescending(e => e.FechaCreacion)
+                            .ToList();
                 equiposFiltrados = equipos.ToList();
                 paginaActual = 1;
                 StateHasChanged();

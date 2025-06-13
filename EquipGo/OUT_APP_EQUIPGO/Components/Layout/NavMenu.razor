@@ -1,12 +1,17 @@
 ﻿<nav class="navbar navbar-light flex-column align-items-start p-3 shadow-sm"
      style="border-radius: 25px; padding: 20px; box-shadow: 0px 4px 6px rgba(0,0,0,0.1); background-color: rgba(255,255,255,0.95); height: 90%; width: 100%; max-width: 300px;">
+
+    <!-- Logo principal -->
     <div style="width: 100%; text-align: center; border-bottom: 2px solid #ccc; padding-bottom: 4px; margin-bottom: 20px;">
         <a class="navbar-brand fs-4 fw-bold text-dark text-center"
            style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 700; font-size: 1.5rem; line-height: 40px; margin: 0; padding: 0;"
            href="#">EquipGO</a>
     </div>
+
+    <!-- Menú vertical principal -->
     <ul class="nav nav-pills flex-column w-100">
-        <!-- Dashboard -->
+
+        <!-- Enlace al Dashboard -->
         <li class="nav-item w-100 mb-2">
             <NavLink class="nav-link w-100 d-flex align-items-center text-dark"
                      activeClass="active bg-danger text-white"
@@ -18,8 +23,9 @@
             </NavLink>
         </li>
 
-        <!-- Administrar -->
+        <!-- Menú desplegable "Administrar" -->
         <li class="nav-item w-100 mb-2">
+            <!-- Botón para desplegar el colapsable -->
             <a class="nav-link text-dark w-100 d-flex align-items-center justify-content-between"
                style="transition: background-color 0.3s ease;"
                onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)'"
@@ -32,8 +38,12 @@
                 <span><i class="bi bi-laptop me-2"></i>🗃️ Administrar</span>
                 <i class="bi bi-caret-down-fill"></i>
             </a>
+
+            <!-- Contenedor colapsable para los elementos de "Administrar" -->
             <div class="collapse ps-3 ms-3" id="collapseAdministrar" style="padding: 8px 0;">
                 <ul class="nav flex-column">
+
+                    <!-- Opción: Equipos -->
                     <li class="nav-item mb-1">
                         <NavLink class="nav-link text-dark w-100"
                                  activeClass="active bg-danger text-white"
@@ -44,6 +54,8 @@
                             💻 Equipos
                         </NavLink>
                     </li>
+
+                    <!-- Opción: Usuarios -->
                     <li class="nav-item mb-1">
                         <NavLink class="nav-link text-dark w-100"
                                  activeClass="active bg-danger text-white"
@@ -54,10 +66,48 @@
                             🪪 Usuarios
                         </NavLink>
                     </li>
+                    <!-- Submenú desplegable "Smart" -->
+                    <li class="nav-item mb-1">
+                        <!-- Botón para desplegar submenu Smart -->
+                        <a class="nav-link text-dark w-100 d-flex align-items-center justify-content-between"
+                           data-bs-toggle="collapse"
+                           href="#collapseSmart"
+                           role="button"
+                           aria-expanded="false"
+                           aria-controls="collapseSmart"
+                           style="transition: background-color 0.3s ease;"
+                           onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)'"
+                           onmouseout="this.style.backgroundColor='transparent'">
+                            ⚙️ Smart
+                            <i class="bi bi-caret-down-fill"></i>
+                        </a>
+
+                        <!-- Contenedor colapsable del submenú Smart -->
+                        <div class="collapse ps-3" id="collapseSmart">
+                            <ul class="nav flex-column">
+
+                                <!-- Opción dentro de Smart: Estados Smart -->
+                                <!-- Opción: Estados -->
+                                <li class="nav-item mb-1">
+                                    <NavLink class="nav-link text-dark w-100"
+                                             activeClass="active bg-danger text-white"
+                                             href="/estados/"
+                                             style="transition: background-color 0.3s ease;"
+                                             onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)'"
+                                             onmouseout="this.style.backgroundColor='transparent'">
+                                        🟢 Estados
+                                    </NavLink>
+                                </li>
+                                </ul>
+                        </div>
+                    </li>
+
                 </ul>
             </div>
         </li>
     </ul>
+
+    <!-- Botón para cerrar sesión -->
     <div class="mt-auto w-100">
         <button class="nav-link text-dark w-100 d-flex align-items-center mt-3 btn btn-link"
                 @onclick="CerrarSesion"
@@ -73,6 +123,7 @@
     [Inject] public IJSRuntime JS { get; set; }
     [Inject] public NavigationManager Navigation { get; set; }
 
+    // Lógica para cerrar sesión
     private async Task CerrarSesion()
     {
         try

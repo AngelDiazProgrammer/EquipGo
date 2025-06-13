@@ -48,12 +48,9 @@ namespace OUT_PERSISTENCE_EQUIPGO.Context
             base.OnModelCreating(modelBuilder);
 
             // Ejemplo especial: código de barras como clave foránea
-            modelBuilder.Entity<Transacciones>()
-                .HasOne<Equipos>()
-                .WithMany()
-                .HasPrincipalKey(e => e.CodigoBarras)
-                .HasForeignKey(t => t.CodigoBarras)
-                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Equipos>()
+    .HasIndex(e => e.CodigoBarras)
+    .IsUnique();
         }
     }
 }

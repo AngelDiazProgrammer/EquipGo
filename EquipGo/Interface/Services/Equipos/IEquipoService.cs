@@ -27,5 +27,6 @@ namespace Interface.Services.Equipos
         Task<List<EquiposPersonal>> ObtenerEquiposPersonalesAsync();
         Task<EquiposPersonal?> ObtenerEquipoPersonalPorIdAsync(int id);
         Task<bool> CrearEquipoAsync(OUT_DOMAIN_EQUIPGO.Entities.Configuracion.Equipos equipo);
+        Task<string> SincronizarEquipoAsync(EquipoSyncRequestDto dto);
     }
 }

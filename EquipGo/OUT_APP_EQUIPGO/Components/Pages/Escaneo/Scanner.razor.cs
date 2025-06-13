@@ -88,7 +88,7 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Escaneo
                 CodigoBarras = equipoEscaneado.CodigoBarras,
                 TipoTransaccion = tipoTransaccionSeleccionado,
                 IdEquipoPersonal = equipoEscaneado.IdEquipoPersonal,
-                IdUsuarioInfo = equipoEscaneado.IdUsuarioInfo,
+                IdUsuarioInfo = equipoEscaneado.IdUsuarioInfo ?? 0,
                 IdUsuarioSession = int.Parse(idUsuarioSessionClaim.Value),
                 SedeOs = equipoEscaneado.IdSedeOs
             };

@@ -216,6 +216,81 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Equipos
 
         #endregion
 
+        #region Sincronizar equipos - agente de escritorio
+
+
+        public async Task<string> SincronizarEquipoAsync(EquipoSyncRequestDto dto)
+        {
+            // 🔍 Validaciones mínimas
+            if (string.IsNullOrWhiteSpace(dto.Serial))
+                return "El campo 'Serial' es obligatorio.";
+
+            if (string.IsNullOrWhiteSpace(dto.Marca) || string.IsNullOrWhiteSpace(dto.Modelo))
+                return "Los campos 'Marca' y 'Modelo' son obligatorios.";
+
+            if (string.IsNullOrWhiteSpace(dto.MacEquipo))
+                return "El campo 'MacEquipo' es obligatorio.";
+
+            if (string.IsNullOrWhiteSpace(dto.SistemaOperativo))
+                return "El campo 'SistemaOperativo' es obligatorio.";
+
+            if (dto.Latitud < -90 || dto.Latitud > 90 || dto.Longitud < -180 || dto.Longitud > 180)
+                return "Las coordenadas de ubicación son inválidas.";
+
+            // 🔍 Buscar si ya existe un equipo con ese serial
+            var equipoExistente = await _context.Equipos
+                .FirstOrDefaultAsync(e => e.Serial == dto.Serial);
+
+            if (equipoExistente != null)
+            {
+                // 🔁 Actualizar equipo existente
+                equipoExistente.Marca = dto.Marca;
+                equipoExistente.Modelo = dto.Modelo;
+                equipoExistente.MacEquipo = dto.MacEquipo;
+                equipoExistente.SistemaOperativo = dto.SistemaOperativo;
+                equipoExistente.VersionSoftware = dto.VersionSoftware;
+                equipoExistente.Latitud = dto.Latitud;
+                equipoExistente.Longitud = dto.Longitud;
+                equipoExistente.UltimaModificacion = DateTime.Now;
+
+                await _unitOfWork.CompleteAsync();
+                return "Equipo actualizado con éxito.";
+            }
+
+            // 🆕 Crear nuevo equipo
+            var nuevoCodigo = string.IsNullOrWhiteSpace(dto.CodigoBarras)
+                ? $"SIN-ASIGNAR-{Guid.NewGuid()}"
+                : dto.CodigoBarras;
+
+            var nuevoEquipo = new OUT_DOMAIN_EQUIPGO.Entities.Configuracion.Equipos
+            {
+                Serial = dto.Serial,
+                Marca = dto.Marca,
+                Modelo = dto.Modelo,
+                MacEquipo = dto.MacEquipo,
+                SistemaOperativo = dto.SistemaOperativo,
+                VersionSoftware = dto.VersionSoftware,
+                Latitud = dto.Latitud,
+                Longitud = dto.Longitud,
+                CodigoBarras = nuevoCodigo,
+                IdUsuarioInfo = dto.IdUsuarioInfo, // Por ahora 0 como "sin asignar"
+                IdEstado = dto.IdEstado,
+                IdSede = dto.IdSede,
+                IdEquipoPersonal = dto.IdEquipoPersonal,
+                IdTipoDispositivo = dto.IdTipoDispositivo,
+                FechaCreacion = DateTime.Now,
+                UltimaModificacion = DateTime.Now
+            };
+
+            await _unitOfWork.Equipos.AddAsync(nuevoEquipo);
+            await _unitOfWork.CompleteAsync();
+
+            return "Equipo registrado automáticamente.";
+        }
+        #endregion
+
+
+
         #region Resgitros de equipos no corporativos
         public async Task<UsuariosInformacion?> ConsultarUsuarioPorDocumentoAsync(string documento)
         {

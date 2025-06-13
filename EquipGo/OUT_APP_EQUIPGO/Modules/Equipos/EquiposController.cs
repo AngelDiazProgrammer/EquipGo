@@ -93,6 +93,20 @@ public class EquiposController : ControllerBase
         });
     }
 
+    [HttpPost("sync")]
+    public async Task<IActionResult> SincronizarEquipo([FromBody] EquipoSyncRequestDto dto)
+    {
+        if (dto == null)
+            return BadRequest("El cuerpo de la solicitud no puede estar vacío.");
 
+        var resultado = await _equipoService.SincronizarEquipoAsync(dto);
+
+        if (resultado.Contains("actualizado"))
+            return Ok(resultado); // 200 OK
+        if (resultado.Contains("registrado"))
+            return StatusCode(201, resultado); // 201 Created
+
+        return BadRequest(resultado); // 400 BadRequest por validaciones fallidas
+    }
 
 }

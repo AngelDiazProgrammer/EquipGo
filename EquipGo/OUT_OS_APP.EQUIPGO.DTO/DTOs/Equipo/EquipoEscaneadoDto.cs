@@ -16,7 +16,7 @@ namespace OUT_OS_APP.EQUIPGO.DTO.DTOs.Equipo
         public string Campaña { get; set; }
 
         public int IdEquipoPersonal { get; set; }
-        public int IdUsuarioInfo { get; set; }
+        public int? IdUsuarioInfo { get; set; }
         public int IdUsuarioSession { get; set; }   // ✅ Añadido para usar en scanner.razor
         public int IdSedeOs { get; set; }             // ✅ Añadido para usar en scanner.razor
 

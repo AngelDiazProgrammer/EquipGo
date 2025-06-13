@@ -1,0 +1,161 @@
+﻿@page "/estados"
+
+<div class="equipos-container">
+    <!--Encabezado-->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #ccc; padding-bottom: 4px;">
+        <h4 style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 700; font-size: 1.5rem; line-height: 40px; margin: 0; padding: 0; color: #000;">Dashboard</h4>
+        <img src="img/logoOutsourcing.png" alt="Logo" style="height: 40px;" />
+    </div>
+
+    <!-- Contadores -->
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-md-4">
+            <div class="bg-dark text-white rounded p-3 text-center shadow">
+                <h4 class="mb-0">150</h4>
+                <p>Usuarios</p>
+            </div>
+        </div>
+        <div class="col-12 col-md-4">
+            <div class="bg-secondary text-white rounded p-3 text-center shadow">
+                <h4 class="mb-0">90</h4>
+                <p>Usuarios</p>
+            </div>
+        </div>
+        <div class="col-12 col-md-4">
+            <div class="text-white rounded p-3 text-center shadow" style="background-color: #E9002B;">
+                <h4 class="mb-0">20</h4>
+                <p>Usuarios</p>
+            </div>
+        </div>
+    </div>
+    <!-- Botón para añadir estado -->
+    <div class="mb-3 d-flex justify-content-end">
+        <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalCrearEstado" onclick="">
+            <i class="bi bi-plus-lg"></i> Añadir Estado
+        </button>
+    </div>
+        <!-- Modal para crear equipo -->
+        <div class="modal fade" id="modalCrearEstado" tabindex="-1" aria-labelledby="modalCrearEstadoLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <!-- Cambié a xl para más espacio -->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalCrearEstadoLabel">Registrar Estado</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="formCrearEstado">
+                            <div class="row g-3">
+                                <!-- Columna izquierda -->
+                                <div class="col-md-6">
+                                    <!-- Nombre de estado -->
+                                    <div>
+                                        <label for="nombre" class="form-label">Estado</label>
+                                        <input type="text" class="form-control" id="nombre" name="nombre" required />
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary" onclick="guardarEstado()">Guardar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <!-- Tabla -->
+    @if (estados == null)
+    {
+        <p>Cargando estados...</p>
+    }
+    else if (!estados.Any())
+    {
+        <p>No hay estados registrados.</p>
+    }
+    else
+    {
+        <div class="table-wrapper" style="border: 1px solid #E9002B; border-radius: 10px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var estado in estados)
+                    {
+                        <tr>
+                            <td>@estado.Id</td>
+                            <td>@estado.NombreEstado</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary"
+                                        onclick="editarEstado(@estado.Id)">
+                                    ✏️
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="abrirModalEliminar(@estado.Id)">
+                                    🗑️
+                                </button>
+
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        //Modales
+        <!-- Modal para editar equipo -->
+        <div class="modal fade" id="modalEditarEstado" tabindex="-1" aria-labelledby="modalEditarEstadoLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalEditarEstadoLabel">Editar Estado</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="formEditarEstado">
+                            <input type="hidden" id="editarId" />
+
+                            <div class="row">
+                                <!-- Columna izquierda -->
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="editarNombreEstado" class="form-label">Estado</label>
+                                        <input type="text" class="form-control" id="editarNombreEstado" />
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary" onclick="guardarCambiosEstado()">Guardar Cambios</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Modal eliminar equipo-->
+        <div class="modal fade" id="modalEliminarEstado" tabindex="-1" aria-labelledby="modalEliminarEstadoLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalEliminarEstadoLabel">Confirmar eliminación</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        ¿Estás seguro de que deseas eliminar este estado?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-danger" onclick="confirmarEliminarEstado()">Eliminar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    }
+</div>

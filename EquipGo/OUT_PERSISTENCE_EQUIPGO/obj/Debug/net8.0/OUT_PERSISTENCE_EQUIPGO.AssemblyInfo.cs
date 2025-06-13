@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("OUT_PERSISTENCE_EQUIPGO")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2cc11b395492e4ad1d1ff3fb239071e79da35564")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+abe5fa7c7f49f934643fd0f50dff34ef2a7ceb9e")]
 [assembly: System.Reflection.AssemblyProductAttribute("OUT_PERSISTENCE_EQUIPGO")]
 [assembly: System.Reflection.AssemblyTitleAttribute("OUT_PERSISTENCE_EQUIPGO")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
