@@ -19,8 +19,8 @@ namespace OUT_OS_APP.EQUIPGO.DTO.DTOs.Equipo
         public string EquipoPersonalNombre { get; set; }
         public string? SedeNombre { get; set; }
         public string TipoDispositivoNombre { get; set; }
-        public decimal? Latitud { get; set; }
-        public decimal? Longitud { get; set; }
+        public double? Latitud { get; set; }
+        public double? Longitud { get; set; }
         public string? SistemaOperativo { get; set; }
         public string? MacEquipo { get; set; }
         public string? VersionSoftware { get; set; }

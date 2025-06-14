@@ -8,8 +8,11 @@ namespace EquipGo.Agent.Services
 {
     public class EquipoInfoService
     {
-        public EquipoSyncRequestDto ObtenerDatos()
+        private readonly GeoService _geoService = new GeoService();
+        public async Task<EquipoSyncRequestDto> ObtenerDatosAsync()
         {
+            var (latitud, longitud) = await _geoService.ObtenerUbicacionAsync();
+
             return new EquipoSyncRequestDto
             {
                 Marca = ObtenerMarca(),
@@ -18,8 +21,8 @@ namespace EquipGo.Agent.Services
                 MacEquipo = ObtenerMac(),
                 SistemaOperativo = ObtenerSistemaOperativo(),
                 VersionSoftware = ObtenerVersionSoftware(),
-                Latitud = 5.123456m,     // temporal
-                Longitud = -74.123456m   // temporal
+                Latitud = latitud.Value,
+                Longitud =longitud.Value 
             };
         }
 

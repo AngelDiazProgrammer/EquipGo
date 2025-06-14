@@ -91,8 +91,8 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Equipos
                 EquipoPersonalNombre = e.IdEquipoPersonalNavigation?.NombrePersonal,
                 SedeNombre = e.IdSedeNavigation?.NombreSede,
                 TipoDispositivoNombre = e.IdTipoDispositivoNavigation?.NombreTipo,
-                Latitud = e.Latitud ?? 0,       // 👈 Conversión explícita
-                Longitud = e.Longitud ?? 0,     // 👈 Conversión explícita
+                Latitud = e.Latitud,       // 👈 Conversión explícita
+                Longitud = e.Longitud,     // 👈 Conversión explícita
                 SistemaOperativo = e.SistemaOperativo,
                 MacEquipo = e.MacEquipo,
                 VersionSoftware = e.VersionSoftware,

@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Globalization;
 using System.IO;
 using System.Net.Http;
 using System.Text;
@@ -24,10 +25,7 @@ namespace EquipGo.Agent
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            // Crear carpeta de logs si no existe
             Directory.CreateDirectory(Path.GetDirectoryName(rutaLog)!);
-
-            // Registrar para que se inicie automáticamente con Windows
             AutoStartManager.RegistrarInicioAutomatico();
 
             _logger.LogInformation("⏳ Servicio iniciado correctamente.");
@@ -40,25 +38,24 @@ namespace EquipGo.Agent
                     if (string.IsNullOrWhiteSpace(clave))
                     {
                         await File.AppendAllTextAsync(rutaLog,
-                            $"[{DateTime.Now}] ❌ Clave maestra no encontrada. Abortando sincronización.\n");
-                        await Task.Delay(TimeSpan.FromMinutes(IntervaloMinutos), stoppingToken);
+                            $"[{DateTime.Now}] ❌ Clave maestra no encontrada. Abortando sincronización.\n").ConfigureAwait(false);
+                        await Task.Delay(TimeSpan.FromMinutes(IntervaloMinutos), stoppingToken).ConfigureAwait(false);
                         continue;
                     }
 
                     var servicio = new EquipoInfoService();
-                    var datos = servicio.ObtenerDatos();
+                    var datos = await servicio.ObtenerDatosAsync().ConfigureAwait(false);
 
-                    var geoService = new GeoService();
-                    var ubicacion = await geoService.ObtenerUbicacionAsync();
-
-                    if (ubicacion.latitud.HasValue && ubicacion.longitud.HasValue)
+                    // Conversión robusta de coordenadas
+                    if (datos.Latitud != 0 && datos.Longitud != 0)
                     {
-                        datos.Latitud = (decimal)ubicacion.latitud.Value;
-                        datos.Longitud = (decimal)ubicacion.longitud.Value;
+                        string inputLat = datos.Latitud.ToString(CultureInfo.InvariantCulture).Replace(',', '.');
+                        string inputLng = datos.Longitud.ToString(CultureInfo.InvariantCulture).Replace(',', '.');
+
                     }
 
                     await File.AppendAllTextAsync(rutaLog,
-                        $"[{DateTime.Now}] Intentando sincronizar equipo SERIAL: {datos.Serial}, LAT: {datos.Latitud}, LNG: {datos.Longitud}...\n");
+                        $"[{DateTime.Now}] Intentando sincronizar equipo SERIAL: {datos.Serial}, LAT: {datos.Latitud}, LNG: {datos.Longitud}...\n").ConfigureAwait(false);
 
                     var json = JsonSerializer.Serialize(datos);
                     var content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -66,27 +63,27 @@ namespace EquipGo.Agent
                     using var httpClient = new HttpClient();
                     httpClient.DefaultRequestHeaders.Add("X-Empresa-Token", clave);
 
-                    var response = await httpClient.PostAsync("https://localhost:7096/api/equipos/sync", content);
+                    var response = await httpClient.PostAsync("https://localhost:7096/api/equipos/sync", content).ConfigureAwait(false);
 
                     if (response.IsSuccessStatusCode)
                     {
                         await File.AppendAllTextAsync(rutaLog,
-                            $"[{DateTime.Now}] ✅ Sincronización exitosa.\n");
+                            $"[{DateTime.Now}] ✅ Sincronización exitosa.\n").ConfigureAwait(false);
                     }
                     else
                     {
-                        var error = await response.Content.ReadAsStringAsync();
+                        var error = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                         await File.AppendAllTextAsync(rutaLog,
-                            $"[{DateTime.Now}] ❌ Error al sincronizar: {error}\n");
+                            $"[{DateTime.Now}] ❌ Error al sincronizar: {error}\n").ConfigureAwait(false);
                     }
                 }
                 catch (Exception ex)
                 {
                     await File.AppendAllTextAsync(rutaLog,
-                        $"[{DateTime.Now}] ❌ Excepción: {ex.Message}\n");
+                        $"[{DateTime.Now}] ❌ Excepción: {ex.Message}\n").ConfigureAwait(false);
                 }
 
-                await Task.Delay(TimeSpan.FromMinutes(IntervaloMinutos), stoppingToken);
+                await Task.Delay(TimeSpan.FromMinutes(IntervaloMinutos), stoppingToken).ConfigureAwait(false);
             }
         }
     }

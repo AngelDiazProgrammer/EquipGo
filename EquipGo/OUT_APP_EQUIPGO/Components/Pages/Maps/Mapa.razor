@@ -1,0 +1,45 @@
+﻿@page "/mapa/{id:int}"
+@using Interface.Services.Equipos
+@using OUT_PERSISTENCE_EQUIPGO.Services.Equipos
+@using Interface.Services.Equipos
+@inject IJSRuntime JS
+@inject IEquipoService EquipoService
+
+<h3>Ubicación del Equipo</h3>
+
+@if (equipoEncontrado)
+{
+    <div id="leaflet-map" style="height: 500px; width: 100%; background-color: lightgray;"></div>
+}
+else
+{
+    <p class="text-danger">Equipo no encontrado.</p>
+}
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+
+    private double latitud;
+    private double longitud;
+    private bool equipoEncontrado = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var equipo = await EquipoService.ObtenerPorIdAsync(id);
+        if (equipo != null && equipo.Latitud.HasValue && equipo.Longitud.HasValue)
+        {
+            latitud = (double)equipo.Latitud.Value;
+            longitud = (double)equipo.Longitud.Value;
+            equipoEncontrado = true;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && equipoEncontrado)
+        {
+            await JS.InvokeVoidAsync("initializeLeafletMap", latitud, longitud);
+        }
+    }
+}

@@ -34,8 +34,8 @@ namespace OUT_DOMAIN_EQUIPGO.Entities.Configuracion
         [Column("id_tipoDispositivo")]
         public int? IdTipoDispositivo { get; set; }
 
-        public decimal? Latitud { get; set; }
-        public decimal? Longitud { get; set; }
+        public double? Latitud { get; set; }
+        public double? Longitud { get; set; }
 
         [Column("sistema_operativo")]
         public string? SistemaOperativo { get; set; }

@@ -8,8 +8,8 @@
         public string MacEquipo { get; set; }
         public string SistemaOperativo { get; set; }
         public string VersionSoftware { get; set; }
-        public decimal Latitud { get; set; }
-        public decimal Longitud { get; set; }
+        public double Latitud { get; set; }
+        public double Longitud { get; set; }
 
         public string? CodigoBarras { get; set; }
         public int? IdUsuarioInfo { get; set; }
