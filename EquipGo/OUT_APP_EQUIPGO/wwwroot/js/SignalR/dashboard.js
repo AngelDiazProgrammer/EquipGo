@@ -1,16 +1,18 @@
-﻿"use strict";
+﻿    "use strict";
 
-const connection = new signalR.HubConnectionBuilder()
+    const connection = new signalR.HubConnectionBuilder()
     .withUrl("/dashboardHub")
     .build();
 
-connection.start().then(() => {
-    console.log("✅ Conexión SignalR establecida");
-    actualizarConteosDashboard(); // 🟢 Llamada inicial para los contadores
-}).catch(err => console.error("❌ Error de conexión SignalR:", err.toString()));
+    connection.start()
+    .then(() => {
+        console.log("✅ Conexión SignalR establecida");
+    actualizarConteosDashboard();
+    })
+    .catch(err => console.error("❌ Error de conexión SignalR:", err.toString()));
 
 connection.on("NuevaTransaccion", () => {
-    console.log("🔄 Nueva transacción detectada");
+        console.log("🔄 Nueva transacción detectada");
     agregarFilaNueva();
     actualizarConteosDashboard();
 });
@@ -35,7 +37,13 @@ function agregarFilaNueva() {
         .then(data => {
             if (data.length === 0) return;
 
-            const tbody = document.querySelector("table tbody");
+            const tbody = document.querySelector("#tablaDashboard tbody");
+
+            // 🔥 Limpiar completamente todas las filas anteriores
+            while (tbody.firstChild) {
+                tbody.removeChild(tbody.firstChild);
+            }
+
             const nueva = data[0];
 
             let rowColor = "";
@@ -53,11 +61,10 @@ function agregarFilaNueva() {
                 <td>${nueva.nombreEquipoPersonal}</td>
                 <td>${nueva.nombreUsuarioSession}</td>
                 <td>${nueva.nombreSedeOs}</td>
-                <td><button>Ver ubicación</button></td>
             `;
 
             row.style.backgroundColor = rowColor;
-            tbody.insertBefore(row, tbody.firstChild);
+            tbody.appendChild(row);
 
             setTimeout(() => {
                 row.style.backgroundColor = "";

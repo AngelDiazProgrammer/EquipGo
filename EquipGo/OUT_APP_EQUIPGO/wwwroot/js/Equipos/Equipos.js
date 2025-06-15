@@ -171,8 +171,15 @@ window.llenarSelect = function (selectId, lista, valueField, textField) {
 let equipoIdAEliminar = null;
 
 window.abrirModalEliminar = function (id) {
-    equipoIdAEliminar = id;
-    const modal = new bootstrap.Modal(document.getElementById('modalEliminarEquipo'));
+    equipoIdAEliminar = id; // se guarda el ID aquí correctamente
+
+    const modalElement = document.getElementById('modalEliminarEquipo');
+    if (!modalElement) {
+        console.error("❌ No se encontró el modal con ID 'modalEliminarEquipo'");
+        return;
+    }
+
+    const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
     modal.show();
 };
 

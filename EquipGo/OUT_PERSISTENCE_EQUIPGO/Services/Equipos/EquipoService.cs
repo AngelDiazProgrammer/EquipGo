@@ -165,7 +165,15 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Equipos
                 IdEstado = equipo.IdEstado,
                 IdEquipoPersonal = equipo.IdEquipoPersonal,
                 IdSede = equipo.IdSede,
-                IdTipoDispositivo = equipo.IdTipoDispositivo
+                IdTipoDispositivo = equipo.IdTipoDispositivo,
+
+                // ✅ Agrega estas propiedades de texto
+                UsuarioNombreCompleto = equipo.IdUsuarioInfoNavigation != null
+        ? $"{equipo.IdUsuarioInfoNavigation.Nombres} {equipo.IdUsuarioInfoNavigation.Apellidos}"
+        : "Sin asignar",
+                EstadoNombre = equipo.Estado?.NombreEstado ?? "Sin estado",
+                EquipoPersonalNombre = equipo.IdEquipoPersonalNavigation?.NombrePersonal ?? "No definido",
+                TipoDispositivoNombre = equipo.IdTipoDispositivoNavigation?.NombreTipo ?? "No definido"
             };
         }
 

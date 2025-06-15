@@ -1,6 +1,4 @@
-﻿let estadoIdAEliminar = null;
-
-// Guardar nuevo estado o actualizar existente
+﻿// Guardar nuevo estado o actualizar existente
 window.guardarEstado = async function () {
     const form = document.getElementById('formCrearEstado');
     const estadoId = form.getAttribute('data-id');
@@ -69,36 +67,54 @@ window.editarEstado = async function (id) {
 };
 
 // Abrir modal eliminar
+let estadoIdAEliminar = null;
 window.abrirModalEliminar = function (id) {
-    estadoIdAEliminar = id;
-    const modal = new bootstrap.Modal(document.getElementById('modalEliminarEstado'));
-    modal.show();
-};
+    equipoIdAEliminar = id;
 
-// Confirmar eliminación
-window.confirmarEliminarEstado = async function () {
-    if (!estadoIdAEliminar) return;
+    const modalElement = document.getElementById('modalEliminarEquipo');
+    if (!modalElement) {
+        console.error("❌ No se encontró el modal con ID 'modalEliminarEquipo'");
+        return;
+    }
 
     try {
-        const response = await fetch(`/api/estados/admin/${estadoIdAEliminar}`, {
+        const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+        modal.show();
+    } catch (error) {
+        console.error("❌ Error al abrir el modal de eliminación:", error);
+    }
+};
+
+window.confirmarEliminarEquipo = async function () {
+    if (!equipoIdAEliminar) {
+        alert("❌ No hay equipo seleccionado para eliminar.");
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/equipos/admin/${equipoIdAEliminar}`, {
             method: 'DELETE'
         });
 
         if (response.ok) {
-            alert("✅ Estado eliminado correctamente.");
-            estadoIdAEliminar = null;
+            alert("✅ Equipo eliminado correctamente.");
+            equipoIdAEliminar = null;
 
-            const modal = bootstrap.Modal.getInstance(document.getElementById('modalEliminarEstado'));
-            modal.hide();
+            const modalElement = document.getElementById('modalEliminarEquipo');
+            const modal = bootstrap.Modal.getInstance(modalElement);
+            if (modal) modal.hide();
 
             setTimeout(() => {
-                DotNet.invokeMethodAsync('OUT_APP_EQUIPGO', 'RefrescarListaEstados');
+                DotNet.invokeMethodAsync('OUT_APP_EQUIPGO', 'RefrescarListaEquipos');
             }, 300);
+
         } else {
-            alert("❌ Error al eliminar el estado.");
+            const error = await response.json();
+            alert("❌ Error al eliminar el equipo: " + (error.error || "Error desconocido."));
         }
+
     } catch (error) {
-        console.error(error);
-        alert("❌ Error de red o servidor.");
+        console.error("❌ Error de red o servidor:", error);
+        alert("❌ Error de red o servidor al intentar eliminar el equipo.");
     }
 };

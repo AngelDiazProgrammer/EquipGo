@@ -99,12 +99,8 @@
     </div>
 
     <!-- Tabla dinámica -->
-    <div class="table-wrapper" style="
-        border: 1px solid #E9002B;
-        border-radius: 10px;
-        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);
-        overflow-x: auto;">
-        <table style="width: 100%; min-width: 600px;">
+    <div class="table-wrapper" style="border: 1px solid #E9002B; border-radius: 10px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5); overflow-x: auto;">
+        <table id="tablaDashboard" style="width: 100%; min-width: 600px;">
             <thead>
                 <tr>
                     <th>Usuario Info</th>
@@ -113,15 +109,15 @@
                     <th>Equipo Personal</th>
                     <th>Guarda Aprobador</th>
                     <th>Sede OS</th>
-                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                <!-- Aquí el JavaScript insertará las filas -->
+                <!-- JS llenará dinámicamente -->
             </tbody>
         </table>
     </div>
 </div>
+
 
 @inject IJSRuntime JS
 

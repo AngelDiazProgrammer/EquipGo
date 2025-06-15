@@ -131,5 +131,28 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
             }
         }
 
+        private EquipoDto equipoSeleccionado;
+        private double latitud;
+        private double longitud;
+
+        [JSInvokable]
+        public async Task MostrarMapa()
+        {
+            await JSRuntime.InvokeVoidAsync("initializeLeafletMap", latitud, longitud);
+        }
+
+        private async Task MostrarDetallesEquipo(int id)
+        {
+            equipoSeleccionado = await EquipoService.ObtenerPorIdAsync(id);
+            if (equipoSeleccionado != null && equipoSeleccionado.Latitud.HasValue && equipoSeleccionado.Longitud.HasValue)
+            {
+                latitud = equipoSeleccionado.Latitud.Value;
+                longitud = equipoSeleccionado.Longitud.Value;
+
+                var dotNetRef = DotNetObjectReference.Create(this);
+                await JSRuntime.InvokeVoidAsync("mostrarModalDetallesEquipo", dotNetRef);
+            }
+        }
+
     }
 }

@@ -183,18 +183,10 @@
                 <thead>
                     <tr>
                         <th>Marca</th>
-                        <th>Modelo</th>
-                        <th>Serial</th>
-                        <th>Asset</th>
-                        <th>Asignado a</th>
-                        <th>Estado</th>
-                        <th>Personal</th>
-                        <th>Sede</th>
-                        <th>Tipo Dispositivo</th>
-                        <th>Sistema Operativo</th>
-                        <th>MAC Equipo</th>
-                        <th>Versión Software</th>
-                        <th>Acciones</th>
+        <th>Modelo</th>
+        <th>Serial</th>
+        <th>Asset</th>
+        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -202,26 +194,22 @@
                     {
                         <tr>
                             <td>@equipo.Marca</td>
-                            <td>@equipo.Modelo</td>
-                            <td>@equipo.Serial</td>
-                            <td>@equipo.CodigoBarras</td>
-                            <td>@equipo.UsuarioNombreCompleto</td>
-                            <td>@equipo.EstadoNombre</td>
-                            <td>@equipo.EquipoPersonalNombre</td>
-                            <td>@equipo.SedeNombre</td>
-                            <td>@equipo.TipoDispositivoNombre</td>
-                            <td>@equipo.SistemaOperativo</td>
-                            <td>@equipo.MacEquipo</td>
-                            <td>@equipo.VersionSoftware</td>
-                            <td>
+            <td>@equipo.Modelo</td>
+            <td>@equipo.Serial</td>
+            <td>@equipo.CodigoBarras</td>
+            <td>
+                <button class="btn btn-sm btn-outline-info" @onclick="@(() => MostrarDetallesEquipo(equipo.Id))">
+                    🔍
+                </button>
 <button class="btn btn-sm btn-outline-primary"
             onclick="editarEquipo(@equipo.Id)">
         ✏️
     </button>
+    <!--
     <button class="btn btn-danger btn-sm" onclick="abrirModalEliminar(@equipo.Id)">
     🗑️
 </button>
-
+-->
 </td>
                         </tr>
                     }
@@ -320,25 +308,68 @@
     </div>
   </div>
 </div>
-<!--Modal eliminar equipo-->
+
+
+<!--modal eliminar equipo
+
 <div class="modal fade" id="modalEliminarEquipo" tabindex="-1" aria-labelledby="modalEliminarEquipoLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalEliminarEquipoLabel">Confirmar eliminación</h5>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalEliminarEquipoLabel">Confirmar eliminación</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        ¿Estás seguro de que deseas eliminar este equipo?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-danger" onclick="confirmarEliminarEquipo()">Eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+-->
+
+
+<!--Modal para ver informacion del equipo-->
+<div class="modal fade" id="modalDetallesEquipo" tabindex="-1" aria-labelledby="modalDetallesEquipoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content border-danger">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="modalDetallesEquipoLabel">Detalles del Equipo</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <div class="modal-body">
-                ¿Estás seguro de que deseas eliminar este equipo?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-danger" onclick="confirmarEliminarEquipo()">Eliminar</button>
+                @if (equipoSeleccionado != null)
+                {
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <p><strong>Marca:</strong> @equipoSeleccionado.Marca</p>
+                            <p><strong>Modelo:</strong> @equipoSeleccionado.Modelo</p>
+                            <p><strong>Serial:</strong> @equipoSeleccionado.Serial</p>
+                            <p><strong>Código de Barras:</strong> @equipoSeleccionado.CodigoBarras</p>
+                            <p><strong>Tipo de equipo:</strong> @equipoSeleccionado.EquipoPersonalNombre</p>
+                            <p><strong>Tipo de dispositivo::</strong> @equipoSeleccionado.TipoDispositivoNombre</p>
+                            <p><strong>Estado:</strong> @equipoSeleccionado.EstadoNombre</p>
+                            <p><strong>Usuario:</strong> @equipoSeleccionado.UsuarioNombreCompleto</p>
+                            <p><strong>Ubicación:</strong> @equipoSeleccionado.Ubicacion</p>
+                            <p><strong>Sistema Operativo:</strong> @equipoSeleccionado.SistemaOperativo</p>
+                        </div>
+                        <div class="col-md-6">
+                            <div id="leaflet-map" style="height: 300px; width: 100%; background-color: lightgray;"></div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-danger">No se pudo cargar la información del equipo.</p>
+                }
             </div>
         </div>
     </div>
 </div>
-
 
 
 
