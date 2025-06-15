@@ -122,6 +122,14 @@ window.editarEquipo = async function (id) {
         // Guardar el ID en un atributo
         document.getElementById('formCrearEquipo').setAttribute('data-id', id);
 
+        setTimeout(() => {
+            document.getElementById('usuarioInfo').tomselect.setValue(equipo.idUsuarioInfo);
+            document.getElementById('estado').tomselect.setValue(equipo.idEstado);
+            document.getElementById('equipoPersonal').tomselect.setValue(equipo.idEquipoPersonal);
+            document.getElementById('sede').tomselect.setValue(equipo.idSede);
+            document.getElementById('tipoDispositivo').tomselect.setValue(equipo.idTipoDispositivo);
+        }, 100);
+
         // Mostrar modal
         const modal = new bootstrap.Modal(document.getElementById('modalCrearEquipo'));
         modal.show();
@@ -137,15 +145,36 @@ window.cargarSelects = async function () {
         if (!response.ok) throw new Error('Error al cargar datos del formulario');
         const data = await response.json();
 
-        console.log('Datos cargados:', data);
+        const selects = [
+            { id: 'usuarioInfo', list: data.usuarios, value: 'id', text: item => `${item.nombres} ${item.apellidos}` },
+            { id: 'estado', list: data.estados, value: 'id', text: item => item.nombreEstado },
+            { id: 'equipoPersonal', list: data.equiposPersonales, value: 'id', text: item => item.nombrePersonal },
+            { id: 'sede', list: data.sedes, value: 'id', text: item => item.nombreSede },
+            { id: 'tipoDispositivo', list: data.tiposDispositivo, value: 'id', text: item => item.nombreTipo }
+        ];
 
-        window.llenarSelect('usuarioInfo', data.usuarios, 'id', null);
-        window.llenarSelect('estado', data.estados, 'id', 'nombreEstado');
-        window.llenarSelect('equipoPersonal', data.equiposPersonales, 'id', 'nombrePersonal');
-        window.llenarSelect('sede', data.sedes, 'id', 'nombreSede');
-        window.llenarSelect('tipoDispositivo', data.tiposDispositivo, 'id', 'nombreTipo');
+        for (const { id, list, value, text } of selects) {
+            const select = document.getElementById(id);
+            if (!select) continue;
+            select.innerHTML = '';
+            list.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item[value];
+                option.text = text(item);
+                select.appendChild(option);
+            });
+
+            if (!select.tomselect) {
+                new TomSelect(select, {
+                    placeholder: 'Buscar...',
+                    maxOptions: 500,
+                    allowEmptyOption: true,
+                    sortField: { field: "text", direction: "asc" }
+                });
+            }
+        }
     } catch (error) {
-        console.error(error);
+        console.error('❌ Error en cargarSelects:', error);
     }
 };
 
