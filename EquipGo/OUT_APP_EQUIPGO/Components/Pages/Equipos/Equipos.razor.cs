@@ -10,6 +10,7 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
 {
     public partial class Equipos : ComponentBase
     {
+        [Inject] private IConfiguration Configuration { get; set; }
         [Inject]
         private Interface.Services.Equipos.IEquipoService EquipoService { get; set; }
 
@@ -19,7 +20,7 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
         private List<EquipoDto> equipos;
         private List<EquipoDto> equiposFiltrados = new();
 
-        // Filtros
+          // Filtros
         private string filtroMarca = "";
         private string filtroModelo = "";
         private string filtroSerial = "";
@@ -31,6 +32,7 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
 
         protected override async Task OnInitializedAsync()
         {
+            apiKey = Configuration["GoogleMaps:ApiKey"];
             try
             {
                 equipos = (await EquipoService.ObtenerTodosLosEquiposAsync())
@@ -136,9 +138,30 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
         private double longitud;
 
         [JSInvokable]
-        public async Task MostrarMapa()
+        public async Task MostrarMapalefleat()
         {
             await JSRuntime.InvokeVoidAsync("initializeLeafletMap", latitud, longitud);
+        }
+
+        private async Task MostrarDetallesEquipolefleat(int id)
+        {
+            equipoSeleccionado = await EquipoService.ObtenerPorIdAsync(id);
+            if (equipoSeleccionado != null && equipoSeleccionado.Latitud.HasValue && equipoSeleccionado.Longitud.HasValue)
+            {
+                latitud = equipoSeleccionado.Latitud.Value;
+                longitud = equipoSeleccionado.Longitud.Value;
+
+                var dotNetRef = DotNetObjectReference.Create(this);
+                await JSRuntime.InvokeVoidAsync("mostrarModalDetallesEquipo", dotNetRef);
+            }
+        }
+
+        //Api Google
+        private string apiKey;
+        [JSInvokable]
+        public async Task MostrarMapa()
+        {
+            await JSRuntime.InvokeVoidAsync("mostrarMapaGoogle", latitud, longitud, apiKey);
         }
 
         private async Task MostrarDetallesEquipo(int id)
