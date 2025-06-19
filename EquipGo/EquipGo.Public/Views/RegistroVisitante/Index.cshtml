@@ -1,0 +1,150 @@
+﻿@{
+    Layout = null;
+}
+@model EquipGo.Public.Models.RegistroVisitanteViewModel
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"]</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <style>
+        .fade-transition {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        .fade-show {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+        }
+    </style>
+</head>
+<body class="bg-light">
+
+    <div class="container d-flex justify-content-center align-items-center min-vh-100">
+        <div class="bg-white p-4 rounded shadow border border-danger w-100" style="max-width: 600px;">
+            @if (!Model.InicioFormulario)
+            {
+                <form method="post">
+                    <div class="text-center fade-transition fade-show">
+                        <h2 class="fw-bold text-danger">¡Bienvenido al registro de visitantes!</h2>
+                        <p class="text-secondary">Completa los pasos para registrar un ingreso externo.</p>
+                        <button name="accion" value="comenzar" class="btn btn-danger mt-3 w-100">Comenzar Registro</button>
+                    </div>
+                </form>
+            }
+            else if (Model.PasoActual == 1)
+            {
+                <form method="post" class="fade-transition fade-show">
+                    <input type="hidden" name="InicioFormulario" value="true" />
+                    <input type="hidden" name="PasoActual" value="1" />
+
+                    <h4 class="mb-3 text-danger fw-bold">Paso 1: Datos del Visitante</h4>
+
+                    <div class="mb-3">
+                        <label class="form-label">Tipo de Documento</label>
+                        <input class="form-control" name="Visitante.TipoDocumento" value="@Model.Visitante.TipoDocumento" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Número de Documento</label>
+                        <input class="form-control" name="Visitante.NumeroDocumento" value="@Model.Visitante.NumeroDocumento" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Nombres</label>
+                        <input class="form-control" name="Visitante.Nombres" value="@Model.Visitante.Nombres" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Apellidos</label>
+                        <input class="form-control" name="Visitante.Apellidos" value="@Model.Visitante.Apellidos" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Tipo de Usuario</label>
+                        <select class="form-select" name="Visitante.TipoUsuario" onchange="mostrarProveedor(this.value)" required>
+                            <option value="">Seleccione...</option>
+                            @Html.Raw($"<option value=\"visitante\" {(Model.Visitante.TipoUsuario == "visitante" ? "selected" : "")}>Visitante</option>")
+                            @Html.Raw($"<option value=\"proveedor\" {(Model.Visitante.TipoUsuario == "proveedor" ? "selected" : "")}>Proveedor</option>")
+                            @Html.Raw($"<option value=\"contratista\" {(Model.Visitante.TipoUsuario == "contratista" ? "selected" : "")}>Contratista</option>")
+                        </select>
+                    </div>
+
+                    <div class="mb-3" id="proveedorDiv" style="display:@(Model.Visitante.TipoUsuario == "proveedor" ? "block" : "none")">
+                        <label class="form-label">Proveedor</label>
+                        <select name="Visitante.IdProveedor" class="form-select">
+                            <option value="">Seleccione proveedor...</option>
+                            @foreach (var p in Model.Proveedores)
+                            {
+                                @Html.Raw($"<option value=\"{p.Id}\" {(Model.Visitante.IdProveedor == p.Id ? "selected" : "")}>{p.Nombre}</option>")
+                            }
+                        </select>
+                    </div>
+
+                    <button name="accion" value="siguiente" class="btn btn-danger w-100">Siguiente</button>
+                </form>
+            }
+            else if (Model.PasoActual == 2)
+            {
+                <form method="post" class="fade-transition fade-show">
+                    <input type="hidden" name="InicioFormulario" value="true" />
+                    <input type="hidden" name="PasoActual" value="2" />
+
+                    <!-- Campos ocultos para mantener datos -->
+                    <input type="hidden" name="Visitante.TipoDocumento" value="@Model.Visitante.TipoDocumento" />
+                    <input type="hidden" name="Visitante.NumeroDocumento" value="@Model.Visitante.NumeroDocumento" />
+                    <input type="hidden" name="Visitante.Nombres" value="@Model.Visitante.Nombres" />
+                    <input type="hidden" name="Visitante.Apellidos" value="@Model.Visitante.Apellidos" />
+                    <input type="hidden" name="Visitante.TipoUsuario" value="@Model.Visitante.TipoUsuario" />
+                    <input type="hidden" name="Visitante.IdProveedor" value="@Model.Visitante.IdProveedor" />
+
+                    <h4 class="mb-3 text-danger fw-bold">Paso 2: Datos del Equipo</h4>
+
+                    <div class="mb-3">
+                        <label class="form-label">Marca</label>
+                        <input class="form-control" name="Visitante.Marca" value="@Model.Visitante.Marca" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Modelo</label>
+                        <input class="form-control" name="Visitante.Modelo" value="@Model.Visitante.Modelo" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Serial</label>
+                        <input class="form-control" name="Visitante.Serial" value="@Model.Visitante.Serial" />
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <button name="accion" value="atras" class="btn btn-secondary">Atrás</button>
+                        <button name="accion" value="registrar" class="btn btn-success">Registrar</button>
+                    </div>
+                </form>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.Mensaje))
+            {
+                <div class="alert alert-info mt-3">@Model.Mensaje</div>
+            }
+        </div>
+    </div>
+
+    <script>
+        function mostrarProveedor(value) {
+            document.getElementById('proveedorDiv').style.display = value === 'proveedor' ? 'block' : 'none';
+        }
+
+        // Animación de aparición al cargar
+        window.onload = () => {
+            const forms = document.querySelectorAll(".fade-transition");
+            forms.forEach(f => setTimeout(() => f.classList.add("fade-show"), 100));
+        };
+    </script>
+</body>
+</html>
