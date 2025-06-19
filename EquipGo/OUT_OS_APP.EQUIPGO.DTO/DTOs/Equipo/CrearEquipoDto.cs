@@ -18,6 +18,7 @@ namespace OUT_OS_APP.EQUIPGO.DTO.DTOs.Equipo
         public int? IdEquipoPersonal { get; set; }
         public int? IdSede { get; set; }
         public int? IdTipoDispositivo { get; set; }
+        public int? IdProveedor { get; set; }
         public double? Latitud { get; set; }
         public double? Longitud { get; set; }
         public string? SistemaOperativo { get; set; }

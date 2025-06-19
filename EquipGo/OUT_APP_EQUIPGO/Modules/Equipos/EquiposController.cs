@@ -1,6 +1,7 @@
 ﻿// Controllers/EquiposController.cs
 using Interface.Services.Equipos;
 using Interface.Services.Estados;
+using Interface.Services.Proveedores;
 using Interface.Services.Sedes;
 using Interface.Services.TipoDispositivos;
 using Interface.Services.Usuarios;
@@ -16,14 +17,16 @@ public class EquiposController : ControllerBase
     private readonly IEstadoService _estadoService;
     private readonly ISedesService  _sedesService;
     private readonly ITipoDispositivosService _tipoDispositivosService;
+    private readonly IProveedoresService _proveedoresService;
 
-    public EquiposController(IEquipoService equipoService, IUsuariosInformacionService usuariosInformacionService, IEstadoService estadoService, ISedesService sedesService, ITipoDispositivosService tipoDispositivosService)
+    public EquiposController(IEquipoService equipoService, IUsuariosInformacionService usuariosInformacionService, IEstadoService estadoService, ISedesService sedesService, ITipoDispositivosService tipoDispositivosService, IProveedoresService proveedoresService)
     {
         _equipoService = equipoService;
         _usuariosInformacionService = usuariosInformacionService;
         _estadoService = estadoService;
         _sedesService = sedesService;
         _tipoDispositivosService = tipoDispositivosService;
+        _proveedoresService = proveedoresService;
     }
 
     [HttpPost("Admin")]
@@ -82,6 +85,7 @@ public class EquiposController : ControllerBase
         var equiposPersonales = await _equipoService.ObtenerEquiposPersonalesAsync();
         var sedes = await _sedesService.ObtenerTodasAsync();
         var tiposDispositivo = await _tipoDispositivosService.ObtenerTodasAsync();
+        var proveedores = await _proveedoresService.ObtenerTodasAsync();
 
         return Ok(new
         {
@@ -89,7 +93,8 @@ public class EquiposController : ControllerBase
             estados,
             equiposPersonales,
             sedes,
-            tiposDispositivo
+            tiposDispositivo,
+            proveedores
         });
     }
 

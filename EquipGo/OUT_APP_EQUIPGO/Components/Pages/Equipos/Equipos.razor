@@ -129,6 +129,11 @@
                                 <label for="tipoDispositivo" class="form-label">Tipo de Dispositivo</label>
                                 <select class="form-select" id="tipoDispositivo" name="tipoDispositivo">Sin asignar</select>
                             </div>
+                            <!-- Proveedor -->
+                            <div>
+                                <label for="proveedor" class="form-label">Proveedor</label>
+                                <select class="form-select" id="proveedor" name="proveedor">Sin asignar</select>
+                            </div>
                             <!-- Latitud -->
                             <div>
                                 <label for="latitud" class="form-label">Latitud</label>
@@ -276,6 +281,11 @@
                 <label for="editarTipoDispositivo" class="form-label">Tipo de Dispositivo</label>
                 <select class="form-select" id="editarTipoDispositivo"></select>
               </div>
+              <!-- Proveedor -->
+               <div>
+               <label for="proveedor" class="form-label">Proveedor</label>
+               <select class="form-select" id="proveedor" name="proveedor">Sin asignar</select>
+               </div>
               <div class="mb-3">
                 <label for="editarLatitud" class="form-label">Latitud</label>
                 <input type="number" step="any" class="form-control" id="editarLatitud" />
@@ -352,6 +362,7 @@
                             <p><strong>Código de Barras:</strong> @equipoSeleccionado.CodigoBarras</p>
                             <p><strong>Tipo de equipo:</strong> @equipoSeleccionado.EquipoPersonalNombre</p>
                             <p><strong>Tipo de dispositivo::</strong> @equipoSeleccionado.TipoDispositivoNombre</p>
+                            <p><strong>Proveedor::</strong>@equipoSeleccionado.ProveedorNombre</p>
                             <p><strong>Estado:</strong> @equipoSeleccionado.EstadoNombre</p>
                             <p><strong>Usuario:</strong> @equipoSeleccionado.UsuarioNombreCompleto</p>
                             <p><strong>Ubicación:</strong> @equipoSeleccionado.Ubicacion</p>

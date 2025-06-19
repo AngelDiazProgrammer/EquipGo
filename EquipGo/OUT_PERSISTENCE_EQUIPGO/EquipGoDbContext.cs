@@ -1,8 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using OUT_DOMAIN_EQUIPGO.Entities.Smart;
-using OUT_DOMAIN_EQUIPGO.Entities.Procesos;
+﻿using Domain.Entities.Procesos;
+using Microsoft.EntityFrameworkCore;
 using OUT_DOMAIN_EQUIPGO.Entities.Configuracion;
+using OUT_DOMAIN_EQUIPGO.Entities.Procesos;
 using OUT_DOMAIN_EQUIPGO.Entities.Seguridad;
+using OUT_DOMAIN_EQUIPGO.Entities.Smart;
 
 namespace OUT_PERSISTENCE_EQUIPGO.Context
 {
@@ -22,6 +23,7 @@ namespace OUT_PERSISTENCE_EQUIPGO.Context
         public DbSet<TipoAlerta> TiposAlerta { get; set; }
         public DbSet<TipoDocumento> TipoDocumento { get; set; }
         public DbSet<TiposDispositivos> TiposDispositivos { get; set; }
+        public DbSet<Proveedores> Proveedores { get; set; }
         public DbSet<TiposTransaccion> TiposTransaccion { get; set; }
 
         // PROCESOS
@@ -32,6 +34,8 @@ namespace OUT_PERSISTENCE_EQUIPGO.Context
         public DbSet<HistorialUbicaciones> HistorialUbicaciones { get; set; }
         public DbSet<LogEventos> LogEventos { get; set; }
         public DbSet<EquiposPorPersona> EquiposPorPersona { get; set; }
+        public DbSet<UsuariosVisitantes> UsuariosVisitantes { get; set; }
+        public DbSet<EquiposVisitantes> EquiposVisitantes { get; set; }
 
         // CONFIGURACION
         public DbSet<ZonasSedes> ZonasSedes { get; set; }

@@ -13,6 +13,7 @@
         idEquipoPersonal: parseInt(document.getElementById('equipoPersonal').value) || null,
         idSede: parseInt(document.getElementById('sede').value) || null,
         idTipoDispositivo: parseInt(document.getElementById('tipoDispositivo').value) || null,
+        idProveedor: parseInt(document.getElementById('proveedor').value) || null,
         latitud: parseFloat(document.getElementById('latitud').value) || null,
         longitud: parseFloat(document.getElementById('longitud').value) || null,
         sistemaOperativo: document.getElementById('sistemaOperativo').value,
@@ -84,6 +85,7 @@ window.abrirModalEditar = async function (idEquipo) {
         document.getElementById('editarEquipoPersonal').value = equipo.idEquipoPersonal || "";
         document.getElementById('editarSede').value = equipo.idSede || "";
         document.getElementById('editarTipoDispositivo').value = equipo.idTipoDispositivo || "";
+        document.getElementById('editarProveedor').value = equipo.idProveedor || "";
 
         // Mostrar modal
         const modal = new bootstrap.Modal(document.getElementById('modalEditarEquipo'));
@@ -128,6 +130,7 @@ window.editarEquipo = async function (id) {
             document.getElementById('equipoPersonal').tomselect.setValue(equipo.idEquipoPersonal);
             document.getElementById('sede').tomselect.setValue(equipo.idSede);
             document.getElementById('tipoDispositivo').tomselect.setValue(equipo.idTipoDispositivo);
+            document.getElementById('proveedor').tomselect.setValue(equipo.idProveedor);
         }, 100);
 
         // Mostrar modal
@@ -150,9 +153,9 @@ window.cargarSelects = async function () {
             { id: 'estado', list: data.estados, value: 'id', text: item => item.nombreEstado },
             { id: 'equipoPersonal', list: data.equiposPersonales, value: 'id', text: item => item.nombrePersonal },
             { id: 'sede', list: data.sedes, value: 'id', text: item => item.nombreSede },
-            { id: 'tipoDispositivo', list: data.tiposDispositivo, value: 'id', text: item => item.nombreTipo }
+            { id: 'tipoDispositivo', list: data.tiposDispositivo, value: 'id', text: item => item.nombreTipo },
+            { id: 'proveedor', list: data.proveedores, value: 'id', text: item => item.nombreProveedor }
         ];
-
         for (const { id, list, value, text } of selects) {
             const select = document.getElementById(id);
             if (!select) continue;

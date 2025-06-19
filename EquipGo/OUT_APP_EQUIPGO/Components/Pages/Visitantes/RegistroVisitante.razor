@@ -1,0 +1,108 @@
+﻿@page "/registro-visitante"
+@layout SinNavLayout
+@attribute [AllowAnonymous]
+@using OUT_APP_EQUIPGO.Components.Layout
+@inherits OUT_APP_EQUIPGO.Pages.Visitantes.RegistroVisitante
+
+<div class="d-flex justify-content-center align-items-center min-vh-100 bg-light">
+    <div class="bg-white p-4 rounded shadow border border-danger" style="width: 100%; max-width: 600px;">
+        @if (!inicioFormulario)
+        {
+            <div class="text-center">
+                <h2 class="fw-bold text-danger">¡Bienvenido al registro de visitantes!</h2>
+                <p class="text-secondary">Completa los pasos para registrar un ingreso externo.</p>
+                <button class="btn btn-danger mt-3" @onclick="() => inicioFormulario = true">Comenzar Registro</button>
+            </div>
+        }
+        else
+        {
+            @if (pasoActual == 1)
+            {
+                <div>
+                    <h4 class="mb-3 text-danger fw-bold">Paso 1: Datos del Visitante</h4>
+
+                    <div class="mb-3">
+                        <label class="form-label">Tipo de Documento</label>
+                        <input class="form-control" @bind="visitante.TipoDocumento" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Número de Documento</label>
+                        <input class="form-control" @bind="visitante.NumeroDocumento" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Nombres</label>
+                        <input class="form-control" @bind="visitante.Nombres" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Apellidos</label>
+                        <input class="form-control" @bind="visitante.Apellidos" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Tipo de Usuario</label>
+                        <select class="form-select" @bind="TipoUsuario">
+                            <option value="">Seleccione...</option>
+                            <option value="visitante">Visitante</option>
+                            <option value="proveedor">Proveedor</option>
+                            <option value="contratista">Contratista</option>
+                        </select>
+                    </div>
+
+                    @if (visitante.TipoUsuario == "proveedor")
+                    {
+                        <div class="mb-3">
+                            <label class="form-label">Proveedor</label>
+                            <select id="selectProveedores" class="form-select" @bind="visitante.IdProveedor">
+                                <option value="">Seleccione proveedor...</option>
+                            </select>
+
+                            <script>
+                                window.setTimeout(() => {
+                                    if (window.registroVisitante?.cargarProveedores) {
+                                        window.registroVisitante.cargarProveedores();
+                                    }
+                                }, 100);
+                            </script>
+                        </div>
+                    }
+
+                    <button class="btn btn-danger w-100" @onclick="IrPaso2">Siguiente</button>
+                </div>
+            }
+            else if (pasoActual == 2)
+            {
+                <div>
+                    <h4 class="mb-3 text-danger fw-bold">Paso 2: Datos del Equipo</h4>
+
+                    <div class="mb-3">
+                        <label class="form-label">Marca</label>
+                        <input class="form-control" @bind="visitante.Marca" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Modelo</label>
+                        <input class="form-control" @bind="visitante.Modelo" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Serial</label>
+                        <input class="form-control" @bind="visitante.Serial" />
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <button class="btn btn-secondary" @onclick="VolverPaso1">Atrás</button>
+                        <button class="btn btn-success" @onclick="Registrar">Registrar</button>
+                    </div>
+                </div>
+            }
+        }
+
+        @if (!string.IsNullOrEmpty(mensaje))
+        {
+            <div class="alert alert-info mt-3">@mensaje</div>
+        }
+    </div>
+</div>

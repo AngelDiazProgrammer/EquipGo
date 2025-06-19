@@ -74,6 +74,7 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Equipos
                                        .Include(e => e.IdEquipoPersonalNavigation)
                                        .Include(e => e.IdSedeNavigation)
                                        .Include(e => e.IdTipoDispositivoNavigation)
+                                       .Include(e => e.IdProveedorNavigation)
                                        .AsNoTracking()
                                        .ToListAsync();
 
@@ -91,6 +92,7 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Equipos
                 EquipoPersonalNombre = e.IdEquipoPersonalNavigation?.NombrePersonal,
                 SedeNombre = e.IdSedeNavigation?.NombreSede,
                 TipoDispositivoNombre = e.IdTipoDispositivoNavigation?.NombreTipo,
+                ProveedorNombre = e.IdProveedorNavigation?.NombreProveedor,
                 Latitud = e.Latitud,       // 👈 Conversión explícita
                 Longitud = e.Longitud,     // 👈 Conversión explícita
                 SistemaOperativo = e.SistemaOperativo,
@@ -121,6 +123,7 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Equipos
                 IdEquipoPersonal = equipoDto.IdEquipoPersonal,
                 IdSede = equipoDto.IdSede,
                 IdTipoDispositivo = equipoDto.IdTipoDispositivo,
+                IdProveedor = equipoDto.IdProveedor,
                 Latitud = equipoDto.Latitud,
                 Longitud = equipoDto.Longitud,
                 SistemaOperativo = equipoDto.SistemaOperativo,
@@ -143,6 +146,7 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Equipos
                 .Include(e => e.IdEquipoPersonalNavigation)
                 .Include(e => e.IdSedeNavigation)
                 .Include(e => e.IdTipoDispositivoNavigation)
+                .Include(e => e.IdProveedorNavigation)
                 .FirstOrDefaultAsync(e => e.Id == id);
 
             if (equipo == null)
@@ -166,6 +170,7 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Equipos
                 IdEquipoPersonal = equipo.IdEquipoPersonal,
                 IdSede = equipo.IdSede,
                 IdTipoDispositivo = equipo.IdTipoDispositivo,
+                IdProveedor = equipo.IdProveedor,
 
                 // ✅ Agrega estas propiedades de texto
                 UsuarioNombreCompleto = equipo.IdUsuarioInfoNavigation != null
@@ -173,7 +178,8 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Equipos
         : "Sin asignar",
                 EstadoNombre = equipo.Estado?.NombreEstado ?? "Sin estado",
                 EquipoPersonalNombre = equipo.IdEquipoPersonalNavigation?.NombrePersonal ?? "No definido",
-                TipoDispositivoNombre = equipo.IdTipoDispositivoNavigation?.NombreTipo ?? "No definido"
+                TipoDispositivoNombre = equipo.IdTipoDispositivoNavigation?.NombreTipo ?? "No definido",
+                ProveedorNombre = equipo.IdProveedorNavigation?.NombreProveedor ?? "Sin asignar"
             };
         }
 
@@ -193,6 +199,7 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Equipos
             equipo.IdEquipoPersonal = dto.IdEquipoPersonal;
             equipo.IdSede = dto.IdSede;
             equipo.IdTipoDispositivo = dto.IdTipoDispositivo;
+            equipo.IdProveedor = dto.IdProveedor;
             equipo.Latitud = dto.Latitud;
             equipo.Longitud = dto.Longitud;
             equipo.SistemaOperativo = dto.SistemaOperativo;
@@ -286,6 +293,7 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Equipos
                 IdSede = dto.IdSede,
                 IdEquipoPersonal = dto.IdEquipoPersonal,
                 IdTipoDispositivo = dto.IdTipoDispositivo,
+                IdProveedor = dto.IdProveedor,
                 FechaCreacion = DateTime.Now,
                 UltimaModificacion = DateTime.Now
             };

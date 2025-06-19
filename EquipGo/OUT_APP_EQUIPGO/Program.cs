@@ -1,15 +1,18 @@
 ﻿// ====================
 // 📌 Usings ordenados
 // ====================
+using Application.Services.Visitantes;
 using Interface;
 using Interface.Services;
 using Interface.Services.Autenticacion;
 using Interface.Services.Equipos;
 using Interface.Services.Estados;
+using Interface.Services.Proveedores;
 using Interface.Services.Sedes;
 using Interface.Services.TipoDispositivos;
 using Interface.Services.Transacciones;
 using Interface.Services.Usuarios;
+using Interface.Services.Visitantes;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +22,7 @@ using OUT_PERSISTENCE_EQUIPGO.Context;
 using OUT_PERSISTENCE_EQUIPGO.Hubs;
 using OUT_PERSISTENCE_EQUIPGO.Services.Equipos;
 using OUT_PERSISTENCE_EQUIPGO.Services.Estados;
+using OUT_PERSISTENCE_EQUIPGO.Services.Proveedores;
 using OUT_PERSISTENCE_EQUIPGO.Services.Sedes;
 using OUT_PERSISTENCE_EQUIPGO.Services.Seguridad;
 using OUT_PERSISTENCE_EQUIPGO.Services.TipoDispositivos;
@@ -43,6 +47,11 @@ builder.Services.AddDbContext<EquipGoDbContext>(options =>
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+builder.Services.AddHttpClient("API", client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7096"); // Ajusta destino de servidor
+});
+
 builder.Services.AddScoped<EquipGoDbContext>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IEquipoService, EquipoService>();
@@ -50,7 +59,9 @@ builder.Services.AddScoped<IUsuariosInformacionService, UsuariosInformacionServi
 builder.Services.AddScoped<IEstadoService, EstadoService>();
 builder.Services.AddScoped<ISedesService, SedesService>();
 builder.Services.AddScoped<ITipoDispositivosService, TipoDispositivosService>();
+builder.Services.AddScoped<IProveedoresService, ProveedoresService>();
 builder.Services.AddScoped<ITransaccionService, TransaccionService>();
+builder.Services.AddScoped<IRegistroVisitanteService, RegistroVisitanteService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddSignalR();

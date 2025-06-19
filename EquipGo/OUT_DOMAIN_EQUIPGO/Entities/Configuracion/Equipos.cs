@@ -34,6 +34,9 @@ namespace OUT_DOMAIN_EQUIPGO.Entities.Configuracion
         [Column("id_tipoDispositivo")]
         public int? IdTipoDispositivo { get; set; }
 
+        [Column("id_Proveedor")]
+        public int? IdProveedor { get; set; }
+
         public double? Latitud { get; set; }
         public double? Longitud { get; set; }
 
@@ -52,7 +55,7 @@ namespace OUT_DOMAIN_EQUIPGO.Entities.Configuracion
         [Column("ultima_modificacion")]
         public DateTime? UltimaModificacion { get; set; }
 
-        // 🔥 AGREGAR ESTAS PROPIEDADES DE NAVEGACIÓN:
+        // PROPIEDADES DE NAVEGACIÓN:
         [ForeignKey("IdUsuarioInfo")]
         public virtual UsuariosInformacion IdUsuarioInfoNavigation { get; set; }
 
@@ -67,5 +70,8 @@ namespace OUT_DOMAIN_EQUIPGO.Entities.Configuracion
 
         [ForeignKey("IdTipoDispositivo")]
         public virtual TiposDispositivos IdTipoDispositivoNavigation { get; set; }
+
+        [ForeignKey("IdProveedor")]
+        public virtual Proveedores IdProveedorNavigation { get; set; }
     }
 }
