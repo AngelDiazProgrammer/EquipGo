@@ -61,7 +61,7 @@ builder.Services.AddScoped<ISedesService, SedesService>();
 builder.Services.AddScoped<ITipoDispositivosService, TipoDispositivosService>();
 builder.Services.AddScoped<IProveedoresService, ProveedoresService>();
 builder.Services.AddScoped<ITransaccionService, TransaccionService>();
-builder.Services.AddScoped<IRegistroVisitanteService, RegistroVisitanteService>();
+builder.Services.AddScoped<IVisitanteService, VisitanteService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddSignalR();

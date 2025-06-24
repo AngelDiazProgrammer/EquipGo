@@ -36,6 +36,8 @@ namespace OUT_PERSISTENCE_EQUIPGO.Context
         public DbSet<EquiposPorPersona> EquiposPorPersona { get; set; }
         public DbSet<UsuariosVisitantes> UsuariosVisitantes { get; set; }
         public DbSet<EquiposVisitantes> EquiposVisitantes { get; set; }
+        public DbSet<TransaccionesVisitantes> TransaccionesVisitantes { get; set; }
+
 
         // CONFIGURACION
         public DbSet<ZonasSedes> ZonasSedes { get; set; }

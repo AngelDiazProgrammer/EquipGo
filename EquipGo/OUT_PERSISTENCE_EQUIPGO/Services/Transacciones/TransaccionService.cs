@@ -124,6 +124,66 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Transacciones
         }
 
 
+        //Transacciones de visitante
+                public async Task<bool> RegistrarTransaccionVisitanteAsync(TransaccionVisitanteRequest request)
+        {
+            try
+            {
+                // Buscar visitante por tipo y número de documento
+                var visitante = await _context.UsuariosVisitantes
+                    .FirstOrDefaultAsync(v =>
+                        v.NumeroDocumento == request.NumeroDocumento);
+
+                if (visitante == null)
+                    throw new Exception("El visitante no está registrado.");
+
+                // Actualizar el ID real del visitante en la solicitud
+                request.IdUsuarioVisitante = visitante.Id;
+
+                // Obtener el equipo asociado al visitante
+                var equipo = await _context.EquiposVisitantes
+                    .FirstOrDefaultAsync(e => e.IdUsuarioVisitante == visitante.Id);
+
+                if (equipo == null)
+                    throw new Exception("El equipo del visitante no está registrado.");
+
+                request.IdEquipoVisitante = equipo.Id;
+
+                // Obtener la última transacción del visitante
+                var ultimaTransaccion = await _context.TransaccionesVisitantes
+                    .Where(t => t.IdUsuarioVisitante == visitante.Id)
+                    .OrderByDescending(t => t.FechaTransaccion)
+                    .FirstOrDefaultAsync();
+
+                // Determinar tipo de transacción automáticamente
+                int tipoTransaccion = (ultimaTransaccion == null || ultimaTransaccion.IdTipoTransaccion == 2) ? 1 : 2;
+
+                // Crear nueva transacción
+                var nueva = new TransaccionesVisitantes
+                {
+                    FechaTransaccion = DateTime.Now,
+                    IdEquipoVisitante = equipo.Id,
+                    IdUsuarioVisitante = visitante.Id,
+                    IdUsuarioSession = request.IdUsuarioSession,
+                    SedeOs = request.SedeOs ?? 1,
+                    IdTipoTransaccion = tipoTransaccion
+                };
+
+                _context.TransaccionesVisitantes.Add(nueva);
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error en RegistrarTransaccionVisitanteAsync: {ex.Message}");
+                throw;
+            }
+        }
+
+
+
+
 
         private int ObtenerIdUsuarioSessionActual()
         {

@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 
 namespace Interface.Services.Visitantes
 {
-    public interface IRegistroVisitanteService
+    public interface IVisitanteService
     {
         Task RegistrarVisitanteAsync(RegistroVisitanteDto dto);
+
     }
 }

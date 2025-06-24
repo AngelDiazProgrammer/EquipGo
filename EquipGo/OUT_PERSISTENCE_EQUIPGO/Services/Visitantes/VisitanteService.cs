@@ -6,11 +6,11 @@ using OUT_PERSISTENCE_EQUIPGO.Context;
 
 namespace Application.Services.Visitantes
 {
-    public class RegistroVisitanteService : IRegistroVisitanteService
+    public class VisitanteService : IVisitanteService
     {
         private readonly EquipGoDbContext _context;
 
-        public RegistroVisitanteService(EquipGoDbContext context)
+        public VisitanteService(EquipGoDbContext context)
         {
             _context = context;
         }
@@ -54,5 +54,7 @@ namespace Application.Services.Visitantes
             _context.EquiposVisitantes.Add(equipo);
             await _context.SaveChangesAsync();
         }
+
+
     }
 }

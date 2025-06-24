@@ -14,5 +14,8 @@ namespace Interface.Services.Transacciones
         Task<List<TransaccionDashboardDto>> ObtenerTransaccionesHoyAsync();
         Task<ConteoTransaccionesDto> ObtenerConteosDashboardAsync();
 
+        //transacciones de visitantes
+        Task<bool> RegistrarTransaccionVisitanteAsync(TransaccionVisitanteRequest request);
+
     }
 }

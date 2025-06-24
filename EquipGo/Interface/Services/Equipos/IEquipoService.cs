@@ -2,6 +2,7 @@
 using OUT_DOMAIN_EQUIPGO.Entities.Procesos;
 using OUT_DOMAIN_EQUIPGO.Entities.Smart;
 using OUT_OS_APP.EQUIPGO.DTO.DTOs.Equipo;
+using OUT_OS_APP.EQUIPGO.DTO.DTOs.Visitantes;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -16,6 +17,10 @@ namespace Interface.Services.Equipos
         Task<EquipoDto?> ObtenerPorIdAsync(int id);
         Task<bool> ActualizarEquipoAdminAsync(int id, CrearEquipoDto dto);
         Task<bool> EliminarAsync(int id);
+
+        //Consultar visitante
+        Task<RegistroVisitanteDto?> ConsultarVisitantePorDocumentoAsync(string numeroDocumento);
+
 
 
         //RegistrarEquipoNoCorporativo

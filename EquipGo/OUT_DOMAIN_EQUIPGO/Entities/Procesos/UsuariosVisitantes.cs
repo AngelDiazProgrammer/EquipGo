@@ -34,6 +34,6 @@ namespace Domain.Entities.Procesos
         [ForeignKey("IdProveedor")]
         public Proveedores? Proveedor { get; set; }
 
-        public ICollection<EquiposVisitantes>? Equipos { get; set; }
+        public ICollection<EquiposVisitantes> EquiposVisitantes { get; set; } = new List<EquiposVisitantes>();
     }
 }

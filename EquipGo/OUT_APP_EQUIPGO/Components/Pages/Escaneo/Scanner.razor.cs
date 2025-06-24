@@ -1,6 +1,8 @@
 ﻿#region Usings
+using Application.Services.Visitantes;
 using Interface.Services.Equipos;
 using Interface.Services.Transacciones;
+using Interface.Services.Visitantes;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
@@ -8,6 +10,8 @@ using OUT_DOMAIN_EQUIPGO.Entities.Procesos;
 using OUT_DOMAIN_EQUIPGO.Entities.Smart;
 using OUT_OS_APP.EQUIPGO.DTO.DTOs;
 using OUT_OS_APP.EQUIPGO.DTO.DTOs.Equipo;
+using OUT_OS_APP.EQUIPGO.DTO.DTOs.Transacciones;
+using OUT_OS_APP.EQUIPGO.DTO.DTOs.Visitantes;
 using System.Security.Claims;
 #endregion
 
@@ -21,12 +25,92 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Escaneo
         [Inject] public IEquipoService EquipoService { get; set; }
         [Inject] public ITransaccionService TransaccionService { get; set; }
         [Inject] public AuthenticationStateProvider AuthProvider { get; set; }
+        private readonly IVisitanteService _visitanteService;
+
         #endregion
 
         #region Variables Generales
         private DotNetObjectReference<Scanner>? dotNetRef;
         private EquipoEscaneadoDto? equipoEscaneado;
         private int tipoTransaccionSeleccionado = 2; // Por defecto 'Salida'
+        #endregion
+
+        #region Validación de Visitante
+        private bool mostrarModalValidarVisitante = false;
+        private string documentoVisitante = "";
+        private RegistroVisitanteDto? visitanteDto;
+        private bool visitanteEncontrado = false;
+
+        private async Task AbrirModalValidarVisitante()
+        {
+            documentoVisitante = "";
+            visitanteEncontrado = false;
+            visitanteDto = null;
+            mostrarModalValidarVisitante = true;
+        }
+
+        private async Task ConsultarVisitante()
+        {
+            if (string.IsNullOrWhiteSpace(documentoVisitante)) return;
+
+            try
+            {
+                visitanteDto = await EquipoService.ConsultarVisitantePorDocumentoAsync(documentoVisitante);
+                visitanteEncontrado = visitanteDto != null;
+            }
+            catch (Exception ex)
+            {
+                visitanteEncontrado = false;
+                Console.WriteLine($"❌ Error al consultar visitante: {ex.Message}");
+            }
+            await InvokeAsync(StateHasChanged);
+        }
+
+        private async Task RegistrarTransaccionVisitante()
+        {
+            if (visitanteDto == null) return;
+
+            var authState = await AuthProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+            var idUsuarioSessionClaim = user.Claims.FirstOrDefault(c => c.Type == "id_usuarioSession");
+
+            if (idUsuarioSessionClaim == null)
+            {
+                await JS.InvokeVoidAsync("alert", "⚠️ Usuario de sesión no identificado.");
+                return;
+            }
+
+            var transaccion = new TransaccionVisitanteRequest
+            {
+                NumeroDocumento = visitanteDto.NumeroDocumento,
+                TipoTransaccion = tipoTransaccionSeleccionado,
+                IdUsuarioSession = int.Parse(idUsuarioSessionClaim.Value),
+                FechaTransaccion = DateTime.Now
+            };
+
+            var exito = await TransaccionService.RegistrarTransaccionVisitanteAsync(transaccion);
+
+            if (exito)
+            {
+                await JS.InvokeVoidAsync("alert", "✅ Transacción de visitante registrada.");
+            }
+            else
+            {
+                await JS.InvokeVoidAsync("alert", "❌ No se pudo registrar la transacción.");
+            }
+
+            await CerrarModalValidarVisitante();
+            await JS.InvokeVoidAsync("startScanner", dotNetRef);
+        }
+
+        private async Task CerrarModalValidarVisitante()
+        {
+            mostrarModalValidarVisitante = false;
+            visitanteDto = null;
+            documentoVisitante = "";
+            visitanteEncontrado = false;
+            await InvokeAsync(StateHasChanged);
+        }
         #endregion
 
         #region OnAfterRenderAsync
@@ -108,199 +192,6 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Escaneo
             equipoEscaneado = null;
             await InvokeAsync(StateHasChanged);
             await IniciarEscaneo();
-        }
-        #endregion
-
-        #region Modal Registro de Equipo
-
-        // Control modal
-        private bool mostrarModalRegistroEquipo = false;
-
-        // Datos usuario
-        private string documentoUsuario = "";
-        private string usuarioNombres = "";
-        private string usuarioApellidos = "";
-        private int idTipodocumentoSeleccionado;
-        private int idAreaSeleccionada;
-        private int idCampañaSeleccionada;
-
-        // Datos equipo
-        private string equipoMarca = "";
-        private string equipoModelo = "";
-        private string equipoSerial = "";
-        private string equipoUbicacion = "";
-
-        // Listas dinámicas
-        private List<TipoDocumento> listaTiposDocumento = new();
-        private List<Area> listaAreas = new();
-        private List<Campaña> listaCampañas = new();
-        private List<EquiposPersonal> listaEquiposPersonales = new();
-
-        // Equipo personal
-        private int idEquipoPersonalSeleccionado;
-
-        private async Task AbrirModalRegistroEquipo()
-        {
-            mostrarModalRegistroEquipo = true;
-            await CargarListasSelect();
-        }
-
-        private async Task CargarListasSelect()
-        {
-            try
-            {
-                // Cargar listas con await por orden de prioridad (puedes hacerlas paralelas si quieres)
-                listaTiposDocumento = await EquipoService.ObtenerTipoDocumentoAsync() ?? new List<TipoDocumento>();
-                listaAreas = await EquipoService.ObtenerAreasAsync() ?? new List<Area>();
-                listaCampañas = await EquipoService.ObtenerCampañasAsync() ?? new List<Campaña>();
-                listaEquiposPersonales = await EquipoService.ObtenerEquiposPersonalesAsync() ?? new List<EquiposPersonal>();
-            }
-            catch (Exception ex)
-            {
-                // Si ocurre un error al cargar alguna lista
-                await JS.InvokeVoidAsync("alert", $"❌ Error al cargar las listas de selección: {ex.Message}");
-                Console.WriteLine($"Error en CargarListasSelect(): {ex}");
-            }
-        }
-
-        private async Task BuscarUsuarioPorDocumento()
-        {
-            if (!string.IsNullOrWhiteSpace(documentoUsuario))
-            {
-                var usuario = await EquipoService.ConsultarUsuarioPorDocumentoAsync(documentoUsuario);
-                if (usuario != null)
-                {
-                    usuarioNombres = usuario.Nombres;
-                    usuarioApellidos = usuario.Apellidos;
-                    idTipodocumentoSeleccionado = usuario.IdTipodocumento;
-                    idAreaSeleccionada = usuario.IdArea;
-                    idCampañaSeleccionada = usuario.IdCampaña;
-                }
-                else
-                {
-                    usuarioNombres = "";
-                    usuarioApellidos = "";
-                    idTipodocumentoSeleccionado = 0;
-                    idAreaSeleccionada = 0;
-                    idCampañaSeleccionada = 0;
-                }
-                await InvokeAsync(StateHasChanged);
-            }
-        }
-
-        private async Task AprobarRegistroEquipo()
-        {
-            // 🛑 Validar selección de tipo de documento
-            if (idTipodocumentoSeleccionado == 0)
-            {
-                await JS.InvokeVoidAsync("alert", "⚠️ Debes seleccionar un tipo de documento válido.");
-                return;
-            }
-            // Verificar o crear usuario
-            var usuario = await EquipoService.ConsultarUsuarioPorDocumentoAsync(documentoUsuario);
-            int idUsuarioInfo;
-
-            if (usuario == null)
-            {
-                var nuevoUsuario = new UsuariosInformacion
-                {
-                    NumeroDocumento = documentoUsuario,
-                    Nombres = usuarioNombres,
-                    Apellidos = usuarioApellidos,
-                    IdTipodocumento = idTipodocumentoSeleccionado,
-                    IdArea = idAreaSeleccionada,
-                    IdCampaña = idCampañaSeleccionada,
-                    IdEstado = 1,
-                    FechaCreacion = DateTime.Now,
-                    UltimaModificacion = DateTime.Now
-                };
-                idUsuarioInfo = await EquipoService.CrearUsuarioAsync(nuevoUsuario);
-            }
-            else
-            {
-                idUsuarioInfo = usuario.Id;
-            }
-
-            // Validar equipo personal
-            var equipoPersonal = await EquipoService.ObtenerEquipoPersonalPorIdAsync(idEquipoPersonalSeleccionado);
-            if (equipoPersonal == null)
-            {
-                await JS.InvokeVoidAsync("alert", "⚠️ Debes seleccionar un equipo personal válido.");
-                return;
-            }
-
-            // Generar código de barras
-            string codigoBarras = $"{equipoPersonal.NombrePersonal}{documentoUsuario}{DateTime.Now:yyyyMMddHHmmss}";
-
-            // Registrar equipo
-            var equipo = new OUT_DOMAIN_EQUIPGO.Entities.Configuracion.Equipos()
-            {
-                Marca = equipoMarca,
-                Modelo = equipoModelo,
-                Serial = equipoSerial,
-                CodigoBarras = codigoBarras,
-                Ubicacion = equipoUbicacion,
-                IdUsuarioInfo = idUsuarioInfo,
-                IdEstado = 1,
-                IdEquipoPersonal = equipoPersonal.Id,
-                IdSede = 1,
-                IdTipoDispositivo = 1,
-                FechaCreacion = DateTime.Now,
-                UltimaModificacion = DateTime.Now
-            };
-
-            bool equipoRegistrado = await EquipoService.CrearEquipoAsync(equipo);
-            if (!equipoRegistrado)
-            {
-                await JS.InvokeVoidAsync("alert", "❌ Error al registrar el equipo.");
-                return;
-            }
-
-            // Registrar transacción
-            var authState = await AuthProvider.GetAuthenticationStateAsync();
-            var user = authState.User;
-            var idUsuarioSessionClaim = user.Claims.FirstOrDefault(c => c.Type == "id_usuarioSession");
-            int idUsuarioSession = int.Parse(idUsuarioSessionClaim?.Value ?? "0");
-
-            var transaccion = new TransaccionRequest
-            {
-                CodigoBarras = codigoBarras,
-                TipoTransaccion = tipoTransaccionSeleccionado,
-                IdEquipoPersonal = equipoPersonal.Id,
-                IdUsuarioInfo = idUsuarioInfo,
-                IdUsuarioSession = idUsuarioSession,
-                SedeOs = 1
-            };
-
-            var resultado = await TransaccionService.RegistrarTransaccionAsync(transaccion);
-            await JS.InvokeVoidAsync("alert", resultado
-                ? "✅ Equipo y transacción registrados."
-                : "❌ Error al registrar la transacción.");
-
-            LimpiarModalRegistroEquipo();
-            mostrarModalRegistroEquipo = false;
-            await IniciarEscaneo();
-        }
-
-        private void LimpiarModalRegistroEquipo()
-        {
-            documentoUsuario = "";
-            usuarioNombres = "";
-            usuarioApellidos = "";
-            idTipodocumentoSeleccionado = 0;
-            idAreaSeleccionada = 0;
-            idCampañaSeleccionada = 0;
-            equipoMarca = "";
-            equipoModelo = "";
-            equipoSerial = "";
-            equipoUbicacion = "";
-        }
-
-        private async Task CerrarModalRegistroEquipo()
-        {
-            LimpiarModalRegistroEquipo();
-            mostrarModalRegistroEquipo = false;
-            await InvokeAsync(StateHasChanged);
         }
         #endregion
 

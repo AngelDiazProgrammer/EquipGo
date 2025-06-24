@@ -7,11 +7,11 @@ using OUT_OS_APP.EQUIPGO.DTO.DTOs.Visitantes;
     [Route("api/[controller]")]
     public class VisitantesController : ControllerBase
     {
-        private readonly IRegistroVisitanteService _registroVisitanteService;
+        private readonly IVisitanteService _VisitanteService;
 
-        public VisitantesController(IRegistroVisitanteService registroVisitanteService)
+        public VisitantesController(IVisitanteService VisitanteService)
         {
-            _registroVisitanteService = registroVisitanteService;
+            _VisitanteService = VisitanteService;
         }
 
         [HttpPost]
@@ -19,7 +19,7 @@ using OUT_OS_APP.EQUIPGO.DTO.DTOs.Visitantes;
         {
             try
             {
-                await _registroVisitanteService.RegistrarVisitanteAsync(dto);
+                await _VisitanteService.RegistrarVisitanteAsync(dto);
                 return Ok(new { message = "✅ Visitante registrado correctamente." });
             }
             catch (Exception ex)

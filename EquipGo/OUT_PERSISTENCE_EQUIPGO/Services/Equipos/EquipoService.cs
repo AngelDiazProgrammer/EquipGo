@@ -5,6 +5,7 @@ using OUT_DOMAIN_EQUIPGO.Entities.Configuracion;
 using OUT_DOMAIN_EQUIPGO.Entities.Procesos;
 using OUT_DOMAIN_EQUIPGO.Entities.Smart;
 using OUT_OS_APP.EQUIPGO.DTO.DTOs.Equipo;
+using OUT_OS_APP.EQUIPGO.DTO.DTOs.Visitantes;
 using OUT_PERSISTENCE_EQUIPGO.Context;
 using System.Collections.Generic;
 using System.Linq;
@@ -230,6 +231,48 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Equipos
         }
 
         #endregion
+
+        #region Visitantes
+
+
+        public async Task<RegistroVisitanteDto?> ConsultarVisitantePorDocumentoAsync(string numeroDocumento)
+        {
+            var visitante = await _context.UsuariosVisitantes
+                .Include(v => v.EquiposVisitantes)
+                .FirstOrDefaultAsync(v => v.NumeroDocumento == numeroDocumento);
+
+            if (visitante == null) return null;
+
+            var equipo = visitante.EquiposVisitantes.FirstOrDefault();
+
+            // Obtener la última transacción del visitante
+            var ultimaTransaccion = await _context.TransaccionesVisitantes
+                .Where(t => t.IdUsuarioVisitante == visitante.Id)
+                .OrderByDescending(t => t.FechaTransaccion)
+                .FirstOrDefaultAsync();
+
+            // Determinar tipo de transacción siguiente: si la última fue Entrada (1), la siguiente es Salida (2), y viceversa
+            int tipoTransaccionSiguiente = ultimaTransaccion?.IdTipoTransaccion == 1 ? 2 : 1;
+
+            return new RegistroVisitanteDto
+            {
+                TipoDocumento = visitante.TipoDocumento,
+                NumeroDocumento = visitante.NumeroDocumento,
+                Nombres = visitante.Nombres,
+                Apellidos = visitante.Apellidos,
+                IdProveedor = visitante.IdProveedor,
+                Marca = equipo?.Marca ?? "",
+                Modelo = equipo?.Modelo ?? "",
+                Serial = equipo?.Serial ?? "",
+                TipoTransaccionSiguiente = tipoTransaccionSiguiente
+            };
+        }
+
+
+        #endregion
+
+
+
 
         #region Sincronizar equipos - agente de escritorio
 

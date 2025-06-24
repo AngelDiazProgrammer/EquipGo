@@ -15,11 +15,15 @@ namespace OUT_OS_APP.EQUIPGO.DTO.DTOs.Visitantes
         public string Apellidos { get; set; } = string.Empty;
         public string TipoUsuario { get; set; } = string.Empty;
         public int? IdProveedor { get; set; }
+        public string NombreProveedor { get; set; } = string.Empty;
 
         // Equipo visitante
         public string Marca { get; set; } = string.Empty;
         public string Modelo { get; set; } = string.Empty;
         public string Serial { get; set; } = string.Empty;
+
+        //Transaccion automatica
+        public int TipoTransaccionSiguiente { get; set; }
     }
 }
 
