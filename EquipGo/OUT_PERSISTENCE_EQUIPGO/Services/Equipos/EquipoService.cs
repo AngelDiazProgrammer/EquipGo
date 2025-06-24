@@ -245,14 +245,25 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Equipos
 
             var equipo = visitante.EquiposVisitantes.FirstOrDefault();
 
+            // Obtener el nombre del proveedor si existe
+            string nombreProveedor = "Sin proveedor";
+
+            if (visitante.IdProveedor.HasValue)
+            {
+                nombreProveedor = await _context.Proveedores
+                    .Where(p => p.Id == visitante.IdProveedor)
+                    .Select(p => p.NombreProveedor)
+                    .FirstOrDefaultAsync() ?? "Sin proveedor";
+            }
+
             // Obtener la última transacción del visitante
             var ultimaTransaccion = await _context.TransaccionesVisitantes
                 .Where(t => t.IdUsuarioVisitante == visitante.Id)
                 .OrderByDescending(t => t.FechaTransaccion)
                 .FirstOrDefaultAsync();
 
-            // Determinar tipo de transacción siguiente: si la última fue Entrada (1), la siguiente es Salida (2), y viceversa
-            int tipoTransaccionSiguiente = ultimaTransaccion?.IdTipoTransaccion == 1 ? 2 : 1;
+            // Determinar tipo de transacción automáticamente
+            int tipoTransaccionSiguiente = (ultimaTransaccion == null || ultimaTransaccion.IdTipoTransaccion == 2) ? 1 : 2;
 
             return new RegistroVisitanteDto
             {
@@ -261,12 +272,15 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Equipos
                 Nombres = visitante.Nombres,
                 Apellidos = visitante.Apellidos,
                 IdProveedor = visitante.IdProveedor,
+                NombreProveedor = nombreProveedor,
                 Marca = equipo?.Marca ?? "",
                 Modelo = equipo?.Modelo ?? "",
                 Serial = equipo?.Serial ?? "",
-                TipoTransaccionSiguiente = tipoTransaccionSiguiente
+                TipoTransaccionSiguiente = tipoTransaccionSiguiente,
+                TipoTransaccion = tipoTransaccionSiguiente == 1 ? "Entrada" : "Salida"
             };
         }
+
 
 
         #endregion
