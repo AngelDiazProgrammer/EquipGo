@@ -1,6 +1,8 @@
 ﻿using Interface.Services.Transacciones;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using OUT_OS_APP.EQUIPGO.DTO.DTOs;
+using OUT_PERSISTENCE_EQUIPGO.Context;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -11,16 +13,24 @@ namespace OUT_APP_EQUIPGO.Modules.Transacciones
     public class TransaccionesController : ControllerBase
     {
         private readonly ITransaccionService _transaccionService;
+        private readonly EquipGoDbContext _context;
 
-        public TransaccionesController(ITransaccionService transaccionService)
+        public TransaccionesController(ITransaccionService transaccionService, EquipGoDbContext context)
         {
             _transaccionService = transaccionService;
+            _context = context;
         }
 
         [HttpGet("GetTransaccionesHoy")]
         public async Task<IActionResult> GetTransaccionesHoy()
         {
             var transacciones = await _transaccionService.ObtenerTransaccionesHoyAsync();
+            return Ok(transacciones);
+        }
+        [HttpGet("GetTransaccionesVisitantesHoy")]
+        public async Task<IActionResult> GetTransaccionesVisitantesHoy()
+        {
+            var transacciones = await _transaccionService.ObtenerTransaccionesVisitantesHoyAsync();
             return Ok(transacciones);
         }
 
@@ -44,8 +54,24 @@ namespace OUT_APP_EQUIPGO.Modules.Transacciones
         [HttpGet("GetConteosDashboard")]
         public async Task<IActionResult> GetConteosDashboard()
         {
-            var conteos = await _transaccionService.ObtenerConteosDashboardAsync();
-            return Ok(conteos);
+            var hoy = DateTime.Today;
+
+            var totalNormales = await _context.Transacciones
+                .Where(t => t.FechaHora.Date == hoy)
+                .CountAsync();
+
+            var totalVisitantes = await _context.TransaccionesVisitantes
+                .Where(t => t.FechaTransaccion.Date == hoy)
+                .CountAsync();
+
+            var totalHoy = totalNormales + totalVisitantes;
+
+            return Ok(new
+            {
+                totalHoy,
+                totalNormales,
+                totalVisitantes
+            });
         }
 
 

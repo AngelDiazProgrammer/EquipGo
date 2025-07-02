@@ -23,9 +23,8 @@ function actualizarConteosDashboard() {
         .then(response => response.json())
         .then(data => {
             document.getElementById("totalHoy").innerText = data.totalHoy;
-            document.getElementById("totalPersonales").innerText = data.totalPersonales;
-            document.getElementById("totalCorporativos").innerText = data.totalCorporativos;
-            document.getElementById("totalProveedores").innerText = data.totalProveedores;
+            document.getElementById("totalNormales").innerText = data.totalNormales;
+            document.getElementById("totalVisitantes").innerText = data.totalVisitantes;
         })
         .catch(error => console.error("❌ Error al obtener conteos:", error));
 }
@@ -38,19 +37,13 @@ function agregarFilaNueva() {
             if (data.length === 0) return;
 
             const tbody = document.querySelector("#tablaDashboard tbody");
-
-            // 🔥 Limpiar completamente todas las filas anteriores
-            while (tbody.firstChild) {
-                tbody.removeChild(tbody.firstChild);
-            }
-
             const nueva = data[0];
 
             let rowColor = "";
             if (nueva.nombreTipoTransaccion.toLowerCase() === "entrada") {
-                rowColor = "#d4edda";
+                rowColor = "#d4edda"; // verde claro
             } else if (nueva.nombreTipoTransaccion.toLowerCase() === "salida") {
-                rowColor = "#f8d7da";
+                rowColor = "#f8d7da"; // rojo claro
             }
 
             const row = document.createElement("tr");
@@ -58,21 +51,67 @@ function agregarFilaNueva() {
                 <td>${nueva.nombreUsuarioInfo}</td>
                 <td>${nueva.codigoBarras}</td>
                 <td>${nueva.nombreTipoTransaccion}</td>
-                <td>${nueva.nombreEquipoPersonal}</td>
                 <td>${nueva.nombreUsuarioSession}</td>
                 <td>${nueva.nombreSedeOs}</td>
             `;
-
             row.style.backgroundColor = rowColor;
-            tbody.appendChild(row);
+            tbody.insertBefore(row, tbody.firstChild); // Insertar arriba
 
             setTimeout(() => {
                 row.style.backgroundColor = "";
             }, 3000);
 
-            while (tbody.rows.length > 10) {
+            // Mantener máximo 13 filas
+            while (tbody.rows.length > 13) {
                 tbody.deleteRow(tbody.rows.length - 1);
             }
         })
         .catch(error => console.error("❌ Error al agregar transacción:", error));
+}
+
+
+//Transacciones Visitantes
+connection.on("NuevaTransaccionVisitante", () => {
+    console.log("🔄 Nueva transacción de visitante detectada");
+    agregarFilaNuevaVisitante();
+    actualizarConteosDashboard();
+});
+
+function agregarFilaNuevaVisitante() {
+    fetch("/api/Transacciones/GetTransaccionesVisitantesHoy")
+        .then(response => response.json())
+        .then(data => {
+            if (data.length === 0) return;
+
+            const tbody = document.querySelector("#tablaVisitantes tbody");
+            const t = data[0];
+
+            let rowColor = "";
+            if (t.tipoTransaccion?.toLowerCase() === "entrada") {
+                rowColor = "#d4edda";
+            } else if (t.tipoTransaccion?.toLowerCase() === "salida") {
+                rowColor = "#f8d7da";
+            }
+
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${t.nombresVisitante || ''}</td>
+                <td>${t.marcaEquipo || ''}</td>
+                <td>${t.tipoTransaccion || ''}</td>
+                <td>${t.nombreAprobador || ''}</td>
+                <td>${t.nombreSede || ''}</td>
+            `;
+            row.style.backgroundColor = rowColor;
+            tbody.insertBefore(row, tbody.firstChild); // Insertar arriba
+
+            setTimeout(() => {
+                row.style.backgroundColor = "";
+            }, 3000);
+
+            // Máximo 13 filas
+            while (tbody.rows.length > 13) {
+                tbody.deleteRow(tbody.rows.length - 1);
+            }
+        })
+        .catch(error => console.error("❌ Error al agregar transacción visitante:", error));
 }

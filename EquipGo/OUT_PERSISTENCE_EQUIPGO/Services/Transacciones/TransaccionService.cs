@@ -91,6 +91,33 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Transacciones
             return transacciones;
         }
 
+        public async Task<List<TransaccionVisitanteDashboardDto>> ObtenerTransaccionesVisitantesHoyAsync()
+        {
+            var hoy = DateTime.Today;
+
+            var transacciones = await _context.TransaccionesVisitantes
+                .Include(t => t.IdUsuarioSessionNavigation)
+                .Include(t => t.IdUsuarioVisitanteNavigation)
+                .Include(t => t.IdEquipoVisitanteNavigation)
+                .Include(t => t.IdTipoTransaccionNavigation)
+                .Include(t => t.SedeOsNavigation)
+                .Where(t => t.FechaTransaccion.Date == hoy)
+                .OrderByDescending(t => t.FechaTransaccion)
+                .Select(t => new TransaccionVisitanteDashboardDto
+                {
+                    NombresVisitante = t.IdUsuarioVisitanteNavigation.Nombres + " " + t.IdUsuarioVisitanteNavigation.Apellidos,
+                    MarcaEquipo = t.IdEquipoVisitanteNavigation != null ? t.IdEquipoVisitanteNavigation.Marca : "",
+                    NombreAprobador = t.IdUsuarioSessionNavigation != null
+                ? t.IdUsuarioSessionNavigation.Nombre + " " + t.IdUsuarioSessionNavigation.Apellido
+                : "Sin aprobador",
+                    NombreSede = t.SedeOsNavigation != null ? t.SedeOsNavigation.NombreSede : "Sin sede",
+                    TipoTransaccion = t.IdTipoTransaccionNavigation.NombreTransaccion
+                })
+                .ToListAsync();
+
+            return transacciones;
+        }
+
         public async Task<ConteoTransaccionesDto> ObtenerConteosDashboardAsync()
         {
             var hoy = DateTime.Today;
@@ -171,6 +198,7 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Transacciones
 
                 _context.TransaccionesVisitantes.Add(nueva);
                 await _context.SaveChangesAsync();
+                await _hubContext.Clients.All.SendAsync("NuevaTransaccionVisitante");
 
                 return true;
             }

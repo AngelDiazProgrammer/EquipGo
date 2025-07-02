@@ -26,57 +26,51 @@
 
     <!-- Contadores superiores dinámicos -->
     <div class="dashboard-counters" style="
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-        margin-bottom: 20px;">
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 20px;">
+
+        <!-- Total Hoy -->
         <div style="
-            flex: 1;
-            background-color: #000;
-            color: #fff;
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);
-            min-width: 220px;">
+        flex: 1;
+        background-color: #000;
+        color: #fff;
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);
+        min-width: 220px;">
             <h4 id="totalHoy" style="margin: 0; font-size: 24px;">0</h4>
-            <p>Transacciones Hoy</p>
+            <p>Transacciones Totales Hoy</p>
         </div>
+
+        <!-- Transacciones Normales -->
         <div style="
-            flex: 1;
-            background-color: #E9002B;
-            color: #fff;
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);
-            min-width: 220px;">
-            <h4 id="totalPersonales" style="margin: 0; font-size: 24px;">0</h4>
-            <p>Transacciones Equipos Corporativos</p>
+        flex: 1;
+        background-color: #E9002B;
+        color: #fff;
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);
+        min-width: 220px;">
+            <h4 id="totalNormales" style="margin: 0; font-size: 24px;">0</h4>
+            <p>Transacciones Normales</p>
         </div>
+
+        <!-- Transacciones Visitantes -->
         <div style="
-            flex: 1;
-            background-color: #008080;
-            color: #fff;
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);
-            min-width: 220px;">
-            <h4 id="totalCorporativos" style="margin: 0; font-size: 24px;">0</h4>
-            <p>Transacciones Equipos Proveedor</p>
-        </div>
-        <div style="
-            flex: 1;
-            background-color: #555 ;
-            color: #fff;
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);
-            min-width: 220px;">
-            <h4 id="totalProveedores" style="margin: 0; font-size: 24px;">0</h4>
-            <p>Transacciones Equipos Personales</p>
+        flex: 1;
+        background-color: #008080;
+        color: #fff;
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);
+        min-width: 220px;">
+            <h4 id="totalVisitantes" style="margin: 0; font-size: 24px;">0</h4>
+            <p>Transacciones Visitantes</p>
         </div>
     </div>
 
@@ -97,24 +91,41 @@
             <option value="baja">Prioridad baja</option>
         </select>
     </div>
+    <!-- Contenedor horizontal de las dos tablas -->
+    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
 
-    <!-- Tabla dinámica -->
-    <div class="table-wrapper" style="border: 1px solid #E9002B; border-radius: 10px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5); overflow-x: auto;">
-        <table id="tablaDashboard" style="width: 100%; min-width: 600px;">
-            <thead>
-                <tr>
-                    <th>Usuario Info</th>
-                    <th>Código de Barras</th>
-                    <th>Tipo Transacción</th>
-                    <th>Equipo Personal</th>
-                    <th>Guarda Aprobador</th>
-                    <th>Sede OS</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- JS llenará dinámicamente -->
-            </tbody>
-        </table>
+        <!-- Tabla dinámica corporativos -->
+        <div class="table-wrapper" style="flex: 1; border: 1px solid #E9002B; border-radius: 10px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5); overflow-x: auto; min-width: 600px;">
+            <table id="tablaDashboard" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Código de Barras</th>
+                        <th>Tipo Transacción</th>
+                        <th>Guarda Aprobador</th>
+                        <th>Sede OS</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <!-- Tabla dinámica visitantes -->
+        <div class="table-wrapper" style="flex: 1; border: 1px solid #E9002B; border-radius: 10px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5); overflow-x: auto; min-width: 600px;">
+            <table id="tablaVisitantes" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th>Nombre Visitante</th>
+                        <th>Marca</th>
+                        <th>Tipo Transacción</th>
+                        <th>Guarda Aprobador</th>
+                        <th>Sede</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
     </div>
 </div>
 
