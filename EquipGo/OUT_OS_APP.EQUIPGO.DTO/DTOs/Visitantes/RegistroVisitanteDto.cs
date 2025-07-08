@@ -21,6 +21,8 @@ namespace OUT_OS_APP.EQUIPGO.DTO.DTOs.Visitantes
         public string Marca { get; set; } = string.Empty;
         public string Modelo { get; set; } = string.Empty;
         public string Serial { get; set; } = string.Empty;
+        public string FotoBase64 { get; set; } = string.Empty;
+
 
         //Transaccion automatica
         public int TipoTransaccionSiguiente { get; set; }

@@ -276,6 +276,7 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Equipos
                 Marca = equipo?.Marca ?? "",
                 Modelo = equipo?.Modelo ?? "",
                 Serial = equipo?.Serial ?? "",
+                FotoBase64 = equipo.Foto,
                 TipoTransaccionSiguiente = tipoTransaccionSiguiente,
                 TipoTransaccion = tipoTransaccionSiguiente == 1 ? "Entrada" : "Salida"
             };

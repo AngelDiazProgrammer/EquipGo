@@ -40,6 +40,8 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Escaneo
         private string documentoVisitante = "";
         private RegistroVisitanteDto? visitanteDto;
         private bool visitanteEncontrado = false;
+        private bool consultaEnProgreso = false;
+
 
         private async Task AbrirModalValidarVisitante()
         {
@@ -51,7 +53,12 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Escaneo
 
         private async Task ConsultarVisitante()
         {
-            if (string.IsNullOrWhiteSpace(documentoVisitante)) return;
+            if (string.IsNullOrWhiteSpace(documentoVisitante))
+                return;
+
+            consultaEnProgreso = true;
+            visitanteEncontrado = false;
+            visitanteDto = null;
 
             try
             {
@@ -60,11 +67,15 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Escaneo
             }
             catch (Exception ex)
             {
-                visitanteEncontrado = false;
                 Console.WriteLine($"❌ Error al consultar visitante: {ex.Message}");
             }
-            await InvokeAsync(StateHasChanged);
+            finally
+            {
+                consultaEnProgreso = false;
+                await InvokeAsync(StateHasChanged);
+            }
         }
+
 
         private async Task RegistrarTransaccionVisitante()
         {

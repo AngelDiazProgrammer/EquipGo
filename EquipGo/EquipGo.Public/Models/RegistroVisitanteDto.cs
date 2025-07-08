@@ -11,6 +11,8 @@
         public string Marca { get; set; } = string.Empty;
         public string Modelo { get; set; } = string.Empty;
         public string Serial { get; set; } = string.Empty;
+        public string FotoBase64 { get; set; } = string.Empty;
+
     }
 
     public class RegistroVisitanteViewModel

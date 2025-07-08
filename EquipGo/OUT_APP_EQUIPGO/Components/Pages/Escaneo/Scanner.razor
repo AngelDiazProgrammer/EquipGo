@@ -96,23 +96,35 @@
                                @onblur="ConsultarVisitante" placeholder="Ingrese número de documento..." />
                     </div>
 
-                    @if (visitanteEncontrado)
-                    {
-                        <hr />
-                        <p><strong>👤 Nombre:</strong> @visitanteDto?.Nombres @visitanteDto?.Apellidos</p>
-                        <p><strong>📄 Tipo Documento:</strong> @visitanteDto?.TipoDocumento</p>
-                        <p><strong>🔧 Marca:</strong> @visitanteDto?.Marca</p>
-                        <p><strong>💻 Modelo:</strong> @visitanteDto?.Modelo</p>
-                        <p><strong>🏷️ Serial:</strong> @visitanteDto?.Serial</p>
-                        <p><strong>🏢 Proveedor:</strong> @visitanteDto?.NombreProveedor</p>
 
-                        <p>Tipo de transacción: @(visitanteDto.TipoTransaccionSiguiente == 1 ? "Entrada" : "Salida")</p>
+                            @if (consultaEnProgreso)
+                            {
+                                <p class="text-primary">🔍 Buscando visitante...</p>
+                            }
+                            else if (visitanteEncontrado)
+                            {
+                                <hr />
+                                <p><strong>👤 Nombre:</strong> @visitanteDto?.Nombres @visitanteDto?.Apellidos</p>
+                                <p><strong>📄 Tipo Documento:</strong> @visitanteDto?.TipoDocumento</p>
+                                <p><strong>🔧 Marca:</strong> @visitanteDto?.Marca</p>
+                                <p><strong>💻 Modelo:</strong> @visitanteDto?.Modelo</p>
+                                <p><strong>🏷️ Serial:</strong> @visitanteDto?.Serial</p>
+                                <p><strong>🏢 Proveedor:</strong> @visitanteDto?.NombreProveedor</p>
+                                <p><strong>🔁 Tipo de transacción:</strong> @(visitanteDto.TipoTransaccionSiguiente == 1 ? "Entrada" : "Salida")</p>
 
-                    }
-                    else if (documentoVisitante != "")
-                    {
-                        <p class="text-danger">❌ Visitante no registrado.</p>
-                    }
+                                @if (!string.IsNullOrWhiteSpace(visitanteDto.FotoBase64))
+                                {
+                                    <div class="mb-3">
+                                        <label class="form-label"><strong>👁️ Foto del equipo:</strong></label><br />
+                                        <img src="@visitanteDto.FotoBase64" alt="Foto del equipo"
+                                             class="img-thumbnail" style="max-width: 300px; height: 300px; border: 1px solid #ccc;" />
+                                    </div>
+                                }
+                            }
+                            else if (!consultaEnProgreso && documentoVisitante != "")
+                            {
+                                <p class="text-danger">❌ Visitante no registrado.</p>
+                            }
                 </div>
                 <div class="modal-footer d-flex justify-content-between">
                     <button class="btn btn-danger flex-fill me-2" @onclick="CerrarModalValidarVisitante">❌ Denegar</button>

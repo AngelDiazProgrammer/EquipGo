@@ -19,6 +19,9 @@ namespace Domain.Entities.Procesos
         [Column("serial")]
         public string Serial { get; set; } = string.Empty;
 
+        [Column("foto")]
+        public string Foto { get; set; } = string.Empty;
+
         [Column("id_usuarioVisitante")]
         public int IdUsuarioVisitante { get; set; }
 

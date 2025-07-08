@@ -1,5 +1,5 @@
 var builder = WebApplication.CreateBuilder(args);
-
+builder.WebHost.UseUrls("https://0.0.0.0:7194");
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient(); // necesario para enviar al backend
 

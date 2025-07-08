@@ -46,6 +46,7 @@ namespace Application.Services.Visitantes
                 Marca = dto.Marca,
                 Modelo = dto.Modelo,
                 Serial = dto.Serial,
+                Foto = dto.FotoBase64,
                 IdUsuarioVisitante = visitante.Id,
                 IdSede = null, // se deja nulo como indicaste
                 FechaRegistro = DateTime.Now

@@ -62,11 +62,9 @@ namespace EquipGo.Public.Controllers
                     break;
 
                 case "registrar":
-                    if (string.IsNullOrWhiteSpace(model.Visitante.Marca) ||
-                        string.IsNullOrWhiteSpace(model.Visitante.Modelo) ||
-                        string.IsNullOrWhiteSpace(model.Visitante.Serial))
+                    if (string.IsNullOrWhiteSpace(model.Visitante.Marca))
                     {
-                        model.Mensaje = "⚠️ Completa todos los campos del equipo.";
+                        model.Mensaje = "⚠️ La marca del equipo es obligatoria.";
                         break;
                     }
 
