@@ -1,4 +1,4 @@
-﻿@page "/estados"
+﻿@page "/areas"
 
 <div class="equipos-container">
     <!-- Encabezado -->
@@ -29,26 +29,26 @@
         </div>
     </div>
 
-    <!-- Botón para añadir estado -->
+    <!-- Botón para añadir Area -->
     <div class="mb-3 d-flex justify-content-end">
-        <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalCrearEstado">
-            <i class="bi bi-plus-lg"></i> Añadir Estado
+        <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalCrearArea">
+            <i class="bi bi-plus-lg"></i> Añadir Area
         </button>
     </div>
 
-    <!-- Modal para crear estado -->
-    <div class="modal fade" id="modalCrearEstado" tabindex="-1" aria-labelledby="modalCrearEstadoLabel" aria-hidden="true">
+    <!-- Modal para crear Area -->
+    <div class="modal fade" id="modalCrearArea" tabindex="-1" aria-labelledby="modalCrearAreaLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalCrearEstadoLabel">Registrar Estado</h5>
+                    <h5 class="modal-title" id="modalCrearAreaLabel">Registrar Area</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="formCrearEstado">
+                    <form id="formCrearArea">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label for="nombre" class="form-label">Nombre del Estado</label>
+                                <label for="nombre" class="form-label">Nombre del Area</label>
                                 <input type="text" class="form-control" id="nombre" name="nombre" required />
                             </div>
                         </div>
@@ -56,18 +56,18 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" onclick="guardarEstado()">Guardar</button>
+                    <button type="button" class="btn btn-primary" onclick="guardarArea()">Guardar</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Tabla de estados -->
-    @if (estados == null)
+    @if (areas == null)
     {
         <p>Cargando estados...</p>
     }
-    else if (!estados.Any())
+    else if (!areas.Any())
     {
         <p>No hay estados registrados.</p>
     }
@@ -83,14 +83,14 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var estado in estados)
+                    @foreach (var area in areas)
                     {
                         <tr>
-                            <td>@estado.Id</td>
-                            <td>@estado.NombreEstado</td>
+                            <td>@area.Id</td>
+                            <td>@area.NombreArea</td>
                             <td>
-                                <button class="btn btn-sm btn-outline-primary" onclick="editarEstado(@estado.Id)">✏️</button>
-                                <button class="btn btn-sm btn-outline-danger" onclick="abrirModalEliminarEstado(@estado.Id)">🗑️</button>
+                                <button class="btn btn-sm btn-outline-primary" onclick="editarArea(@area.Id)">✏️</button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="abrirModalEliminarArea(@area.Id)">🗑️</button>
                             </td>
                         </tr>
                     }
@@ -98,45 +98,45 @@
             </table>
         </div>
 
-        <!-- Modal para editar estado -->
-        <div class="modal fade" id="modalEditarEstado" tabindex="-1" aria-labelledby="modalEditarEstadoLabel" aria-hidden="true">
+        <!-- Modal para editar Area -->
+        <div class="modal fade" id="modalEditarArea" tabindex="-1" aria-labelledby="modalEditarAreaLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="modalEditarEstadoLabel">Editar Estado</h5>
+                        <h5 class="modal-title" id="modalEditarAreaLabel">Editar Area</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                     </div>
                     <div class="modal-body">
-                        <form id="formEditarEstado">
+                        <form id="formEditarArea">
                             <input type="hidden" id="editarId" />
                             <div class="mb-3">
-                                <label for="editarNombreEstado" class="form-label">Nombre del Estado</label>
-                                <input type="text" class="form-control" id="editarNombreEstado" />
+                                <label for="editarNombreEstado" class="form-label">Nombre del Area</label>
+                                <input type="text" class="form-control" id="editarNombreArea" />
                             </div>
                         </form>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="button" class="btn btn-primary" onclick="guardarCambiosEstado()">Guardar Cambios</button>
+                        <button type="button" class="btn btn-primary" onclick="guardarCambiosArea()">Guardar Cambios</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Modal eliminar estado -->
-        <div class="modal fade" id="modalEliminarEstado" tabindex="-1" aria-labelledby="modalEliminarEstadoLabel" aria-hidden="true">
+        <!-- Modal eliminar Area -->
+        <div class="modal fade" id="modalEliminarArea" tabindex="-1" aria-labelledby="modalEliminarAreaLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="modalEliminarEstadoLabel">Confirmar eliminación</h5>
+                        <h5 class="modal-title" id="modalEliminarAreaLabel">Confirmar eliminación</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                     </div>
                     <div class="modal-body">
-                        ¿Estás seguro de que deseas eliminar este estado?
+                        ¿Estás seguro de que deseas eliminar esta Area?
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="button" class="btn btn-danger" onclick="confirmarEliminarEstado()">Eliminar</button>
+                        <button type="button" class="btn btn-danger" onclick="confirmarEliminarArea()">Eliminar</button>
                     </div>
                 </div>
             </div>

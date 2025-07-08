@@ -394,7 +394,7 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Equipos
 
         public async Task<List<Area>> ObtenerAreasAsync()
         {
-            return await _unitOfWork.Area.Query().ToListAsync();
+            return await _unitOfWork.Areas.Query().ToListAsync();
         }
 
         public async Task<List<Campaña>> ObtenerCampañasAsync()

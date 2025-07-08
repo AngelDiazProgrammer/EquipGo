@@ -16,7 +16,7 @@ namespace OUT_PERSISTENCE_EQUIPGO.UnitOfWork
             Equipos = new EquiposRepository(_context);
             UsuariosInformacion = new UsuariosInformacionRepository(_context);
             Transacciones = new TransaccionesRepository(_context);
-            Area = new AreaRepository(_context);
+            Areas = new AreaRepository(_context);
             Campaña = new CampañaRepository(_context);
             UsuariosSession = new UsuariosSessionRepository(_context);
             EquiposPersonal = new EquipoPersonalRepository(_context); 
@@ -29,7 +29,7 @@ namespace OUT_PERSISTENCE_EQUIPGO.UnitOfWork
         public IEquiposRepository Equipos { get; }
         public IUsuariosInformacionRepository UsuariosInformacion { get; }
         public ITransaccionesRepository Transacciones { get; }
-        public IAreaRepository Area { get; }
+        public IAreaRepository Areas { get; }
         public ICampañaRepository Campaña { get; }
         public IUsuariosSessionRepository UsuariosSession { get; }
         public IEquipoPersonalRepositoy EquiposPersonal { get; }

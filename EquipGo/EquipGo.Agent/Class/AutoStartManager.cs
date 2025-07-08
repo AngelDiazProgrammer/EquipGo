@@ -1,33 +1,15 @@
 ﻿using Microsoft.Win32;
-using System.Reflection;
+using System;
 
-namespace EquipGo.Agent.Services
+namespace EquipGo.Agent
 {
     public static class AutoStartManager
     {
-        private const string AppName = "EquipGoAgent";
-
-        public static void RegistrarInicioAutomatico()
+        public static void RegistrarInicioAutomaticoParaTodos()
         {
-            string rutaExe = Assembly.GetExecutingAssembly().Location;
-
-            using (RegistryKey clave = Registry.CurrentUser.OpenSubKey(
-                @"Software\Microsoft\Windows\CurrentVersion\Run", true))
-            {
-                if (clave.GetValue(AppName) == null || clave.GetValue(AppName)?.ToString() != rutaExe)
-                {
-                    clave.SetValue(AppName, rutaExe);
-                }
-            }
-        }
-
-        public static void QuitarInicioAutomatico()
-        {
-            using (RegistryKey clave = Registry.CurrentUser.OpenSubKey(
-                @"Software\Microsoft\Windows\CurrentVersion\Run", true))
-            {
-                clave.DeleteValue(AppName, false);
-            }
+            string rutaExe = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
+            using var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
+            key?.SetValue("EquipGoAgent", $"\"{rutaExe}\"");
         }
     }
 }

@@ -9,7 +9,7 @@ namespace Interface
         IEquiposRepository Equipos { get; }
         IUsuariosInformacionRepository UsuariosInformacion { get; }
         ITransaccionesRepository Transacciones { get; }
-        IAreaRepository Area { get; }
+        IAreaRepository Areas { get; }
         ICampañaRepository Campaña { get; }
         IUsuariosSessionRepository UsuariosSession { get; }
         IEquipoPersonalRepositoy EquiposPersonal { get; }

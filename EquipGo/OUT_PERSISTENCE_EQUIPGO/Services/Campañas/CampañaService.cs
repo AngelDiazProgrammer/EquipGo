@@ -1,4 +1,4 @@
-﻿using Interface.Services.Areas;
+﻿using Interface.Services.Campañas;
 using Microsoft.EntityFrameworkCore;
 using OUT_DOMAIN_EQUIPGO.Entities.Smart;
 using OUT_PERSISTENCE_EQUIPGO.Context;
@@ -10,18 +10,18 @@ using System.Threading.Tasks;
 
 namespace OUT_PERSISTENCE_EQUIPGO.Services.Campañas
 {
-    public class AreaService : IAreaService
+    public class CampañaService : ICampañaService
     {
         private readonly EquipGoDbContext _context;
 
-        public AreaService(EquipGoDbContext context)
+        public CampañaService(EquipGoDbContext context)
         {
             _context = context;
         }
 
-        public async Task<List<Area>> ObtenerTodasAsync()
+        public async Task<List<Campaña>> ObtenerTodasAsync()
         {
-            return await _context.Areas.AsNoTracking().ToListAsync();
+            return await _context.Campañas.AsNoTracking().ToListAsync();
         }
     }
 }

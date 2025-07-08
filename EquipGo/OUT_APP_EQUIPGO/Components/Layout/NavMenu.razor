@@ -43,19 +43,59 @@
             <div class="collapse ps-3 ms-3" id="collapseAdministrar" style="padding: 8px 0;">
                 <ul class="nav flex-column">
 
-                    <!-- Opción: Equipos -->
+                    <!-- Submenú desplegable "Equipos" -->
                     <li class="nav-item mb-1">
-                        <NavLink class="nav-link text-dark w-100"
-                                 activeClass="active bg-danger text-white"
-                                 href="/equipos/"
-                                 style="transition: background-color 0.3s ease;"
-                                 onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)'"
-                                 onmouseout="this.style.backgroundColor='transparent'">
+                        <!-- Botón para desplegar submenu Equipos -->
+                        <a class="nav-link text-dark w-100 d-flex align-items-center justify-content-between"
+                           data-bs-toggle="collapse"
+                           href="#collapseEquipos"
+                           role="button"
+                           aria-expanded="false"
+                           aria-controls="collapseEquipos"
+                           style="transition: background-color 0.3s ease;"
+                           onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)'"
+                           onmouseout="this.style.backgroundColor='transparent'">
                             💻 Equipos
-                        </NavLink>
+                            <i class="bi bi-caret-down-fill"></i>
+                        </a>
+                        <!-- Contenedor colapsable del submenú Equipos -->
+                        <div class="collapse ps-3" id="collapseEquipos">
+                            <ul class="nav flex-column">
+                                <!-- Opción: Equipos -->
+                                <li class="nav-item mb-1">
+                                    <NavLink class="nav-link text-dark w-100"
+                                             activeClass="active bg-danger text-white"
+                                             href="/equipos/"
+                                             style="transition: background-color 0.3s ease;"
+                                             onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)'"
+                                             onmouseout="this.style.backgroundColor='transparent'">
+                                        👩🏽‍💻 Corporativos
+                                    </NavLink>
+                                </li>
+                            </ul>
+                        </div>
+                        <!--li Cierre desplegable usuarios-->
                     </li>
 
-                    <!-- Opción: Usuarios -->
+                     <!-- Submenú desplegable "Usuarios" -->
+                    <li class="nav-item mb-1">
+                        <!-- Botón para desplegar submenu Usuarios -->
+                        <a class="nav-link text-dark w-100 d-flex align-items-center justify-content-between"
+                           data-bs-toggle="collapse"
+                           href="#collapseUsuarios"
+                           role="button"
+                           aria-expanded="false"
+                           aria-controls="collapseUsuarios"
+                           style="transition: background-color 0.3s ease;"
+                           onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)'"
+                           onmouseout="this.style.backgroundColor='transparent'">
+                            👥 Usuarios
+                            <i class="bi bi-caret-down-fill"></i>
+                        </a>
+                        <!-- Contenedor colapsable del submenú Smart -->
+                        <div class="collapse ps-3" id="collapseUsuarios">
+                            <ul class="nav flex-column">
+                        <!-- Opción: Usuarios -->
                     <li class="nav-item mb-1">
                         <NavLink class="nav-link text-dark w-100"
                                  activeClass="active bg-danger text-white"
@@ -63,9 +103,14 @@
                                  style="transition: background-color 0.3s ease;"
                                  onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)'"
                                  onmouseout="this.style.backgroundColor='transparent'">
-                            🪪 Usuarios
+                            👨🏻‍💼 Empleados
                         </NavLink>
                     </li>
+                    </ul>
+                    </div>                    
+                   <!--li Cierre desplegable usuarios-->
+                        </li>
+
                     <!-- Submenú desplegable "Smart" -->
                     <li class="nav-item mb-1">
                         <!-- Botón para desplegar submenu Smart -->
@@ -85,8 +130,28 @@
                         <!-- Contenedor colapsable del submenú Smart -->
                         <div class="collapse ps-3" id="collapseSmart">
                             <ul class="nav flex-column">
-
-                                <!-- Opción dentro de Smart: Estados Smart -->
+                                <!-- Opción: Areas -->
+                                <li class="nav-item mb-1">
+                                    <NavLink class="nav-link text-dark w-100"
+                                             activeClass="active bg-danger text-white"
+                                             href="/areas/"
+                                             style="transition: background-color 0.3s ease;"
+                                             onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)'"
+                                             onmouseout="this.style.backgroundColor='transparent'">
+                                        📝 Areas
+                                    </NavLink>
+                                </li>
+                                <!-- Opción:Campañas -->
+                                <li class="nav-item mb-1">
+                                    <NavLink class="nav-link text-dark w-100"
+                                             activeClass="active bg-danger text-white"
+                                             href="/campaña/"
+                                             style="transition: background-color 0.3s ease;"
+                                             onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)'"
+                                             onmouseout="this.style.backgroundColor='transparent'">
+                                        🚩 Campañas
+                                    </NavLink>
+                                </li>
                                 <!-- Opción: Estados -->
                                 <li class="nav-item mb-1">
                                     <NavLink class="nav-link text-dark w-100"
@@ -98,6 +163,18 @@
                                         🟢 Estados
                                     </NavLink>
                                 </li>
+                                <!-- Opción: Proveedores-->
+                                <li class="nav-item mb-1">
+                                    <NavLink class="nav-link text-dark w-100"
+                                             activeClass="active bg-danger text-white"
+                                             href="/proovedor/"
+                                             style="transition: background-color 0.3s ease;"
+                                             onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)'"
+                                             onmouseout="this.style.backgroundColor='transparent'">
+                                        📦 Proveedores
+                                    </NavLink>
+                                </li>
+                                <!-- Opción: Sedes -->
                                 <li class="nav-item mb-1">
                                     <NavLink class="nav-link text-dark w-100"
                                              activeClass="active bg-danger text-white"
@@ -105,7 +182,18 @@
                                              style="transition: background-color 0.3s ease;"
                                              onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)'"
                                              onmouseout="this.style.backgroundColor='transparent'">
-                                        prueba
+                                        🏢 Sedes
+                                    </NavLink>
+                                </li>
+                                <!-- Opción: Tipos dispositivos -->
+                                <li class="nav-item mb-1">
+                                    <NavLink class="nav-link text-dark w-100"
+                                             activeClass="active bg-danger text-white"
+                                             href="/mapa/"
+                                             style="transition: background-color 0.3s ease;"
+                                             onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)'"
+                                             onmouseout="this.style.backgroundColor='transparent'">
+                                        💻 Tipo de dispositivos
                                     </NavLink>
                                 </li>
                                 </ul>

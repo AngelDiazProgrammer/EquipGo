@@ -4,6 +4,7 @@
 using Application.Services.Visitantes;
 using Interface;
 using Interface.Services;
+using Interface.Services.Areas;
 using Interface.Services.Autenticacion;
 using Interface.Services.Equipos;
 using Interface.Services.Estados;
@@ -20,6 +21,7 @@ using OUT_APP_EQUIPGO.Components;
 using OUT_APP_EQUIPGO.Middlewares;
 using OUT_PERSISTENCE_EQUIPGO.Context;
 using OUT_PERSISTENCE_EQUIPGO.Hubs;
+using OUT_PERSISTENCE_EQUIPGO.Services.Areas;
 using OUT_PERSISTENCE_EQUIPGO.Services.Equipos;
 using OUT_PERSISTENCE_EQUIPGO.Services.Estados;
 using OUT_PERSISTENCE_EQUIPGO.Services.Proveedores;
@@ -54,6 +56,7 @@ builder.Services.AddHttpClient("API", client =>
 
 builder.Services.AddScoped<EquipGoDbContext>();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IAreasService, AreasService>();
 builder.Services.AddScoped<IEquipoService, EquipoService>();
 builder.Services.AddScoped<IUsuariosInformacionService, UsuariosInformacionService>();
 builder.Services.AddScoped<IEstadoService, EstadoService>();

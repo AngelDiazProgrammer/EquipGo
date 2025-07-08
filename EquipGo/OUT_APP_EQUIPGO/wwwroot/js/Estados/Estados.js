@@ -68,12 +68,12 @@ window.editarEstado = async function (id) {
 
 // Abrir modal eliminar
 let estadoIdAEliminar = null;
-window.abrirModalEliminar = function (id) {
-    equipoIdAEliminar = id;
+window.abrirModalEliminarEstado = function (id) {
+    estadoIdAEliminar = id;
 
-    const modalElement = document.getElementById('modalEliminarEquipo');
+    const modalElement = document.getElementById('modalEliminarEstado');
     if (!modalElement) {
-        console.error("❌ No se encontró el modal con ID 'modalEliminarEquipo'");
+        console.error("❌ No se encontró el modal con ID 'modalEliminarEstado'");
         return;
     }
 
@@ -85,36 +85,29 @@ window.abrirModalEliminar = function (id) {
     }
 };
 
-window.confirmarEliminarEquipo = async function () {
-    if (!equipoIdAEliminar) {
-        alert("❌ No hay equipo seleccionado para eliminar.");
-        return;
-    }
+window.confirmarEliminarEstado = async function () {
+    if (!estadoIdAEliminar) return;
 
     try {
-        const response = await fetch(`/api/equipos/admin/${equipoIdAEliminar}`, {
+        const response = await fetch(`/api/estados/admin/${estadoIdAEliminar}`, {
             method: 'DELETE'
         });
 
         if (response.ok) {
-            alert("✅ Equipo eliminado correctamente.");
-            equipoIdAEliminar = null;
+            alert("✅ Estado eliminado correctamente.");
+            estadoIdAEliminar = null;
 
-            const modalElement = document.getElementById('modalEliminarEquipo');
-            const modal = bootstrap.Modal.getInstance(modalElement);
-            if (modal) modal.hide();
+            const modal = bootstrap.Modal.getInstance(document.getElementById('modalEliminarEstado'));
+            modal.hide();
 
             setTimeout(() => {
-                DotNet.invokeMethodAsync('OUT_APP_EQUIPGO', 'RefrescarListaEquipos');
+                DotNet.invokeMethodAsync('OUT_APP_EQUIPGO', 'RefrescarListaEstados');
             }, 300);
-
         } else {
-            const error = await response.json();
-            alert("❌ Error al eliminar el equipo: " + (error.error || "Error desconocido."));
+            alert("❌ Error al eliminar el estado.");
         }
-
     } catch (error) {
-        console.error("❌ Error de red o servidor:", error);
-        alert("❌ Error de red o servidor al intentar eliminar el equipo.");
+        console.error(error);
+        alert("❌ Error de red o servidor.");
     }
 };
