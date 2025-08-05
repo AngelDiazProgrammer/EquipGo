@@ -7,4 +7,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\EquipGo.Agent.Application\EquipGo.Agent.Application.csproj" />
+    <ProjectReference Include="..\EquipGo.Agent.Shared\EquipGo.Agent.Shared.csproj" />
+  </ItemGroup>
+
 </Project>

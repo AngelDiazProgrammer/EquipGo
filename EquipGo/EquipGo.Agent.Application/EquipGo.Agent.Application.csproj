@@ -6,4 +6,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\EquipGo.Agent.Domain\EquipGo.Agent.Domain.csproj" />
+    <ProjectReference Include="..\EquipGo.Agent.Infrastructure\EquipGo.Agent.Infrastructure.csproj" />
+    <ProjectReference Include="..\EquipGo.Agent.Shared\EquipGo.Agent.Shared.csproj" />
+  </ItemGroup>
+
 </Project>
