@@ -57,6 +57,23 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Auth
             }
         }
 
+        private string passwordInputType = "password";
+        private string passwordIcon = "img/icons/eye.svg";
+
+        private void TogglePassword()
+        {
+            if (passwordInputType == "password")
+            {
+                passwordInputType = "text";
+                passwordIcon = "img/icons/eye-off.svg"; // icono tachado
+            }
+            else
+            {
+                passwordInputType = "password";
+                passwordIcon = "img/icons/eye.svg"; // icono normal
+            }
+        }
+
         public class LoginRespuesta
         {
             public string Mensaje { get; set; }
