@@ -15,4 +15,8 @@
     <ProjectReference Include="..\OUT_PERSISTENCE_EQUIPGO\OUT_PERSISTENCE_EQUIPGO.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\img\Fondos\" />
+  </ItemGroup>
+
 </Project>
