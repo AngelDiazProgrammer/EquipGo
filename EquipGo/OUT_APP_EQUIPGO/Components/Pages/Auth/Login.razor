@@ -432,4 +432,17 @@
     .justify-content-between, .btn-danger {
         all: unset;
     }
+
+    /* Quitar fondo azul en autocompletado (Chrome, Edge, etc.) */
+    input:-webkit-autofill {
+        -webkit-box-shadow: 0 0 0px 1000px #ededed inset !important; /* mismo color de tu fondo */
+        -webkit-text-fill-color: #89898c !important; /* mismo color de tu texto */
+        transition: background-color 9999s ease-in-out 0s;
+    }
+
+        input:-webkit-autofill:focus {
+            -webkit-box-shadow: 0 0 0px 1000px #ededed inset !important;
+            -webkit-text-fill-color: #89898c !important;
+        }
 </style>
+
