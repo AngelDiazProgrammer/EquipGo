@@ -89,6 +89,20 @@
     {
         "CustomAction"
         {
+            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_7C072ACBDAC349EA8F410BB4E2EBA693"
+            {
+            "Name" = "8:Resultado principal from EquipGoAgent (Active)"
+            "Condition" = "8:"
+            "Object" = "8:_CA18B242727C4FDE88EB4B6FBFA94A9D"
+            "FileType" = "3:2"
+            "InstallAction" = "3:1"
+            "Arguments" = "8:"
+            "EntryPoint" = "8:"
+            "Sequence" = "3:1"
+            "Identifier" = "8:_BDA54E5C_B42E_4E14_9E56_77E55F31D7EE"
+            "InstallerClass" = "11:TRUE"
+            "CustomActionData" = "8:"
+            }
         }
         "DefaultFeature"
         {
@@ -242,7 +256,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:EquipGo Agent"
         "ProductCode" = "8:{E2B9D2DA-B1AC-4C38-8EAA-FD7D7C68B87C}"
-        "PackageCode" = "8:{AA3B2C56-8404-479B-8F2D-270D322D205D}"
+        "PackageCode" = "8:{0D5DCE1E-E08B-40C6-BC87-1CA2DC1B201A}"
         "UpgradeCode" = "8:{5A42ACE2-38DB-4433-909A-9A43A2C16753}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
@@ -362,7 +376,7 @@
         }
         "Shortcut"
         {
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_1A8E84F233A04CF0AC3F095DB5B91D0C"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_3F81672107E04679AC4389C9957EA6EB"
             {
             "Name" = "8:EquipGo Agent"
             "Arguments" = "8:"
@@ -371,7 +385,7 @@
             "IconIndex" = "3:0"
             "Transitive" = "11:FALSE"
             "Target" = "8:_CA18B242727C4FDE88EB4B6FBFA94A9D"
-            "Folder" = "8:_736813C0E23F4F6DAD104AC0C21DF77D"
+            "Folder" = "8:_8E57C502C2A9410487BE2E8731823632"
             "WorkingFolder" = "8:_8E57C502C2A9410487BE2E8731823632"
             "Icon" = "8:"
             "Feature" = "8:"
@@ -385,7 +399,7 @@
             "IconIndex" = "3:0"
             "Transitive" = "11:FALSE"
             "Target" = "8:_CA18B242727C4FDE88EB4B6FBFA94A9D"
-            "Folder" = "8:_8E57C502C2A9410487BE2E8731823632"
+            "Folder" = "8:_736813C0E23F4F6DAD104AC0C21DF77D"
             "WorkingFolder" = "8:_8E57C502C2A9410487BE2E8731823632"
             "Icon" = "8:"
             "Feature" = "8:"

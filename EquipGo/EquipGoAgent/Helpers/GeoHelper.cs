@@ -18,7 +18,7 @@ namespace EquipGo.Agent
             try
             {
                 var watcher = new GeoCoordinateWatcher(GeoPositionAccuracy.High);
-                bool started = watcher.TryStart(false, TimeSpan.FromSeconds(10));
+                bool started = watcher.TryStart(false, TimeSpan.FromSeconds(30));
 
                 _logger.Log($"📡 GeoWatcher iniciado: {started}, Status={watcher.Status}");
 
