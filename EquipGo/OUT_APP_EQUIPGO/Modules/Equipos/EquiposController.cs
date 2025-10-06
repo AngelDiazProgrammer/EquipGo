@@ -1,4 +1,5 @@
 ﻿// Controllers/EquiposController.cs
+using Interface.Services.Active_Directory;
 using Interface.Services.Equipos;
 using Interface.Services.Estados;
 using Interface.Services.Proveedores;
@@ -18,8 +19,9 @@ public class EquiposController : ControllerBase
     private readonly ISedesService  _sedesService;
     private readonly ITipoDispositivosService _tipoDispositivosService;
     private readonly IProveedoresService _proveedoresService;
+    private readonly IActiveDirectoryService _activeDirectoryService;
 
-    public EquiposController(IEquipoService equipoService, IUsuariosInformacionService usuariosInformacionService, IEstadoService estadoService, ISedesService sedesService, ITipoDispositivosService tipoDispositivosService, IProveedoresService proveedoresService)
+    public EquiposController(IEquipoService equipoService, IUsuariosInformacionService usuariosInformacionService, IEstadoService estadoService, ISedesService sedesService, ITipoDispositivosService tipoDispositivosService, IProveedoresService proveedoresService, IActiveDirectoryService activeDirectoryService)
     {
         _equipoService = equipoService;
         _usuariosInformacionService = usuariosInformacionService;
@@ -27,6 +29,7 @@ public class EquiposController : ControllerBase
         _sedesService = sedesService;
         _tipoDispositivosService = tipoDispositivosService;
         _proveedoresService = proveedoresService;
+        _activeDirectoryService = activeDirectoryService;
     }
 
     [HttpPost("Admin")]
@@ -80,7 +83,7 @@ public class EquiposController : ControllerBase
     [HttpGet("admin/form-data")]
     public async Task<IActionResult> ObtenerFormData()
     {
-        var usuarios = await _usuariosInformacionService.ObtenerTodosLosUsuariosInformacionAsync();
+        var usuariosAD = await _activeDirectoryService.ObtenerUsuariosAsync();
         var estados = await _estadoService.ObtenerTodasAsync();
         var equiposPersonales = await _equipoService.ObtenerEquiposPersonalesAsync();
         var sedes = await _sedesService.ObtenerTodasAsync();
@@ -89,7 +92,7 @@ public class EquiposController : ControllerBase
 
         return Ok(new
         {
-            usuarios,
+            usuarios = usuariosAD,
             estados,
             equiposPersonales,
             sedes,

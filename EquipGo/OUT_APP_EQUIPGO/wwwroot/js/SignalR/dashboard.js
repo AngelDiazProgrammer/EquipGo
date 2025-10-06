@@ -17,6 +17,40 @@ connection.on("NuevaTransaccion", () => {
     actualizarConteosDashboard();
 });
 
+//Filtros dinamicos
+// Añade esto al inicio de tu archivo dashboard.js
+
+document.addEventListener('applyFilters', (event) => {
+    const { type, data } = event.detail;
+    console.log(`Evento de filtros recibido para tipo: ${type}`, data);
+
+    // Aquí puedes construir la URL de tu API con los filtros
+    // Ejemplo: /api/Transacciones/GetFiltradas?usuario=...&tipoTransaccion=...
+
+    let apiUrl = '';
+    if (type === 'corporativo') {
+        apiUrl = '/api/Transacciones/GetFiltradasCorporativo';
+    } else {
+        apiUrl = '/api/Transacciones/GetFiltradasVisitantes';
+    }
+
+    // Construir la query string a partir del objeto 'data'
+    const queryString = new URLSearchParams(data).toString();
+    if (queryString) {
+        apiUrl += `?${queryString}`;
+    }
+
+    // Llamar a tu API y actualizar la tabla correspondiente
+    fetch(apiUrl)
+        .then(response => response.json())
+        .then(transaccionesFiltradas => {
+            // Lógica para limpiar la tabla actual y llenarla con 'transaccionesFiltradas'
+            console.log("Datos filtrados recibidos:", transaccionesFiltradas);
+            // Ejemplo: actualizarTabla(type, transaccionesFiltradas);
+        })
+        .catch(error => console.error("Error al aplicar filtros:", error));
+});
+
 // Función para actualizar las tarjetas de conteo
 function actualizarConteosDashboard() {
     fetch("/api/Transacciones/GetConteosDashboard")
@@ -62,7 +96,7 @@ function agregarFilaNueva() {
             }, 3000);
 
             // Mantener máximo 13 filas
-            while (tbody.rows.length > 13) {
+            while (tbody.rows.length > 6) {
                 tbody.deleteRow(tbody.rows.length - 1);
             }
         })
@@ -109,7 +143,7 @@ function agregarFilaNuevaVisitante() {
             }, 3000);
 
             // Máximo 13 filas
-            while (tbody.rows.length > 13) {
+            while (tbody.rows.length > 6) {
                 tbody.deleteRow(tbody.rows.length - 1);
             }
         })

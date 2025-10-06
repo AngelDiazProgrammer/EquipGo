@@ -21,8 +21,6 @@ namespace Interface.Services.Equipos
         //Consultar visitante
         Task<RegistroVisitanteDto?> ConsultarVisitantePorDocumentoAsync(string numeroDocumento);
 
-
-
         //RegistrarEquipoNoCorporativo
         Task<List<TipoDocumento>> ObtenerTipoDocumentoAsync();
         Task<UsuariosInformacion?> ConsultarUsuarioPorDocumentoAsync(string documento);

@@ -2,8 +2,10 @@
 // 📌 Usings ordenados
 // ====================
 using Application.Services.Visitantes;
+using Infrastructure.Services;
 using Interface;
 using Interface.Services;
+using Interface.Services.Active_Directory;
 using Interface.Services.Areas;
 using Interface.Services.Autenticacion;
 using Interface.Services.Equipos;
@@ -56,6 +58,7 @@ builder.Services.AddHttpClient("API", client =>
 
 builder.Services.AddScoped<EquipGoDbContext>();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IActiveDirectoryService, ActiveDirectoryService>();
 builder.Services.AddScoped<IAreasService, AreasService>();
 builder.Services.AddScoped<IEquipoService, EquipoService>();
 builder.Services.AddScoped<IUsuariosInformacionService, UsuariosInformacionService>();

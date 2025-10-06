@@ -1,221 +1,229 @@
-﻿<nav class="navbar navbar-light flex-column align-items-start p-3 shadow-sm"
-     style="border-radius: 25px; padding: 20px; box-shadow: 0px 4px 6px rgba(0,0,0,0.1); background-color: rgba(255,255,255,0.95); height: 90%; width: 100%; max-width: 300px;">
+﻿<nav class="cerrar">
+    <div class="menu">
+        <!-- Logo principal -->
+        <div class="equipgo">
+            <a class="navbar-brand fs-4 fw-bold text-dark text-center"
+               style="font-family: 'Open Sans', sans-serif; font-weight: 700; font-size: 40px; line-height: 40px; margin: 0; padding: 0; text-decoration: none; color: #393e42;"
+               href="#">EquipGO</a>
+        </div>
 
-    <!-- Logo principal -->
-    <div style="width: 100%; text-align: center; border-bottom: 2px solid #ccc; padding-bottom: 4px; margin-bottom: 20px;">
-        <a class="navbar-brand fs-4 fw-bold text-dark text-center"
-           style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 700; font-size: 1.5rem; line-height: 40px; margin: 0; padding: 0;"
-           href="#">EquipGO</a>
+        <!-- Menú vertical principal -->
+        <div class="frame-parent">
+            <!-- Dashboard -->
+            <div class="user-wrapper">
+                <NavLink class="user d-flex align-items-center text-white"
+                         activeClass="active"
+                         href="/AdminDashboard"
+                         style="text-decoration: none; width: 100%;">
+                    <i class="bi bi-house-door-fill casa-icon"></i>
+                    <div class="usuario">
+                        <b class="cerrar-equipgo">Dashboard</b>
+                    </div>
+                </NavLink>
+            </div>
+
+            <!-- Submenús -->
+            <div class="submen">
+                <!-- Usuarios -->
+                <div class="usuarios menu-item">
+                    <!-- <-- CAMBIO: Añadida clase "menu-item" -->
+                    <div class="menu-usuarios">
+                        <div class="user">
+                            <div class="cerrar-usuario">
+                                <div class="icono">
+                                    <i class="bi bi-people-fill vector-icon"></i>
+                                </div>
+                            </div>
+                            <div class="usuario">
+                                <b class="cerrar-equipgo">Usuarios</b>
+                            </div>
+                        </div>
+                        <i class="bi bi-caret-down-fill flecha-icon"></i>
+                    </div>
+                    <div class="user2">
+                        <div class="administrar">
+                            <NavLink class="administrar-equipos d-flex align-items-center"
+                                     activeClass="active"
+                                     href="/usuarios/"
+                                     style="text-decoration: none; color: #393e42;">
+                                <i class="bi bi-person-gear me-2"></i> Gestión de usuarios
+                            </NavLink>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Equipos -->
+                <div class="equipos menu-item" id="equiposContainer">
+                    <!-- <-- CAMBIO: Añadida clase "menu-item" -->
+                    <div class="menu-equipo">
+                        <div class="user">
+                            <i class="bi bi-laptop-fill computador-icon"></i>
+                            <div class="usuario">
+                                <b class="cerrar-equipgo">Equipos</b>
+                            </div>
+                        </div>
+                        <i class="bi bi-caret-down-fill flecha-icon"></i>
+                    </div>
+                    <div class="equipos-es">
+                        <div class="administrar">
+                            <NavLink class="administrar-equipos d-flex align-items-center"
+                                     activeClass="active"
+                                     href="/equipos/"
+                                     style="text-decoration: none; color: #393e42;">
+                                <i class="bi bi-laptop me-2"></i> Administrar equipos
+                            </NavLink>
+                        </div>
+                        <div class="administrar">
+                            <NavLink class="administrar-equipos d-flex align-items-center"
+                                     activeClass="active"
+                                     href="/monitoreo/"
+                                     style="text-decoration: none; color: #393e42;">
+                                <i class="bi bi-activity me-2"></i> Módulo de monitoreo
+                            </NavLink>
+                        </div>
+                        <div class="administrar">
+                            <NavLink class="administrar-equipos d-flex align-items-center"
+                                     activeClass="active"
+                                     href="/alertas/"
+                                     style="text-decoration: none; color: #393e42;">
+                                <i class="bi bi-bell me-2"></i> Alertas
+                            </NavLink>
+                        </div>
+                        <div class="administrar">
+                            <NavLink class="administrar-equipos d-flex align-items-center"
+                                     activeClass="active"
+                                     href="/historial/"
+                                     style="text-decoration: none; color: #393e42;">
+                                <i class="bi bi-clock-history me-2"></i> Historial
+                            </NavLink>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Smart (Administración) -->
+                <div class="equipos menu-item" id="smartContainer">
+                    <!-- <-- CAMBIO: Añadida clase "menu-item" -->
+                    <div class="menu-equipo">
+                        <div class="user">
+                            <i class="bi bi-gear-fill computador-icon"></i>
+                            <div class="usuario">
+                                <b class="cerrar-equipgo">Smart</b>
+                            </div>
+                        </div>
+                        <i class="bi bi-caret-down-fill flecha-icon"></i>
+                    </div>
+                    <div class="equipos-es">
+                        <div class="administrar">
+                            <NavLink class="administrar-equipos d-flex align-items-center"
+                                     activeClass="active"
+                                     href="/areas/"
+                                     style="text-decoration: none; color: #393e42;">
+                                <i class="bi bi-diagram-3 me-2"></i> Áreas
+                            </NavLink>
+                        </div>
+                        <div class="administrar">
+                            <NavLink class="administrar-equipos d-flex align-items-center"
+                                     activeClass="active"
+                                     href="/campaña/"
+                                     style="text-decoration: none; color: #393e42;">
+                                <i class="bi bi-megaphone me-2"></i> Campañas
+                            </NavLink>
+                        </div>
+                        <div class="administrar">
+                            <NavLink class="administrar-equipos d-flex align-items-center"
+                                     activeClass="active"
+                                     href="/estados/"
+                                     style="text-decoration: none; color: #393e42;">
+                                <i class="bi bi-toggle-on me-2"></i> Estados
+                            </NavLink>
+                        </div>
+                        <div class="administrar">
+                            <NavLink class="administrar-equipos d-flex align-items-center"
+                                     activeClass="active"
+                                     href="/proovedor/"
+                                     style="text-decoration: none; color: #393e42;">
+                                <i class="bi bi-truck me-2"></i> Proveedores
+                            </NavLink>
+                        </div>
+                        <div class="administrar">
+                            <NavLink class="administrar-equipos d-flex align-items-center"
+                                     activeClass="active"
+                                     href="/mapa/"
+                                     style="text-decoration: none; color: #393e42;">
+                                <i class="bi bi-building me-2"></i> Sedes
+                            </NavLink>
+                        </div>
+                        <div class="administrar">
+                            <NavLink class="administrar-equipos d-flex align-items-center"
+                                     activeClass="active"
+                                     href="/tipos/"
+                                     style="text-decoration: none; color: #393e42;">
+                                <i class="bi bi-cpu me-2"></i> Tipo de dispositivos
+                            </NavLink>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Menú vertical principal -->
-    <ul class="nav nav-pills flex-column w-100">
-
-        <!-- Enlace al Dashboard -->
-        <li class="nav-item w-100 mb-2">
-            <NavLink class="nav-link w-100 d-flex align-items-center text-dark"
-                     activeClass="active bg-danger text-white"
-                     href="/AdminDashboard"
-                     style="transition: background-color 0.3s ease;"
-                     onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)'"
-                     onmouseout="this.style.backgroundColor='transparent'">
-                <i class="bi bi-house-door-fill me-2"></i> <span style="color: black;">📊 Dashboard</span>
-            </NavLink>
-        </li>
-
-        <!-- Menú desplegable "Administrar" -->
-        <li class="nav-item w-100 mb-2">
-            <!-- Botón para desplegar el colapsable -->
-            <a class="nav-link text-dark w-100 d-flex align-items-center justify-content-between"
-               style="transition: background-color 0.3s ease;"
-               onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)'"
-               onmouseout="this.style.backgroundColor='transparent'"
-               data-bs-toggle="collapse"
-               href="#collapseAdministrar"
-               role="button"
-               aria-expanded="false"
-               aria-controls="collapseAdministrar">
-                <span><i class="bi bi-laptop me-2"></i>🗃️ Administrar</span>
-                <i class="bi bi-caret-down-fill"></i>
-            </a>
-
-            <!-- Contenedor colapsable para los elementos de "Administrar" -->
-            <div class="collapse ps-3 ms-3" id="collapseAdministrar" style="padding: 8px 0;">
-                <ul class="nav flex-column">
-
-                    <!-- Submenú desplegable "Equipos" -->
-                    <li class="nav-item mb-1">
-                        <!-- Botón para desplegar submenu Equipos -->
-                        <a class="nav-link text-dark w-100 d-flex align-items-center justify-content-between"
-                           data-bs-toggle="collapse"
-                           href="#collapseEquipos"
-                           role="button"
-                           aria-expanded="false"
-                           aria-controls="collapseEquipos"
-                           style="transition: background-color 0.3s ease;"
-                           onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)'"
-                           onmouseout="this.style.backgroundColor='transparent'">
-                            💻 Equipos
-                            <i class="bi bi-caret-down-fill"></i>
-                        </a>
-                        <!-- Contenedor colapsable del submenú Equipos -->
-                        <div class="collapse ps-3" id="collapseEquipos">
-                            <ul class="nav flex-column">
-                                <!-- Opción: Equipos -->
-                                <li class="nav-item mb-1">
-                                    <NavLink class="nav-link text-dark w-100"
-                                             activeClass="active bg-danger text-white"
-                                             href="/equipos/"
-                                             style="transition: background-color 0.3s ease;"
-                                             onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)'"
-                                             onmouseout="this.style.backgroundColor='transparent'">
-                                        👩🏽‍💻 Corporativos
-                                    </NavLink>
-                                </li>
-                            </ul>
-                        </div>
-                        <!--li Cierre desplegable usuarios-->
-                    </li>
-
-                     <!-- Submenú desplegable "Usuarios" -->
-                    <li class="nav-item mb-1">
-                        <!-- Botón para desplegar submenu Usuarios -->
-                        <a class="nav-link text-dark w-100 d-flex align-items-center justify-content-between"
-                           data-bs-toggle="collapse"
-                           href="#collapseUsuarios"
-                           role="button"
-                           aria-expanded="false"
-                           aria-controls="collapseUsuarios"
-                           style="transition: background-color 0.3s ease;"
-                           onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)'"
-                           onmouseout="this.style.backgroundColor='transparent'">
-                            👥 Usuarios
-                            <i class="bi bi-caret-down-fill"></i>
-                        </a>
-                        <!-- Contenedor colapsable del submenú Smart -->
-                        <div class="collapse ps-3" id="collapseUsuarios">
-                            <ul class="nav flex-column">
-                        <!-- Opción: Usuarios -->
-                    <li class="nav-item mb-1">
-                        <NavLink class="nav-link text-dark w-100"
-                                 activeClass="active bg-danger text-white"
-                                 href="/usuarios/"
-                                 style="transition: background-color 0.3s ease;"
-                                 onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)'"
-                                 onmouseout="this.style.backgroundColor='transparent'">
-                            👨🏻‍💼 Empleados
-                        </NavLink>
-                    </li>
-                    </ul>
-                    </div>                    
-                   <!--li Cierre desplegable usuarios-->
-                        </li>
-
-                    <!-- Submenú desplegable "Smart" -->
-                    <li class="nav-item mb-1">
-                        <!-- Botón para desplegar submenu Smart -->
-                        <a class="nav-link text-dark w-100 d-flex align-items-center justify-content-between"
-                           data-bs-toggle="collapse"
-                           href="#collapseSmart"
-                           role="button"
-                           aria-expanded="false"
-                           aria-controls="collapseSmart"
-                           style="transition: background-color 0.3s ease;"
-                           onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)'"
-                           onmouseout="this.style.backgroundColor='transparent'">
-                            ⚙️ Smart
-                            <i class="bi bi-caret-down-fill"></i>
-                        </a>
-
-                        <!-- Contenedor colapsable del submenú Smart -->
-                        <div class="collapse ps-3" id="collapseSmart">
-                            <ul class="nav flex-column">
-                                <!-- Opción: Areas -->
-                                <li class="nav-item mb-1">
-                                    <NavLink class="nav-link text-dark w-100"
-                                             activeClass="active bg-danger text-white"
-                                             href="/areas/"
-                                             style="transition: background-color 0.3s ease;"
-                                             onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)'"
-                                             onmouseout="this.style.backgroundColor='transparent'">
-                                        📝 Areas
-                                    </NavLink>
-                                </li>
-                                <!-- Opción:Campañas -->
-                                <li class="nav-item mb-1">
-                                    <NavLink class="nav-link text-dark w-100"
-                                             activeClass="active bg-danger text-white"
-                                             href="/campaña/"
-                                             style="transition: background-color 0.3s ease;"
-                                             onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)'"
-                                             onmouseout="this.style.backgroundColor='transparent'">
-                                        🚩 Campañas
-                                    </NavLink>
-                                </li>
-                                <!-- Opción: Estados -->
-                                <li class="nav-item mb-1">
-                                    <NavLink class="nav-link text-dark w-100"
-                                             activeClass="active bg-danger text-white"
-                                             href="/estados/"
-                                             style="transition: background-color 0.3s ease;"
-                                             onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)'"
-                                             onmouseout="this.style.backgroundColor='transparent'">
-                                        🟢 Estados
-                                    </NavLink>
-                                </li>
-                                <!-- Opción: Proveedores-->
-                                <li class="nav-item mb-1">
-                                    <NavLink class="nav-link text-dark w-100"
-                                             activeClass="active bg-danger text-white"
-                                             href="/proovedor/"
-                                             style="transition: background-color 0.3s ease;"
-                                             onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)'"
-                                             onmouseout="this.style.backgroundColor='transparent'">
-                                        📦 Proveedores
-                                    </NavLink>
-                                </li>
-                                <!-- Opción: Sedes -->
-                                <li class="nav-item mb-1">
-                                    <NavLink class="nav-link text-dark w-100"
-                                             activeClass="active bg-danger text-white"
-                                             href="/mapa/"
-                                             style="transition: background-color 0.3s ease;"
-                                             onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)'"
-                                             onmouseout="this.style.backgroundColor='transparent'">
-                                        🏢 Sedes
-                                    </NavLink>
-                                </li>
-                                <!-- Opción: Tipos dispositivos -->
-                                <li class="nav-item mb-1">
-                                    <NavLink class="nav-link text-dark w-100"
-                                             activeClass="active bg-danger text-white"
-                                             href="/mapa/"
-                                             style="transition: background-color 0.3s ease;"
-                                             onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)'"
-                                             onmouseout="this.style.backgroundColor='transparent'">
-                                        💻 Tipo de dispositivos
-                                    </NavLink>
-                                </li>
-                                </ul>
-                        </div>
-                    </li>
-
-                </ul>
-            </div>
-        </li>
-    </ul>
-
     <!-- Botón para cerrar sesión -->
-    <div class="mt-auto w-100">
-        <button class="nav-link text-dark w-100 d-flex align-items-center mt-3 btn btn-link"
+    <div class="user-container">
+        <button class="user4 d-flex align-items-center btn btn-link"
                 @onclick="CerrarSesion"
-                style="transition: background-color 0.3s ease;"
-                onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)'"
-                onmouseout="this.style.backgroundColor='transparent'">
-            <i class="bi bi-box-arrow-left me-2"></i> Cerrar sesión
+                style="text-decoration: none; color: #393e42;">
+            <i class="bi bi-box-arrow-left salir-icon"></i>
+            <div class="usuario">
+                <b class="cerrar-equipgo">Cerrar sesión</b>
+            </div>
         </button>
     </div>
 </nav>
+
+<script>
+    window.initMenu = function() {
+        // Selecciona todos los elementos del menú principal que tienen submenús
+        const menuItems = document.querySelectorAll('.menu-item');
+
+        menuItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                const clickedItem = e.currentTarget;
+
+                // Encuentra el submenú y la flecha del elemento clicado
+                const submenu = clickedItem.querySelector('.equipos-es, .user2');
+                const arrow = clickedItem.querySelector('.flecha-icon');
+
+                // --- LÓGICA DEL ACORDEÓN ---
+                // Recorre todos los demás elementos del menú
+                menuItems.forEach(otherItem => {
+                    // Si el otro elemento no es el que se ha clicado...
+                    if (otherItem !== clickedItem) {
+                        const otherSubmenu = otherItem.querySelector('.equipos-es, .user2');
+                        const otherArrow = otherItem.querySelector('.flecha-icon');
+
+                        // ...cierra su submenú si estaba abierto
+                        if (otherSubmenu && otherSubmenu.style.display === 'flex') {
+                            otherSubmenu.style.display = 'none';
+                            otherArrow.style.transform = 'rotate(0deg)';
+                        }
+                    }
+                });
+                // --- FIN DE LA LÓGICA DEL ACORDEÓN ---
+
+                // --- LÓGICA ORIGINAL PARA ABRIR/CERRAR EL MENÚ CLICADO ---
+                if (submenu.style.display === 'flex') {
+                    // Si ya estaba abierto, lo cierra
+                    submenu.style.display = 'none';
+                    arrow.style.transform = 'rotate(0deg)';
+                } else {
+                    // Si estaba cerrado, lo abre
+                    submenu.style.display = 'flex';
+                    arrow.style.transform = 'rotate(180deg)';
+                }
+            });
+        });
+    }
+</script>
 
 @code {
     [Inject] public IJSRuntime JS { get; set; }
@@ -232,6 +240,14 @@
         catch (Exception ex)
         {
             Console.WriteLine($"Error al cerrar sesión: {ex.Message}");
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("initMenu");
         }
     }
 }

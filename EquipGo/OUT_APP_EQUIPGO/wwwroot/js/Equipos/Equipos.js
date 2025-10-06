@@ -1,4 +1,8 @@
-﻿window.guardarEquipo = async function () {
+﻿// 🧠 Cache global para usuarios del Active Directory
+window._usuariosCache = null;
+
+// 🧩 Guardar o actualizar equipo
+window.guardarEquipo = async function () {
     const form = document.getElementById('formCrearEquipo');
     const equipoId = form.getAttribute('data-id'); // puede ser null o string
 
@@ -21,9 +25,7 @@
         versionSoftware: document.getElementById('versionSoftware').value
     };
 
-    const url = equipoId
-        ? `/api/equipos/admin/${equipoId}`
-        : `/api/equipos/admin`;
+    const url = equipoId ? `/api/equipos/admin/${equipoId}` : `/api/equipos/admin`;
     const method = equipoId ? 'PUT' : 'POST';
 
     try {
@@ -60,14 +62,13 @@
     }
 };
 
+// 🧩 Abrir modal de edición (modo rápido)
 window.abrirModalEditar = async function (idEquipo) {
     try {
         const response = await fetch(`/api/equipos/${idEquipo}`);
         if (!response.ok) throw new Error("No se pudo obtener el equipo");
-
         const equipo = await response.json();
 
-        // Llenar los campos del modal
         document.getElementById('editarId').value = equipo.id;
         document.getElementById('editarMarca').value = equipo.marca || "";
         document.getElementById('editarModelo').value = equipo.modelo || "";
@@ -87,7 +88,6 @@ window.abrirModalEditar = async function (idEquipo) {
         document.getElementById('editarTipoDispositivo').value = equipo.idTipoDispositivo || "";
         document.getElementById('editarProveedor').value = equipo.idProveedor || "";
 
-        // Mostrar modal
         const modal = new bootstrap.Modal(document.getElementById('modalEditarEquipo'));
         modal.show();
     } catch (error) {
@@ -96,15 +96,14 @@ window.abrirModalEditar = async function (idEquipo) {
     }
 };
 
+// 🧩 Editar equipo (carga completa)
 window.editarEquipo = async function (id) {
     try {
-        await cargarSelects(); 
+        await cargarSelects();
         const response = await fetch(`/api/equipos/${id}`);
         if (!response.ok) throw new Error("No se pudo obtener el equipo");
-
         const equipo = await response.json();
 
-        // Llenar los campos del modal
         document.getElementById('marca').value = equipo.marca || "";
         document.getElementById('modelo').value = equipo.modelo || "";
         document.getElementById('serial').value = equipo.serial || "";
@@ -121,7 +120,6 @@ window.editarEquipo = async function (id) {
         document.getElementById('macEquipo').value = equipo.macEquipo || "";
         document.getElementById('versionSoftware').value = equipo.versionSoftware || "";
 
-        // Guardar el ID en un atributo
         document.getElementById('formCrearEquipo').setAttribute('data-id', id);
 
         setTimeout(() => {
@@ -133,7 +131,6 @@ window.editarEquipo = async function (id) {
             document.getElementById('proveedor').tomselect.setValue(equipo.idProveedor);
         }, 100);
 
-        // Mostrar modal
         const modal = new bootstrap.Modal(document.getElementById('modalCrearEquipo'));
         modal.show();
     } catch (error) {
@@ -142,94 +139,99 @@ window.editarEquipo = async function (id) {
     }
 };
 
+// ⚙️ Cargar selects optimizado con caché y carga no bloqueante
 window.cargarSelects = async function () {
     try {
         const response = await fetch('/api/equipos/admin/form-data');
         if (!response.ok) throw new Error('Error al cargar datos del formulario');
         const data = await response.json();
 
+        if (!window._usuariosCache && data.usuarios?.length) {
+            window._usuariosCache = data.usuarios;
+        }
+
         const selects = [
-            { id: 'usuarioInfo', list: data.usuarios, value: 'id', text: item => `${item.nombres} ${item.apellidos}` },
+            { id: 'usuarioInfo', list: window._usuariosCache || data.usuarios, value: 'usuario', text: item => `${item.nombreCompleto} (${item.correo || item.usuario})` },
             { id: 'estado', list: data.estados, value: 'id', text: item => item.nombreEstado },
             { id: 'equipoPersonal', list: data.equiposPersonales, value: 'id', text: item => item.nombrePersonal },
             { id: 'sede', list: data.sedes, value: 'id', text: item => item.nombreSede },
             { id: 'tipoDispositivo', list: data.tiposDispositivo, value: 'id', text: item => item.nombreTipo },
             { id: 'proveedor', list: data.proveedores, value: 'id', text: item => item.nombreProveedor }
         ];
+
         for (const { id, list, value, text } of selects) {
             const select = document.getElementById(id);
             if (!select) continue;
-            select.innerHTML = '';
-            list.forEach(item => {
-                const option = document.createElement('option');
-                option.value = item[value];
-                option.text = text(item);
-                select.appendChild(option);
-            });
 
-            if (!select.tomselect) {
-                new TomSelect(select, {
-                    placeholder: 'Buscar...',
-                    maxOptions: 500,
-                    allowEmptyOption: true,
-                    sortField: { field: "text", direction: "asc" }
+            select.innerHTML = '<option>Cargando...</option>';
+
+            requestAnimationFrame(() => {
+                select.innerHTML = '';
+                list.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = id === 'usuarioInfo' ? item.usuario : item[value];
+                    option.text = id === 'usuarioInfo'
+                        ? `${item.nombreCompleto} (${item.correo || item.usuario})`
+                        : text(item);
+                    select.appendChild(option);
                 });
-            }
+
+                if (!select.tomselect) {
+                    new TomSelect(select, {
+                        placeholder: 'Buscar...',
+                        maxOptions: 500,
+                        allowEmptyOption: true,
+                        sortField: { field: "text", direction: "asc" },
+                        searchField: ['text', 'value'],
+                        score: function (search) {
+                            const normalize = str => str
+                                .toLowerCase()
+                                .normalize("NFD")
+                                .replace(/[\u0300-\u036f]/g, "");
+                            const words = normalize(search).split(/\s+/).filter(Boolean);
+                            return function (item) {
+                                const text = normalize(item.text);
+                                return words.every(word => text.includes(word)) ? 1 : 0;
+                            };
+                        }
+                    });
+                }
+            });
         }
     } catch (error) {
         console.error('❌ Error en cargarSelects:', error);
     }
 };
 
-window.llenarSelect = function (selectId, lista, valueField, textField) {
-    const select = document.getElementById(selectId);
-    if (!select) {
-        console.error(`Select no encontrado: ${selectId}`);
-        return;
+// 🧩 Precargar selects (solo se ejecuta una vez al inicio)
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        await window.cargarSelects();
+        console.log("✅ Datos precargados en caché");
+    } catch (e) {
+        console.warn("⚠️ No se pudo precargar selects:", e);
     }
-    select.innerHTML = '';
-    lista.forEach(item => {
-        const option = document.createElement('option');
-        option.value = item[valueField];
-        if (selectId === 'usuarioInfo') {
-            option.text = `${item.nombres} ${item.apellidos}`;
-        } else {
-            option.text = item[textField];
-        }
-        select.appendChild(option);
-    });
-};
+});
 
+// 🗑️ Manejo de eliminación de equipos
 let equipoIdAEliminar = null;
 
 window.abrirModalEliminar = function (id) {
-    equipoIdAEliminar = id; // se guarda el ID aquí correctamente
-
+    equipoIdAEliminar = id;
     const modalElement = document.getElementById('modalEliminarEquipo');
-    if (!modalElement) {
-        console.error("❌ No se encontró el modal con ID 'modalEliminarEquipo'");
-        return;
-    }
-
-    const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
-    modal.show();
+    if (!modalElement) return console.error("❌ No se encontró el modal 'modalEliminarEquipo'");
+    bootstrap.Modal.getOrCreateInstance(modalElement).show();
 };
 
 window.confirmarEliminarEquipo = async function () {
     if (!equipoIdAEliminar) return;
 
     try {
-        const response = await fetch(`/api/equipos/admin/${equipoIdAEliminar}`, {
-            method: 'DELETE'
-        });
-
+        const response = await fetch(`/api/equipos/admin/${equipoIdAEliminar}`, { method: 'DELETE' });
         if (response.ok) {
             alert("✅ Equipo eliminado correctamente.");
             equipoIdAEliminar = null;
-
-            const modal = bootstrap.Modal.getInstance(document.getElementById('modalEliminarEquipo'));
-            modal.hide();
-
+            bootstrap.Modal.getInstance(document.getElementById('modalEliminarEquipo')).hide();
             setTimeout(() => {
                 DotNet.invokeMethodAsync('OUT_OS_APP.EQUIPGO', 'RefrescarListaEquipos');
             }, 300);
@@ -241,5 +243,3 @@ window.confirmarEliminarEquipo = async function () {
         alert("❌ Error de red o servidor.");
     }
 };
-
-

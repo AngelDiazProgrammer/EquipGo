@@ -1,50 +1,124 @@
-﻿/* Sidebar vertical */
-.navbar {
-    background-color: #FFFFFF; /* Fondo blanco */
-    width: 250px;
-    min-height: 100vh;
-    padding: 20px 0;
-    border-right: 1px solid #E0E0E0;
+﻿/* =============================================
+   ESTILOS PARA LA BARRA LATERAL (SOBREESCRIBIENDO BOOTSTRAP)
+   ============================================= */
+
+/* --- Contenedor Principal de la Barra Lateral --- */
+/*.navbar-light {
+    width: 295px;
+    max-width: 300px;*/ /* Respeta tu max-width */
+    /*height: 90vh;*/ /* Respeta tu altura */
+    /*box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 25px;
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 20px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-}
+    position: sticky;*/ /* Mantiene la barra visible al hacer scroll */
+    /*top: 0;
+}*/
 
-/* Logo o nombre de la app */
-.navbar-brand {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #E9002B; /* Rojo corporativo */
-    margin-bottom: 20px;
-    text-decoration: none;
-}
-
-/* Links de navegación */
-.nav-link {
-    color: #555555; /* Gris oscuro */
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    padding: 12px 20px;
+/* --- Logo --- */
+/*.navbar-brand {
     width: 100%;
-    border-radius: 8px;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    font-weight: 500;
-}
+    text-align: center;
+    border-bottom: 2px solid #ccc;
+    padding-bottom: 4px;
+    margin-bottom: 20px;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    line-height: 40px;
+    margin: 0;
+    padding: 0;
+    color: #393e42;*/ /* Color del texto del logo original */
+/*}*/
 
-    /* Íconos */
-    .nav-link span {
-        margin-right: 10px;
-        font-size: 1.2rem;
+/* --- Contenedor del Menú Principal --- */
+/*.nav-pills {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;*/ /* Hace que el menú ocupe el espacio disponible */
+/*}*/
+
+    /* --- Elementos de la Lista Principal (<li>) --- */
+    /*.nav-pills .nav-item {
+        width: 100%;
+        margin-bottom: 8px;*/ /* Espacio entre elementos */
+    /*}*/
+
+    /* --- Enlaces Principales (Dashboard, Administrar) --- */
+    /*.nav-pills .nav-link {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        padding: 10px 15px;*/ /* Padding interno */
+        /*border-radius: 10px;
+        color: #393e42;*/ /* Color de texto por defecto */
+        /*background-color: transparent;
+        transition: background-color 0.3s ease, color 0.3s ease;
+        text-decoration: none;
+        font-size: 16px;
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }*/
+
+        /* --- Estado Activo (Dashboard) --- */
+        /*.nav-pills .nav-link.active {
+            background-color: #ea0029;*/ /* Rojo corporativo del diseño original */
+            /*color: #fff;
+        }*/
+
+        /* --- Efecto Hover para enlaces principales --- */
+        /*.nav-pills .nav-link:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+            color: #393e42;
+        }*/
+
+    /* --- Contenedor de Submenús (collapse) --- */
+    /*.nav-pills .collapse {
+        padding-left: 20px;*/ /* Indentación para submenús */
+        /*padding-top: 8px;
+        padding-bottom: 8px;
+        border-left: 2px solid #89898c;*/ /* Borde izquierdo del diseño original */
+        /*margin-left: 10px;*/ /* Espacio entre el borde y el texto */
+    /*}*/
+
+        /* --- Enlaces de Submenús --- */
+        /*.nav-pills .collapse .nav-link {
+            padding: 8px 12px;
+            color: #393e42;
+            background-color: transparent;
+            border-radius: 0;
+            font-size: 15px;
+            transition: background-color 0.3s ease;
+        }
+
+            .nav-pills .collapse .nav-link:hover {
+                background-color: rgba(0, 0, 0, 0.05);
+            }*/
+
+    /* --- Botón Cerrar Sesión --- */
+    /*.nav-pills .btn-link {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        margin-top: auto;*/ /* Empuja el botón hacia abajo */
+        /*padding: 10px 15px;
+        color: #393e42;
+        text-decoration: none;
+        font-size: 16px;
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        transition: background-color 0.3s ease;
     }
 
-    /* Link activo */
-    .nav-link.active {
-        background-color: #E9002B; /* Fondo rojo para activo */
-        color: #FFFFFF !important;
-    }
+        .nav-pills .btn-link:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+            text-decoration: none;
+        }*/
 
-    /* Hover */
-    .nav-link:hover {
-        background-color: rgba(233, 0, 43, 0.1);
-    }
+        /* --- Iconos (Bootstrap Icons) --- */
+        /*.nav-pills .nav-link i,
+        .nav-pills .btn-link i {
+            margin-right: 8px;*/ /* Espacio entre icono y texto */
+            /*font-size: 1.1em;
+        }*/

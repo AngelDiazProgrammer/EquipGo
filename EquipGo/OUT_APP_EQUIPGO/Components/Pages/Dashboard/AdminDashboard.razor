@@ -1,134 +1,375 @@
 ﻿@page "/AdminDashboard"
+@using System.Collections.Generic
+@inject IJSRuntime JS
+
 <PageTitle>AdminDashboard</PageTitle>
 
-<div class="equipos-container">
+<div class="frame-container">
     <!-- Encabezado -->
-    <div style="
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-        border-bottom: 2px solid #ccc;
-        padding-bottom: 4px;
-        flex-wrap: wrap;">
-        <h4 style="
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            font-weight: 700;
-            font-size: 1.5rem;
-            line-height: 40px;
-            margin: 0;
-            padding: 0;
-            color: #000;">
-            Dashboard
-        </h4>
-        <img src="img/logoOutsourcing.png" alt="Logo" style="height: 40px; margin-top: 10px;" />
+    <div class="dashboard-parent">
+        <b class="dashboard-equipgo">Dashboard</b>
+        <div class="logo-os">
+            <img class="dashboard-vector-icon" alt="Logo" src="img/logoOutsourcing.png" />
+        </div>
     </div>
 
     <!-- Contadores superiores dinámicos -->
-    <div class="dashboard-counters" style="
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    margin-bottom: 20px;">
-
-        <!-- Total Hoy -->
-        <div style="
-        flex: 1;
-        background-color: #000;
-        color: #fff;
-        border-radius: 12px;
-        padding: 20px;
-        text-align: center;
-        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);
-        min-width: 220px;">
-            <h4 id="totalHoy" style="margin: 0; font-size: 24px;">0</h4>
-            <p>Transacciones Totales Hoy</p>
+    <div class="info">
+        <div class="card-registros">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" /></svg>
+            <div class="datos"><b class="b">@TotalHoy</b><b class="transacciones-de-hoy">Transacciones de Hoy</b></div>
         </div>
-
-        <!-- Transacciones Normales -->
-        <div style="
-        flex: 1;
-        background-color: #E9002B;
-        color: #fff;
-        border-radius: 12px;
-        padding: 20px;
-        text-align: center;
-        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);
-        min-width: 220px;">
-            <h4 id="totalNormales" style="margin: 0; font-size: 24px;">0</h4>
-            <p>Transacciones Normales</p>
+        <div class="dashboard-card-registros">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" /></svg>
+            <div class="dashboard-datos"><b class="b">@TotalNormales</b><b class="transacciones-de-hoy">Transacciones Internas</b></div>
         </div>
-
-        <!-- Transacciones Visitantes -->
-        <div style="
-        flex: 1;
-        background-color: #008080;
-        color: #fff;
-        border-radius: 12px;
-        padding: 20px;
-        text-align: center;
-        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);
-        min-width: 220px;">
-            <h4 id="totalVisitantes" style="margin: 0; font-size: 24px;">0</h4>
-            <p>Transacciones Visitantes</p>
+        <div class="card-alerta">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" /></svg>
+            <div class="dashboard-datos"><b class="b">@TotalVisitantes</b><b class="transacciones-de-hoy">Transacciones de Visitantes</b></div>
         </div>
     </div>
 
-    <!-- Filtros superiores -->
-    <div class="dashboard-filters" style="
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-        margin-bottom: 20px;">
-        <input type="text" placeholder="Asignado"
-               style="flex: 1; min-width: 220px; padding: 10px; border: 1px solid #ccc; border-radius: 8px;">
-        <input type="text" placeholder="Número de serie"
-               style="flex: 1; min-width: 220px; padding: 10px; border: 1px solid #ccc; border-radius: 8px;">
-        <select style="flex: 1; min-width: 220px; padding: 10px; border: 1px solid #ccc; border-radius: 8px;">
-            <option value="">Todas las Alertas</option>
-            <option value="alta">Prioridad alta</option>
-            <option value="media">Prioridad media</option>
-            <option value="baja">Prioridad baja</option>
-        </select>
-    </div>
-    <!-- Contenedor horizontal de las dos tablas -->
-    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
-
-        <!-- Tabla dinámica corporativos -->
-        <div class="table-wrapper" style="flex: 1; border: 1px solid #E9002B; border-radius: 10px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5); overflow-x: auto; min-width: 600px;">
-            <table id="tablaDashboard" style="width: 100%;">
-                <thead>
-                    <tr>
-                        <th>Usuario</th>
-                        <th>Código de Barras</th>
-                        <th>Tipo Transacción</th>
-                        <th>Guarda Aprobador</th>
-                        <th>Sede OS</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+    <div class="contenido">
+        <div class="cambiar-seleccin">
+            <div class="btn-cambio">
+                <div class="corporativo active-tab" id="tabCorporativo"><b class="dashboard-equipgo">Corporativo</b></div>
+                <div class="visitante" id="tabVisitante"><b class="dashboard-equipgo">Visitante</b></div>
+            </div>
         </div>
 
-        <!-- Tabla dinámica visitantes -->
-        <div class="table-wrapper" style="flex: 1; border: 1px solid #E9002B; border-radius: 10px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5); overflow-x: auto; min-width: 600px;">
-            <table id="tablaVisitantes" style="width: 100%;">
-                <thead>
-                    <tr>
-                        <th>Nombre Visitante</th>
-                        <th>Marca</th>
-                        <th>Tipo Transacción</th>
-                        <th>Guarda Aprobador</th>
-                        <th>Sede</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+        <!-- SECCIÓN CORPORATIVO -->
+        <div class="corporativo2" id="corporativoSection">
+            <div class="subtitulo"><b class="corporativo3">Corporativo</b></div>
+            <div class="dashboard-filtros">
+                <div class="dashboard-filtro">
+                    <div class="buscar-nombre">
+                        <label>Usuario</label>
+                        <div class="frame-div">
+                            <input type="text" class="placeholder filter-input" placeholder="Buscar" name="usuario" />
+                        </div>
+                    </div>
+                    <div class="buscar-nombre">
+                        <label>Código de barras</label>
+                        <div class="frame-div">
+                            <input type="text" class="placeholder filter-input" placeholder="Buscar" name="codigoBarras" />
+                        </div>
+                    </div>
+                    <div class="transaccin">
+                        <label>Tipo Transacción</label>
+                        <div class="dashboard-contenido">
+                            <select class="placeholder filter-input" name="tipoTransaccion">
+                                <option value="">Todos</option>
+                                <option value="entrada">Entrada</option>
+                                <option value="salida">Salida</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="buscar-nombre">
+                        <label>Guarda Aprobador</label>
+                        <div class="frame-div">
+                            <input type="text" class="placeholder filter-input" placeholder="Buscar" name="guardaAprobador" />
+                        </div>
+                    </div>
+                </div>
+                <div class="botonera">
+                    <button class="botn3">Limpiar Filtros</button>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table id="tablaDashboard" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Código de Barras</th>
+                            <th>Tipo Transacción</th>
+                            <th>Guarda Aprobador</th>
+                            <th>Sede OS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in PaginatedCorporativoItems)
+                        {
+                            <tr>
+                                <td>@item.Usuario</td>
+                                <td>@item.CodigoBarras</td>
+                                <td>@item.TipoTransaccion</td>
+                                <td>@item.GuardaAprobador</td>
+                                <td>@item.SedeOS</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="pagination-controls d-flex justify-content-between align-items-center p-2">
+                <button class="btn btn-sm btn-outline-primary" @onclick="GoToPreviousCorporativoPage" disabled="@(CurrentCorporativoPage == 1)">Anterior</button>
+                <span>Página @CurrentCorporativoPage de @TotalCorporativoPages</span>
+                <button class="btn btn-sm btn-outline-primary" @onclick="GoToNextCorporativoPage" disabled="@(CurrentCorporativoPage == TotalCorporativoPages)">Siguiente</button>
+            </div>
         </div>
 
+        <!-- SECCIÓN VISITANTES -->
+        <div class="visitante2" id="visitanteSection" style="display: none;">
+            <div class="dashboard-subtitulo"><b class="corporativo3">Visitante</b></div>
+            <div class="dashboard-filtros">
+                <div class="dashboard-filtro">
+                    <div class="buscar-nombre">
+                        <label>Nombre Visitante</label>
+                        <div class="frame-div">
+                            <input type="text" class="placeholder filter-input" placeholder="Buscar" name="nombreVisitante" />
+                        </div>
+                    </div>
+                    <div class="buscar-nombre">
+                        <label>Marca</label>
+                        <div class="frame-div">
+                            <input type="text" class="placeholder filter-input" placeholder="Buscar" name="marca" />
+                        </div>
+                    </div>
+                    <div class="transaccin">
+                        <label>Tipo Transacción</label>
+                        <div class="dashboard-contenido">
+                            <select class="placeholder filter-input" name="tipoTransaccion">
+                                <option value="">Todos</option>
+                                <option value="entrada">Entrada</option>
+                                <option value="salida">Salida</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="buscar-nombre">
+                        <label>Aprobado por</label>
+                        <div class="frame-div">
+                            <input type="text" class="placeholder filter-input" placeholder="Buscar" name="aprobadoPor" />
+                        </div>
+                    </div>
+                </div>
+                <div class="botonera">
+                    <button class="botn3">Limpiar Filtros</button>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table id="tablaVisitantes" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Nombre Visitante</th>
+                            <th>Marca</th>
+                            <th>Tipo Transacción</th>
+                            <th>Guarda Aprobador</th>
+                            <th>Sede</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in PaginatedVisitanteItems)
+                        {
+                            <tr>
+                                <td>@item.NombreVisitante</td>
+                                <td>@item.Marca</td>
+                                <td>@item.TipoTransaccion</td>
+                                <td>@item.AprobadoPor</td>
+                                <td>@item.Sede</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="pagination-controls d-flex justify-content-between align-items-center p-2">
+                <button class="btn btn-sm btn-outline-primary" @onclick="GoToPreviousVisitantePage" disabled="@(CurrentVisitantePage == 1)">Anterior</button>
+                <span>Página @CurrentVisitantePage de @TotalVisitantePages</span>
+                <button class="btn btn-sm btn-outline-primary" @onclick="GoToNextVisitantePage" disabled="@(CurrentVisitantePage == TotalVisitantePages)">Siguiente</button>
+            </div>
+        </div>
     </div>
 </div>
 
 
-@inject IJSRuntime JS
+@code {
+    // --- MODELOS DE DATOS ---
+    public class TransaccionCorporativo { public string Usuario { get; set; } public string CodigoBarras { get; set; } public string TipoTransaccion { get; set; } public string GuardaAprobador { get; set; } public string SedeOS { get; set; } }
+    public class TransaccionVisitante { public string NombreVisitante { get; set; } public string Marca { get; set; } public string TipoTransaccion { get; set; } public string AprobadoPor { get; set; } public string Sede { get; set; } }
 
+    // --- ESTADO Y DATOS ---
+    private const int PageSize = 6; // Tamaño de página fijo a 6
+
+    // Datos completos (simulados, aquí vendría SignalR)
+    private List<TransaccionCorporativo> AllCorporativoItems { get; set; } = new();
+    private List<TransaccionVisitante> AllVisitanteItems { get; set; } = new();
+
+    // Datos filtrados
+    private List<TransaccionCorporativo> FilteredCorporativoItems { get; set; } = new();
+    private List<TransaccionVisitante> FilteredVisitanteItems { get; set; } = new();
+
+    // Estado de paginación
+    private int CurrentCorporativoPage { get; set; } = 1;
+    private int CurrentVisitantePage { get; set; } = 1;
+
+    // --- PROPIEDADES CALCULADAS PARA LA PAGINACIÓN ---
+    private List<TransaccionCorporativo> PaginatedCorporativoItems => FilteredCorporativoItems.Skip((CurrentCorporativoPage - 1) * PageSize).Take(PageSize).ToList();
+    private int TotalCorporativoPages => (int)Math.Ceiling((double)FilteredCorporativoItems.Count / PageSize);
+
+    private List<TransaccionVisitante> PaginatedVisitanteItems => FilteredVisitanteItems.Skip((CurrentVisitantePage - 1) * PageSize).Take(PageSize).ToList();
+    private int TotalVisitantePages => (int)Math.Ceiling((double)FilteredVisitanteItems.Count / PageSize);
+
+    // --- CONTADORES ---
+    private int TotalHoy => AllCorporativoItems.Count + AllVisitanteItems.Count;
+    private int TotalNormales => AllCorporativoItems.Count;
+    private int TotalVisitantes => AllVisitanteItems.Count;
+
+    // --- MÉTODOS DE CICLO DE VIDA ---
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            //LoadSampleData(); // Carga datos de ejemplo
+            FilteredCorporativoItems = AllCorporativoItems;
+            FilteredVisitanteItems = AllVisitanteItems;
+
+            // Inicializa el JS y le pasa una referencia a este componente para que pueda llamar a métodos C#
+            await JS.InvokeVoidAsync("initDashboardUI", DotNetObjectReference.Create(this));
+        }
+    }
+
+    // --- MÉTODOS DE PAGINACIÓN ---
+    private void GoToPreviousCorporativoPage() { if (CurrentCorporativoPage > 1) CurrentCorporativoPage--; StateHasChanged(); }
+    private void GoToNextCorporativoPage() { if (CurrentCorporativoPage < TotalCorporativoPages) CurrentCorporativoPage++; StateHasChanged(); }
+    private void GoToPreviousVisitantePage() { if (CurrentVisitantePage > 1) CurrentVisitantePage--; StateHasChanged(); }
+    private void GoToNextVisitantePage() { if (CurrentVisitantePage < TotalVisitantePages) CurrentVisitantePage++; StateHasChanged(); }
+
+    // --- MÉTODO QUE SERÁ LLAMADO DESDE JAVASCRIPT PARA APLICAR FILTROS ---
+    [JSInvokable]
+    public void ApplyFiltersFromJS(string filterType, Dictionary<string, string> filters)
+    {
+        if (filterType == "corporativo")
+        {
+            FilteredCorporativoItems = AllCorporativoItems.Where(item =>
+                (string.IsNullOrEmpty(filters["usuario"]) || item.Usuario.Contains(filters["usuario"], StringComparison.OrdinalIgnoreCase)) &&
+                (string.IsNullOrEmpty(filters["codigoBarras"]) || item.CodigoBarras.Contains(filters["codigoBarras"], StringComparison.OrdinalIgnoreCase)) &&
+                (string.IsNullOrEmpty(filters["tipoTransaccion"]) || item.TipoTransaccion.Equals(filters["tipoTransaccion"], StringComparison.OrdinalIgnoreCase)) &&
+                (string.IsNullOrEmpty(filters["guardaAprobador"]) || item.GuardaAprobador.Contains(filters["guardaAprobador"], StringComparison.OrdinalIgnoreCase))
+            ).ToList();
+            CurrentCorporativoPage = 1; // Resetear a la primera página al filtrar
+        }
+        else if (filterType == "visitante")
+        {
+            FilteredVisitanteItems = AllVisitanteItems.Where(item =>
+                (string.IsNullOrEmpty(filters["nombreVisitante"]) || item.NombreVisitante.Contains(filters["nombreVisitante"], StringComparison.OrdinalIgnoreCase)) &&
+                (string.IsNullOrEmpty(filters["marca"]) || item.Marca.Contains(filters["marca"], StringComparison.OrdinalIgnoreCase)) &&
+                (string.IsNullOrEmpty(filters["tipoTransaccion"]) || item.TipoTransaccion.Equals(filters["tipoTransaccion"], StringComparison.OrdinalIgnoreCase)) &&
+                (string.IsNullOrEmpty(filters["aprobadoPor"]) || item.AprobadoPor.Contains(filters["aprobadoPor"], StringComparison.OrdinalIgnoreCase))
+            ).ToList();
+            CurrentVisitantePage = 1; // Resetear a la primera página al filtrar
+        }
+        StateHasChanged(); // Vuelve a renderizar el componente con los datos filtrados
+    }
+
+    #region Datos Hardcoreados Tablas dinamicas Dashboard (DEBUG)
+    //      --- MÉTODO DE CARGA DE DATOS DE EJEMPLO ---
+    //     private void LoadSampleData()
+    //     {
+    //         var rand = new Random();
+    //         AllCorporativoItems = Enumerable.Range(1, 50).Select(i => new TransaccionCorporativo
+    //         {
+    //             Usuario = $"Usuario {i}",
+    //             CodigoBarras = $"CB-{rand.Next(1000, 9999)}",
+    //             TipoTransaccion = rand.Next(0, 2) == 0 ? "entrada" : "salida",
+    //             GuardaAprobador = $"Guarda {rand.Next(1, 5)}",
+    //             SedeOS = $"Sede {rand.Next(1, 4)}"
+    //         }).ToList();
+
+    //         AllVisitanteItems = Enumerable.Range(1, 30).Select(i => new TransaccionVisitante
+    //         {
+    //             NombreVisitante = $"Visitante {i}",
+    //             Marca = $"Marca {rand.Next(1, 10)}",
+    //             TipoTransaccion = rand.Next(0, 2) == 0 ? "entrada" : "salida",
+    //             AprobadoPor = $"Guarda {rand.Next(1, 5)}",
+    //             Sede = $"Sede {rand.Next(1, 4)}"
+    //         }).ToList();
+    //     }
+    #endregion
+
+}
+
+
+<!--JAVASCRIPT (TUS FILTROS, PERO CONECTADOS A C#)-->
+
+<script>
+    function initDashboardUI(dotNetHelper) {
+        console.log("UI del Dashboard inicializada.");
+
+        const corporativoBtn = document.getElementById('tabCorporativo');
+        const visitanteBtn = document.getElementById('tabVisitante');
+        const corporativoSection = document.getElementById('corporativoSection');
+        const visitanteSection = document.getElementById('visitanteSection');
+
+        if (corporativoBtn && visitanteBtn && corporativoSection && visitanteSection) {
+            corporativoBtn.addEventListener('click', () => showTab('corporativo'));
+            visitanteBtn.addEventListener('click', () => showTab('visitante'));
+        }
+
+        function showTab(tab) {
+            if (tab === 'corporativo') {
+                corporativoSection.style.display = 'flex';
+                visitanteSection.style.display = 'none';
+                corporativoBtn.classList.add('active-tab');
+                visitanteBtn.classList.remove('active-tab');
+            } else {
+                corporativoSection.style.display = 'none';
+                visitanteSection.style.display = 'flex';
+                visitanteBtn.classList.add('active-tab');
+                corporativoBtn.classList.remove('active-tab');
+            }
+            // Al cambiar de pestaña, aplicar filtros de la nueva pestaña activa
+            triggerFilterUpdate();
+        }
+
+        let debounceTimer;
+
+        // CAMBIO CLAVE: Esta función ahora llama a C# en lugar de solo disparar un evento
+        function triggerFilterUpdate() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                const activeSection = document.querySelector('.corporativo2:not([style*="display: none"]), .visitante2:not([style*="display: none"])');
+                if (!activeSection) return;
+
+                const filterType = activeSection.id.includes('corporativo') ? 'corporativo' : 'visitante';
+                const filters = {};
+                activeSection.querySelectorAll('.filter-input').forEach(el => {
+                    if (el.name) {
+                        filters[el.name] = el.value;
+                    }
+                });
+                console.log(`Llamando a C# para aplicar filtros para ${filterType}:`, filters);
+
+                // Aquí está la magia: Llamamos al método [JSInvokable] de C#
+                dotNetHelper.invokeMethodAsync('ApplyFiltersFromJS', filterType, filters);
+            }, 300);
+        }
+
+        // Añadir listeners a todos los campos de filtro
+        document.addEventListener('input', (e) => {
+            if (e.target.classList.contains('filter-input')) {
+                triggerFilterUpdate();
+            }
+        });
+
+        document.addEventListener('change', (e) => {
+            if (e.target.classList.contains('filter-input')) {
+                triggerFilterUpdate();
+            }
+        });
+
+        // Listener para el botón "Limpiar Filtros"
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.botn3')) {
+                const filterContainer = e.target.closest('.dashboard-filtros');
+                filterContainer.querySelectorAll('.filter-input').forEach(input => {
+                    input.value = '';
+                });
+                // Dispara la actualización después de limpiar
+                triggerFilterUpdate();
+                console.log("Filtros limpiados.");
+            }
+        });
+    }
+</script>

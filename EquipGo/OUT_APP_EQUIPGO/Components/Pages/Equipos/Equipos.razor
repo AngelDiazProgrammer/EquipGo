@@ -1,176 +1,160 @@
 ﻿@page "/equipos"
 @using OUT_OS_APP.EQUIPGO.DTO.DTOs.Equipo
 
-<div class="equipos-container">
+<div class="frame-container">
     <!-- Encabezado -->
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #ccc; padding-bottom: 4px;">
-        <h4 style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 700; font-size: 1.5rem; line-height: 40px; margin: 0; padding: 0; color: #000;">Dashboard</h4>
-        <img src="img/logoOutsourcing.png" alt="Logo" style="height: 40px;" />
+    <div class="dashboard-parent">
+        <h4 class="dashboard-equipgo">Equipos</h4>
+        <div class="logo-os">
+            <img src="img/logoOutsourcing.png" alt="Logo" class="dashboard-vector-icon" />
+        </div>
     </div>
 
     <!-- Contadores -->
-    <div class="row g-3 mb-4">
-        <div class="col-12 col-md-4">
-            <div class="bg-dark text-white rounded p-3 text-center shadow">
-                <h4 class="mb-0">150</h4>
-                <p>Equipos Registrados</p>
+    <div class="info">
+        <div class="card-registros">
+            <div class="datos">
+                <span class="b">150</span>
+                <span class="transacciones-de-hoy">Equipos Registrados</span>
             </div>
         </div>
-        <div class="col-12 col-md-4">
-            <div class="bg-secondary text-white rounded p-3 text-center shadow">
-                <h4 class="mb-0">90</h4>
-                <p>Equipos Personales</p>
+        <div class="dashboard-card-registros">
+            <div class="datos">
+                <span class="b">90</span>
+                <span class="transacciones-de-hoy">Equipos Personales</span>
             </div>
         </div>
-        <div class="col-12 col-md-4">
-            <div class="text-white rounded p-3 text-center shadow" style="background-color: #E9002B;">
-                <h4 class="mb-0">20</h4>
-                <p>Equipos Corporativos</p>
+        <div class="card-alerta">
+            <div class="datos">
+                <span class="b">20</span>
+                <span class="transacciones-de-hoy">Equipos Corporativos</span>
             </div>
         </div>
     </div>
 
     <!-- Filtros -->
-    <div class="bg-white p-3 rounded shadow mb-4" style="border: 1px solid #E9002B;">
-        <div class="row g-3">
-            <div class="col-12 col-md-3">
-                <label class="form-label">Marca</label>
-                <input type="text" class="form-control" @bind="filtroMarca" placeholder="Filtrar por marca..." />
+    <div class="dashboard-filtros">
+        <div class="dashboard-filtro">
+            <div class="buscar-nombre">
+                <label>Marca</label>
+                <div class="frame-div">
+                    <input type="text" class="placeholder" @bind="filtroMarca" placeholder="Filtrar por marca..." />
+                </div>
             </div>
-            <div class="col-12 col-md-3">
-                <label class="form-label">Modelo</label>
-                <input type="text" class="form-control" @bind="filtroModelo" placeholder="Filtrar por modelo..." />
+            <div class="buscar-nombre">
+                <label>Modelo</label>
+                <div class="frame-div">
+                    <input type="text" class="placeholder" @bind="filtroModelo" placeholder="Filtrar por modelo..." />
+                </div>
             </div>
-            <div class="col-12 col-md-3">
-                <label class="form-label">Serial</label>
-                <input type="text" class="form-control" @bind="filtroSerial" placeholder="Filtrar por serial..." />
+            <div class="buscar-nombre">
+                <label>Serial</label>
+                <div class="frame-div">
+                    <input type="text" class="placeholder" @bind="filtroSerial" placeholder="Filtrar por serial..." />
+                </div>
             </div>
-            <div class="col-12 col-md-3">
-                <label class="form-label">Estado</label>
-                <input type="text" class="form-control" @bind="filtroEstado" placeholder="Filtrar por estado..." />
+            <div class="buscar-nombre">
+                <label>Estado</label>
+                <div class="frame-div">
+                    <input type="text" class="placeholder" @bind="filtroEstado" placeholder="Filtrar por estado..." />
+                </div>
             </div>
         </div>
-        <div class="mt-3">
-            <button class="btn btn-danger" @onclick="Filtrar">Aplicar Filtros</button>
-            <button class="btn btn-secondary ms-2" @onclick="LimpiarFiltros">Limpiar</button>
+        <div class="botonera">
+            <button class="botn3" @onclick="Filtrar">Aplicar Filtros</button>
+            <button class="botn3" style="background-color: #E0E0E0; color:#292929;" @onclick="LimpiarFiltros">Limpiar</button>
         </div>
     </div>
 
     <!-- Botón para añadir equipo -->
-    <div class="mb-3 d-flex justify-content-end">
-        <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalCrearEquipo" onclick="window.cargarSelects()">
-    <i class="bi bi-plus-lg"></i> Añadir Equipo
-</button>
+    <div class="botonera">
+        <button class="botn3" data-bs-toggle="modal" data-bs-target="#modalCrearEquipo" onclick="window.cargarSelects()">
+            <i class="bi bi-plus-lg"></i> Añadir Equipo
+        </button>
     </div>
-<!-- Modal para crear equipo -->
-<div class="modal fade" id="modalCrearEquipo" tabindex="-1" aria-labelledby="modalCrearEquipoLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl"> <!-- Cambié a xl para más espacio -->
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalCrearEquipoLabel">Registrar Equipo</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-            </div>
-            <div class="modal-body">
-                <form id="formCrearEquipo">
-                    <div class="row g-3">
-                        <!-- Columna izquierda -->
-                        <div class="col-md-6">
-                            <!-- Marca -->
-                            <div>
-                                <label for="marca" class="form-label">Marca</label>
-                                <input type="text" class="form-control" id="marca" name="marca" required />
-                            </div>
-                            <!-- Modelo -->
-                            <div>
-                                <label for="modelo" class="form-label">Modelo</label>
-                                <input type="text" class="form-control" id="modelo" name="modelo" required />
-                            </div>
-                            <!-- Serial -->
-                            <div>
-                                <label for="serial" class="form-label">Serial</label>
-                                <input type="text" class="form-control" id="serial" name="serial" />
-                            </div>
-                            <!-- Código de Barras -->
-                            <div>
-                                <label for="codigoBarras" class="form-label">Código de Barras</label>
-                                <input type="text" class="form-control" id="codigoBarras" name="codigoBarras" />
-                            </div>
-                            <!-- Ubicación -->
-                            <div>
-                                <label for="ubicacion" class="form-label">Ubicación</label>
-                                <input type="text" class="form-control" id="ubicacion" name="ubicacion" />
-                            </div>
-                            <!-- Usuario -->
-                            <div>
-                                <label for="usuarioInfo" class="form-label">Asignado a</label>
-                                <select class="form-select" id="usuarioInfo" name="usuarioInfo" required>Sin asignar</select>
-                            </div>
-                            <!-- Estado -->
-                            <div>
-                                <label for="estado" class="form-label">Estado</label>
-                                <select class="form-select" id="estado" name="estado">Sin asignar</select>
-                            </div>
-                        </div>
 
-                        <!-- Columna derecha -->
-                        <div class="col-md-6">
-                            <!-- Equipo Personal -->
-                            <div>
-                                <label for="equipoPersonal" class="form-label">Equipo Personal</label>
-                                <select class="form-select" id="equipoPersonal" name="equipoPersonal">Sin asignar</select>
+    <!-- Modal Crear Equipo -->
+    <div class="modal fade" id="modalCrearEquipo" tabindex="-1" aria-labelledby="modalCrearEquipoLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content frame-container">
+                <div class="dashboard-parent">
+                    <h5 class="dashboard-equipgo">Registrar Equipo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body contenido">
+                    <form id="formCrearEquipo">
+                        <div class="row g-3">
+                            <!-- Columna izquierda -->
+                            <div class="col-md-6">
+                                <label>Marca</label>
+                                <input type="text" class="frame-div placeholder" id="marca" name="marca" required />
+
+                                <label>Modelo</label>
+                                <input type="text" class="frame-div placeholder" id="modelo" name="modelo" required />
+
+                                <label>Serial</label>
+                                <input type="text" class="frame-div placeholder" id="serial" name="serial" />
+
+                                <label>Código de Barras</label>
+                                <input type="text" class="frame-div placeholder" id="codigoBarras" name="codigoBarras" />
+
+                                <label>Ubicación</label>
+                                <input type="text" class="frame-div placeholder" id="ubicacion" name="ubicacion" />
+
+                                <label>Asignado a</label>
+                                <label>Asignado a</label>
+                                <select id="usuarioInfo" name="usuarioInfo" class="frame-div placeholder"
+                                        @bind="UsuarioSeleccionado">
+                                    <option value="">-- Selecciona un usuario --</option>
+                                    @foreach (var usuario in UsuariosAD)
+                                    {
+                                        <option value="@usuario.Usuario">@usuario.NombreCompleto (@usuario.Correo)</option>
+                                    }
+                                </select>
+
+                                <label>Estado</label>
+                                <select class="frame-div placeholder" id="estado" name="estado"></select>
                             </div>
-                            <!-- Sede -->
-                            <div>
-                                <label for="sede" class="form-label">Sede</label>
-                                <select class="form-select" id="sede" name="sede">Sin asignar</select>
-                            </div>
-                            <!-- Tipo Dispositivo -->
-                            <div>
-                                <label for="tipoDispositivo" class="form-label">Tipo de Dispositivo</label>
-                                <select class="form-select" id="tipoDispositivo" name="tipoDispositivo">Sin asignar</select>
-                            </div>
-                            <!-- Proveedor -->
-                            <div>
-                                <label for="proveedor" class="form-label">Proveedor</label>
-                                <select class="form-select" id="proveedor" name="proveedor">Sin asignar</select>
-                            </div>
-                            <!-- Latitud -->
-                            <div>
-                                <label for="latitud" class="form-label">Latitud</label>
-                                <input type="number" step="any" class="form-control" id="latitud" name="latitud" />
-                            </div>
-                            <!-- Longitud -->
-                            <div>
-                                <label for="longitud" class="form-label">Longitud</label>
-                                <input type="number" step="any" class="form-control" id="longitud" name="longitud" />
-                            </div>
-                            <!-- Sistema Operativo -->
-                            <div>
-                                <label for="sistemaOperativo" class="form-label">Sistema Operativo</label>
-                                <input type="text" class="form-control" id="sistemaOperativo" name="sistemaOperativo" />
-                            </div>
-                            <!-- MAC Equipo -->
-                            <div>
-                                <label for="macEquipo" class="form-label">MAC Equipo</label>
-                                <input type="text" class="form-control" id="macEquipo" name="macEquipo" />
-                            </div>
-                            <!-- Versión Software -->
-                            <div>
-                                <label for="versionSoftware" class="form-label">Versión Software</label>
-                                <input type="text" class="form-control" id="versionSoftware" name="versionSoftware" />
+
+                            <!-- Columna derecha -->
+                            <div class="col-md-6">
+                                <label>Equipo Personal</label>
+                                <select class="frame-div placeholder" id="equipoPersonal" name="equipoPersonal"></select>
+
+                                <label>Sede</label>
+                                <select class="frame-div placeholder" id="sede" name="sede"></select>
+
+                                <label>Tipo de Dispositivo</label>
+                                <select class="frame-div placeholder" id="tipoDispositivo" name="tipoDispositivo"></select>
+
+                                <label>Proveedor</label>
+                                <select class="frame-div placeholder" id="proveedor" name="proveedor"></select>
+
+                                <label>Latitud</label>
+                                <input type="number" step="any" class="frame-div placeholder" id="latitud" name="latitud" />
+
+                                <label>Longitud</label>
+                                <input type="number" step="any" class="frame-div placeholder" id="longitud" name="longitud" />
+
+                                <label>Sistema Operativo</label>
+                                <input type="text" class="frame-div placeholder" id="sistemaOperativo" name="sistemaOperativo" />
+
+                                <label>MAC Equipo</label>
+                                <input type="text" class="frame-div placeholder" id="macEquipo" name="macEquipo" />
+
+                                <label>Versión Software</label>
+                                <input type="text" class="frame-div placeholder" id="versionSoftware" name="versionSoftware" />
                             </div>
                         </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" onclick="guardarEquipo()">Guardar</button>
+                    </form>
+                </div>
+                <div class="botonera">
+                    <button class="botn3" style="background-color:#E0E0E0; color:#292929;" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="botn3" onclick="guardarEquipo()">Guardar</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
-
 
     <!-- Tabla -->
     @if (equiposFiltrados == null)
@@ -183,15 +167,15 @@
     }
     else
     {
-        <div class="table-wrapper" style="border: 1px solid #E9002B; border-radius: 10px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);">
-            <table>
+        <div class="table-wrapper">
+            <table id="tablaDashboard">
                 <thead>
                     <tr>
                         <th>Marca</th>
-        <th>Modelo</th>
-        <th>Serial</th>
-        <th>Asset</th>
-        <th>Acciones</th>
+                        <th>Modelo</th>
+                        <th>Serial</th>
+                        <th>Asset</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -199,196 +183,156 @@
                     {
                         <tr>
                             <td>@equipo.Marca</td>
-            <td>@equipo.Modelo</td>
-            <td>@equipo.Serial</td>
-            <td>@equipo.CodigoBarras</td>
-            <td>
-                <button class="btn btn-sm btn-outline-info" @onclick="@(() => MostrarDetallesEquipo(equipo.Id))">
-                    🔍
-                </button>
-<button class="btn btn-sm btn-outline-primary"
-            onclick="editarEquipo(@equipo.Id)">
-        ✏️
-    </button>
-    <!--
-    <button class="btn btn-danger btn-sm" onclick="abrirModalEliminar(@equipo.Id)">
-    🗑️
-</button>
--->
-</td>
+                            <td>@equipo.Modelo</td>
+                            <td>@equipo.Serial</td>
+                            <td>@equipo.CodigoBarras</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-info" @onclick="@(() => MostrarDetallesEquipo(equipo.Id))">🔍</button>
+                                <button class="btn btn-sm btn-outline-primary" onclick="editarEquipo(@equipo.Id)">✏️</button>
+                            </td>
                         </tr>
                     }
                 </tbody>
             </table>
         </div>
 
-        <!-- Modal para editar equipo -->
-<div class="modal fade" id="modalEditarEquipo" tabindex="-1" aria-labelledby="modalEditarEquipoLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="modalEditarEquipoLabel">Editar Equipo</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-      </div>
-      <div class="modal-body">
-        <form id="formEditarEquipo">
-          <input type="hidden" id="editarId" />
-
-          <div class="row">
-            <!-- Columna izquierda -->
-            <div class="col-md-6">
-              <div class="mb-3">
-                <label for="editarMarca" class="form-label">Marca</label>
-                <input type="text" class="form-control" id="editarMarca" />
-              </div>
-              <div class="mb-3">
-                <label for="editarModelo" class="form-label">Modelo</label>
-                <input type="text" class="form-control" id="editarModelo" />
-              </div>
-              <div class="mb-3">
-                <label for="editarSerial" class="form-label">Serial</label>
-                <input type="text" class="form-control" id="editarSerial" />
-              </div>
-              <div class="mb-3">
-                <label for="editarCodigoBarras" class="form-label">Código de Barras</label>
-                <input type="text" class="form-control" id="editarCodigoBarras" />
-              </div>
-              <div class="mb-3">
-                <label for="editarUbicacion" class="form-label">Ubicación</label>
-                <input type="text" class="form-control" id="editarUbicacion" />
-              </div>
-              <div class="mb-3">
-                <label for="editarUsuarioInfo" class="form-label">Asignado a</label>
-                <select class="form-select" id="editarUsuarioInfo"></select>
-              </div>
-              <div class="mb-3">
-                <label for="editarEstado" class="form-label">Estado</label>
-                <select class="form-select" id="editarEstado"></select>
-              </div>
-            </div>
-
-            <!-- Columna derecha -->
-            <div class="col-md-6">
-              <div class="mb-3">
-                <label for="editarEquipoPersonal" class="form-label">Equipo Personal</label>
-                <select class="form-select" id="editarEquipoPersonal"></select>
-              </div>
-              <div class="mb-3">
-                <label for="editarSede" class="form-label">Sede</label>
-                <select class="form-select" id="editarSede"></select>
-              </div>
-              <div class="mb-3">
-                <label for="editarTipoDispositivo" class="form-label">Tipo de Dispositivo</label>
-                <select class="form-select" id="editarTipoDispositivo"></select>
-              </div>
-              <!-- Proveedor -->
-               <div>
-               <label for="proveedor" class="form-label">Proveedor</label>
-               <select class="form-select" id="proveedor" name="proveedor">Sin asignar</select>
-               </div>
-              <div class="mb-3">
-                <label for="editarLatitud" class="form-label">Latitud</label>
-                <input type="number" step="any" class="form-control" id="editarLatitud" />
-              </div>
-              <div class="mb-3">
-                <label for="editarLongitud" class="form-label">Longitud</label>
-                <input type="number" step="any" class="form-control" id="editarLongitud" />
-              </div>
-              <div class="mb-3">
-                <label for="editarSistemaOperativo" class="form-label">Sistema Operativo</label>
-                <input type="text" class="form-control" id="editarSistemaOperativo" />
-              </div>
-              <div class="mb-3">
-                <label for="editarMacEquipo" class="form-label">MAC Equipo</label>
-                <input type="text" class="form-control" id="editarMacEquipo" />
-              </div>
-              <div class="mb-3">
-                <label for="editarVersionSoftware" class="form-label">Versión Software</label>
-                <input type="text" class="form-control" id="editarVersionSoftware" />
-              </div>
-            </div>
-          </div>
-        </form>
-      </div>
-
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-        <button type="button" class="btn btn-primary" onclick="guardarCambiosEquipo()">Guardar Cambios</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<!--modal eliminar equipo
-
-<div class="modal fade" id="modalEliminarEquipo" tabindex="-1" aria-labelledby="modalEliminarEquipoLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="modalEliminarEquipoLabel">Confirmar eliminación</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-      </div>
-      <div class="modal-body">
-        ¿Estás seguro de que deseas eliminar este equipo?
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-        <button type="button" class="btn btn-danger" onclick="confirmarEliminarEquipo()">Eliminar</button>
-      </div>
-    </div>
-  </div>
-</div>
-
--->
-
-
-<!--Modal para ver informacion del equipo-->
-<div class="modal fade" id="modalDetallesEquipo" tabindex="-1" aria-labelledby="modalDetallesEquipoLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content border-danger">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title" id="modalDetallesEquipoLabel">Detalles del Equipo</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-            </div>
-            <div class="modal-body">
-                @if (equipoSeleccionado != null)
-                {
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <p><strong>Marca:</strong> @equipoSeleccionado.Marca</p>
-                            <p><strong>Modelo:</strong> @equipoSeleccionado.Modelo</p>
-                            <p><strong>Serial:</strong> @equipoSeleccionado.Serial</p>
-                            <p><strong>Código de Barras:</strong> @equipoSeleccionado.CodigoBarras</p>
-                            <p><strong>Tipo de equipo:</strong> @equipoSeleccionado.EquipoPersonalNombre</p>
-                            <p><strong>Tipo de dispositivo::</strong> @equipoSeleccionado.TipoDispositivoNombre</p>
-                            <p><strong>Proveedor::</strong>@equipoSeleccionado.ProveedorNombre</p>
-                            <p><strong>Estado:</strong> @equipoSeleccionado.EstadoNombre</p>
-                            <p><strong>Usuario:</strong> @equipoSeleccionado.UsuarioNombreCompleto</p>
-                            <p><strong>Ubicación:</strong> @equipoSeleccionado.Ubicacion</p>
-                            <p><strong>Sistema Operativo:</strong> @equipoSeleccionado.SistemaOperativo</p>
-                        </div>
-                        <div class="col-md-6">
-                            <div id="google-map" style="height: 300px; width: 100%; background-color: lightgray;"></div>
-                        </div>
+        <!-- Modal Editar Equipo -->
+        <div class="modal fade" id="modalEditarEquipo" tabindex="-1" aria-labelledby="modalEditarEquipoLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content frame-container">
+                    <div class="dashboard-parent">
+                        <h5 class="dashboard-equipgo">Editar Equipo</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
-                }
-                else
-                {
-                    <p class="text-danger">No se pudo cargar la información del equipo.</p>
-                }
+                    <div class="modal-body contenido">
+                        <form id="formEditarEquipo">
+                            <input type="hidden" id="editarId" />
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label>Marca</label>
+                                    <input type="text" class="frame-div placeholder" id="editarMarca" />
+
+                                    <label>Modelo</label>
+                                    <input type="text" class="frame-div placeholder" id="editarModelo" />
+
+                                    <label>Serial</label>
+                                    <input type="text" class="frame-div placeholder" id="editarSerial" />
+
+                                    <label>Código de Barras</label>
+                                    <input type="text" class="frame-div placeholder" id="editarCodigoBarras" />
+
+                                    <label>Ubicación</label>
+                                    <input type="text" class="frame-div placeholder" id="editarUbicacion" />
+
+                                    <label>Asignado a</label>
+                                    <label>Asignado a</label>
+                                    <select id="usuarioInfo" name="usuarioInfo" class="frame-div placeholder"
+                                            @bind="UsuarioSeleccionado">
+                                        @if (UsuariosAD == null)
+                                        {
+                                            <option disabled>Cargando usuarios del AD...</option>
+                                        }
+                                        else if (!UsuariosAD.Any())
+                                        {
+                                            <option disabled>No se encontraron usuarios en AD</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="">-- Selecciona un usuario --</option>
+                                            @foreach (var usuario in UsuariosAD)
+                                            {
+                                                <option value="@usuario.Usuario">@usuario.NombreCompleto (@usuario.Correo)</option>
+                                            }
+                                        }
+                                    </select>
+
+
+                                    <label>Estado</label>
+                                    <select class="frame-div placeholder" id="editarEstado"></select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label>Equipo Personal</label>
+                                    <select class="frame-div placeholder" id="editarEquipoPersonal"></select>
+
+                                    <label>Sede</label>
+                                    <select class="frame-div placeholder" id="editarSede"></select>
+
+                                    <label>Tipo Dispositivo</label>
+                                    <select class="frame-div placeholder" id="editarTipoDispositivo"></select>
+
+                                    <label>Proveedor</label>
+                                    <select class="frame-div placeholder" id="proveedor"></select>
+
+                                    <label>Latitud</label>
+                                    <input type="number" step="any" class="frame-div placeholder" id="editarLatitud" />
+
+                                    <label>Longitud</label>
+                                    <input type="number" step="any" class="frame-div placeholder" id="editarLongitud" />
+
+                                    <label>Sistema Operativo</label>
+                                    <input type="text" class="frame-div placeholder" id="editarSistemaOperativo" />
+
+                                    <label>MAC Equipo</label>
+                                    <input type="text" class="frame-div placeholder" id="editarMacEquipo" />
+
+                                    <label>Versión Software</label>
+                                    <input type="text" class="frame-div placeholder" id="editarVersionSoftware" />
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="botonera">
+                        <button class="botn3" style="background-color:#E0E0E0; color:#292929;" data-bs-dismiss="modal">Cancelar</button>
+                        <button class="botn3" onclick="guardarCambiosEquipo()">Guardar Cambios</button>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
+        <!-- Modal Detalles Equipo -->
+        <div class="modal fade" id="modalDetallesEquipo" tabindex="-1" aria-labelledby="modalDetallesEquipoLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content frame-container">
+                    <div class="dashboard-parent">
+                        <h5 class="dashboard-equipgo">Detalles del Equipo</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body contenido">
+                        @if (equipoSeleccionado != null)
+                        {
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <p><strong>Marca:</strong> @equipoSeleccionado.Marca</p>
+                                    <p><strong>Modelo:</strong> @equipoSeleccionado.Modelo</p>
+                                    <p><strong>Serial:</strong> @equipoSeleccionado.Serial</p>
+                                    <p><strong>Código de Barras:</strong> @equipoSeleccionado.CodigoBarras</p>
+                                    <p><strong>Tipo de equipo:</strong> @equipoSeleccionado.EquipoPersonalNombre</p>
+                                    <p><strong>Tipo de dispositivo:</strong> @equipoSeleccionado.TipoDispositivoNombre</p>
+                                    <p><strong>Proveedor:</strong> @equipoSeleccionado.ProveedorNombre</p>
+                                    <p><strong>Estado:</strong> @equipoSeleccionado.EstadoNombre</p>
+                                    <p><strong>Usuario:</strong> @equipoSeleccionado.UsuarioNombreCompleto</p>
+                                    <p><strong>Ubicación:</strong> @equipoSeleccionado.Ubicacion</p>
+                                    <p><strong>Sistema Operativo:</strong> @equipoSeleccionado.SistemaOperativo</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <div id="google-map" style="height: 300px; width: 100%; background-color: lightgray;"></div>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <p class="text-danger">No se pudo cargar la información del equipo.</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
 
-
-        <div class="d-flex justify-content-between align-items-center mt-2">
-    <button class="btn btn-outline-secondary" @onclick="AnteriorPagina" disabled="@(paginaActual == 1)">Anterior</button>
-    <span>Página @paginaActual de @TotalPaginas</span>
-    <button class="btn btn-outline-secondary" @onclick="SiguientePagina" disabled="@(paginaActual == TotalPaginas)">Siguiente</button>
-</div>
-
+        <!-- Paginación -->
+        <div class="botonera">
+            <button class="botn3" style="background-color:#E0E0E0; color:#292929;" @onclick="AnteriorPagina" disabled="@(paginaActual == 1)">Anterior</button>
+            <span>Página @paginaActual de @TotalPaginas</span>
+            <button class="botn3" style="background-color:#E0E0E0; color:#292929;" @onclick="SiguientePagina" disabled="@(paginaActual == TotalPaginas)">Siguiente</button>
+        </div>
     }
 </div>

@@ -11,6 +11,7 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Usuarios
 
         private List<UsuarioInformacionDto> usuariosInformacion = new();
         private List<UsuarioInformacionDto> usuariosFiltrados = new();
+       
         //filtros
         private string filtroArea = string.Empty;
         private string filtroCampaña = string.Empty;
@@ -22,6 +23,13 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Usuarios
             {
                 usuariosInformacion = await UsuariosInformacionService.ObtenerTodosLosUsuariosInformacionAsync();
                 usuariosFiltrados = usuariosInformacion.ToList();
+
+                foreach (var usuario in usuariosInformacion)
+                {
+                    // Imprime el valor del estado tal cual viene de la base de datos
+                    Console.WriteLine($"Estado: '{usuario.Estado}'");
+                }
+
             }
             catch (Exception ex)
             {
@@ -52,5 +60,11 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Usuarios
             filtroEstado = "";
             usuariosFiltrados = usuariosInformacion?.ToList() ?? new List<UsuarioInformacionDto>();
         }
+        //LA LISTA  DE LAS CARD
+        private int TotalUsuarios => usuariosInformacion.Count;
+        private int UsuariosActivos => usuariosInformacion.Count(u => u.Estado?.Trim().ToLower() == "activo");
+        private int UsuariosInactivos => usuariosInformacion.Count(u => u.Estado?.Trim().ToLower() == "inactivo");
     }
+
 }
+

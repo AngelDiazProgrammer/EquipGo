@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using Infrastructure.Services;
+using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using OUT_OS_APP.EQUIPGO.DTO.DTOs.Active_Directory;
 using OUT_OS_APP.EQUIPGO.DTO.DTOs.Equipo;
 using System;
 using System.Collections.Generic;
@@ -11,11 +13,10 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
     public partial class Equipos : ComponentBase
     {
         [Inject] private IConfiguration Configuration { get; set; }
-        [Inject]
-        private Interface.Services.Equipos.IEquipoService EquipoService { get; set; }
+        [Inject] private Interface.Services.Equipos.IEquipoService EquipoService { get; set; }
+        [Inject] private IJSRuntime JSRuntime { get; set; }
+        [Inject] private Interface.Services.Active_Directory.IActiveDirectoryService ActiveDirectoryService { get; set; }
 
-        [Inject]
-        private IJSRuntime JSRuntime { get; set; }
 
         private List<EquipoDto> equipos;
         private List<EquipoDto> equiposFiltrados = new();
@@ -30,8 +31,17 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
         private int paginaActual = 1;
         private int tamanoPagina = 5;
 
+        //Llamado Directorio Activo
+        private List<UsuarioADDto> UsuariosAD = new();
+        private string UsuarioSeleccionado = string.Empty;
+
         protected override async Task OnInitializedAsync()
         {
+            UsuariosAD = await ActiveDirectoryService.ObtenerUsuariosAsync();
+            Console.WriteLine($"Usuarios cargados desde AD: {UsuariosAD.Count}");
+            foreach (var u in UsuariosAD.Take(5))
+                Console.WriteLine($"🧍 {u.NombreCompleto} - {u.Usuario}");
+
             apiKey = Configuration["GoogleMaps:ApiKey"];
             try
             {
@@ -39,6 +49,11 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
                             .OrderByDescending(e => e.FechaCreacion)
                             .ToList();
                 equiposFiltrados = equipos.ToList();
+
+                UsuariosAD = await ActiveDirectoryService.ObtenerUsuariosAsync();
+
+                // 🔹 Forzar actualización de la UI después de obtener los usuarios
+                await InvokeAsync(StateHasChanged);
             }
             catch (Exception ex)
             {
@@ -47,6 +62,7 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
                 equiposFiltrados = new List<EquipoDto>();
             }
         }
+
 
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -176,6 +192,10 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
                 await JSRuntime.InvokeVoidAsync("mostrarModalDetallesEquipo", dotNetRef);
             }
         }
+
+
+        
+
 
     }
 }
