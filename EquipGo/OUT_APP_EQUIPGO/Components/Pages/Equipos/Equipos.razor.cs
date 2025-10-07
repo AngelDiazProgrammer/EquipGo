@@ -17,11 +17,13 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
         [Inject] private IJSRuntime JSRuntime { get; set; }
         [Inject] private Interface.Services.Active_Directory.IActiveDirectoryService ActiveDirectoryService { get; set; }
 
-
+        private EquipoDto nuevoEquipo = new EquipoDto();
         private List<EquipoDto> equipos;
         private List<EquipoDto> equiposFiltrados = new();
+        private EquipoDto RegistrarEquipo = new EquipoDto();
+        private EquipoDto EditarEquipo = new EquipoDto();
 
-          // Filtros
+        // Filtros
         private string filtroMarca = "";
         private string filtroModelo = "";
         private string filtroSerial = "";
@@ -35,24 +37,26 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
         private List<UsuarioADDto> UsuariosAD = new();
         private string UsuarioSeleccionado = string.Empty;
 
+        //Loader
+        private bool isCargandoEquipos = true;
         protected override async Task OnInitializedAsync()
         {
-            UsuariosAD = await ActiveDirectoryService.ObtenerUsuariosAsync();
-            Console.WriteLine($"Usuarios cargados desde AD: {UsuariosAD.Count}");
-            foreach (var u in UsuariosAD.Take(5))
-                Console.WriteLine($"🧍 {u.NombreCompleto} - {u.Usuario}");
-
             apiKey = Configuration["GoogleMaps:ApiKey"];
+
             try
             {
-                equipos = (await EquipoService.ObtenerTodosLosEquiposAsync())
-                            .OrderByDescending(e => e.FechaCreacion)
-                            .ToList();
+                isCargandoEquipos = true;
+                StateHasChanged();
+
+                // Cargar equipos
+                var equiposResponse = await EquipoService.ObtenerTodosLosEquiposAsync();
+                equipos = equiposResponse.OrderByDescending(e => e.FechaCreacion).ToList();
                 equiposFiltrados = equipos.ToList();
 
+                // Cargar usuarios AD
                 UsuariosAD = await ActiveDirectoryService.ObtenerUsuariosAsync();
+                Console.WriteLine($"Usuarios cargados desde AD: {UsuariosAD.Count}");
 
-                // 🔹 Forzar actualización de la UI después de obtener los usuarios
                 await InvokeAsync(StateHasChanged);
             }
             catch (Exception ex)
@@ -60,6 +64,11 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
                 Console.Error.WriteLine($"❌ Error al cargar equipos: {ex.Message}");
                 equipos = new List<EquipoDto>();
                 equiposFiltrados = new List<EquipoDto>();
+            }
+            finally
+            {
+                isCargandoEquipos = false;
+                StateHasChanged();
             }
         }
 
