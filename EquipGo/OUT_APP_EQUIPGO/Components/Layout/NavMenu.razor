@@ -1,12 +1,10 @@
 ﻿<nav class="cerrar">
-    <div class="menu">
-        <!-- Logo principal -->
-        <div class="equipgo">
-            <a class="navbar-brand fs-4 fw-bold text-dark text-center"
-               style="font-family: 'Open Sans', sans-serif; font-weight: 700; font-size: 40px; line-height: 40px; margin: 0; padding: 0; text-decoration: none; color: #393e42;"
-               href="#">EquipGO</a>
-        </div>
+    <!-- Logo con imagen que ocupa todo el contenedor -->
+    <div class="logo-container">
+        <img src="/img/LogoEquipGO/LogotipoEquipGONavBar.png" alt="EquipGO Logo" class="logo-img" />
+    </div>
 
+    <div class="menu">
         <!-- Menú vertical principal -->
         <div class="frame-parent">
             <!-- Dashboard -->
@@ -15,7 +13,6 @@
                          activeClass="active"
                          href="/AdminDashboard"
                          style="text-decoration: none; width: 100%;">
-                    <i class="bi bi-house-door-fill casa-icon"></i>
                     <div class="usuario">
                         <b class="cerrar-equipgo">Dashboard</b>
                     </div>
@@ -25,15 +22,9 @@
             <!-- Submenús -->
             <div class="submen">
                 <!-- Usuarios -->
-                <div class="usuarios menu-item">
-                    <!-- <-- CAMBIO: Añadida clase "menu-item" -->
+                <div class="usuarios menu-item" id="menuUsuarios">
                     <div class="menu-usuarios">
                         <div class="user">
-                            <div class="cerrar-usuario">
-                                <div class="icono">
-                                    <i class="bi bi-people-fill vector-icon"></i>
-                                </div>
-                            </div>
                             <div class="usuario">
                                 <b class="cerrar-equipgo">Usuarios</b>
                             </div>
@@ -46,18 +37,16 @@
                                      activeClass="active"
                                      href="/usuarios/"
                                      style="text-decoration: none; color: #393e42;">
-                                <i class="bi bi-person-gear me-2"></i> Gestión de usuarios
+                                Gestión de usuarios
                             </NavLink>
                         </div>
                     </div>
                 </div>
 
                 <!-- Equipos -->
-                <div class="equipos menu-item" id="equiposContainer">
-                    <!-- <-- CAMBIO: Añadida clase "menu-item" -->
+                <div class="equipos menu-item" id="menuEquipos">
                     <div class="menu-equipo">
                         <div class="user">
-                            <i class="bi bi-laptop-fill computador-icon"></i>
                             <div class="usuario">
                                 <b class="cerrar-equipgo">Equipos</b>
                             </div>
@@ -70,7 +59,7 @@
                                      activeClass="active"
                                      href="/equipos/"
                                      style="text-decoration: none; color: #393e42;">
-                                <i class="bi bi-laptop me-2"></i> Administrar equipos
+                                Administrar equipos
                             </NavLink>
                         </div>
                         <div class="administrar">
@@ -78,7 +67,7 @@
                                      activeClass="active"
                                      href="/monitoreo/"
                                      style="text-decoration: none; color: #393e42;">
-                                <i class="bi bi-activity me-2"></i> Módulo de monitoreo
+                                Módulo de monitoreo
                             </NavLink>
                         </div>
                         <div class="administrar">
@@ -86,7 +75,7 @@
                                      activeClass="active"
                                      href="/alertas/"
                                      style="text-decoration: none; color: #393e42;">
-                                <i class="bi bi-bell me-2"></i> Alertas
+                                Alertas
                             </NavLink>
                         </div>
                         <div class="administrar">
@@ -94,18 +83,16 @@
                                      activeClass="active"
                                      href="/historial/"
                                      style="text-decoration: none; color: #393e42;">
-                                <i class="bi bi-clock-history me-2"></i> Historial
+                                Historial
                             </NavLink>
                         </div>
                     </div>
                 </div>
 
                 <!-- Smart (Administración) -->
-                <div class="equipos menu-item" id="smartContainer">
-                    <!-- <-- CAMBIO: Añadida clase "menu-item" -->
+                <div class="equipos menu-item" id="menuSmart">
                     <div class="menu-equipo">
                         <div class="user">
-                            <i class="bi bi-gear-fill computador-icon"></i>
                             <div class="usuario">
                                 <b class="cerrar-equipgo">Smart</b>
                             </div>
@@ -118,7 +105,7 @@
                                      activeClass="active"
                                      href="/areas/"
                                      style="text-decoration: none; color: #393e42;">
-                                <i class="bi bi-diagram-3 me-2"></i> Áreas
+                                Áreas
                             </NavLink>
                         </div>
                         <div class="administrar">
@@ -126,7 +113,7 @@
                                      activeClass="active"
                                      href="/campaña/"
                                      style="text-decoration: none; color: #393e42;">
-                                <i class="bi bi-megaphone me-2"></i> Campañas
+                                Campañas
                             </NavLink>
                         </div>
                         <div class="administrar">
@@ -134,7 +121,7 @@
                                      activeClass="active"
                                      href="/estados/"
                                      style="text-decoration: none; color: #393e42;">
-                                <i class="bi bi-toggle-on me-2"></i> Estados
+                                Estados
                             </NavLink>
                         </div>
                         <div class="administrar">
@@ -142,7 +129,7 @@
                                      activeClass="active"
                                      href="/proovedor/"
                                      style="text-decoration: none; color: #393e42;">
-                                <i class="bi bi-truck me-2"></i> Proveedores
+                                Proveedores
                             </NavLink>
                         </div>
                         <div class="administrar">
@@ -150,7 +137,7 @@
                                      activeClass="active"
                                      href="/mapa/"
                                      style="text-decoration: none; color: #393e42;">
-                                <i class="bi bi-building me-2"></i> Sedes
+                                Sedes
                             </NavLink>
                         </div>
                         <div class="administrar">
@@ -158,7 +145,7 @@
                                      activeClass="active"
                                      href="/tipos/"
                                      style="text-decoration: none; color: #393e42;">
-                                <i class="bi bi-cpu me-2"></i> Tipo de dispositivos
+                                Tipo de dispositivos
                             </NavLink>
                         </div>
                     </div>
@@ -172,7 +159,6 @@
         <button class="user4 d-flex align-items-center btn btn-link"
                 @onclick="CerrarSesion"
                 style="text-decoration: none; color: #393e42;">
-            <i class="bi bi-box-arrow-left salir-icon"></i>
             <div class="usuario">
                 <b class="cerrar-equipgo">Cerrar sesión</b>
             </div>
@@ -182,49 +168,132 @@
 
 <script>
     window.initMenu = function() {
-        // Selecciona todos los elementos del menú principal que tienen submenús
         const menuItems = document.querySelectorAll('.menu-item');
 
         menuItems.forEach(item => {
-            item.addEventListener('click', function(e) {
-                const clickedItem = e.currentTarget;
+            const header = item.querySelector('.menu-usuarios, .menu-equipo');
+            const submenu = item.querySelector('.equipos-es, .user2');
+            const arrow = item.querySelector('.flecha-icon');
 
-                // Encuentra el submenú y la flecha del elemento clicado
-                const submenu = clickedItem.querySelector('.equipos-es, .user2');
-                const arrow = clickedItem.querySelector('.flecha-icon');
+            header.addEventListener('click', function(e) {
+                e.stopPropagation();
 
-                // --- LÓGICA DEL ACORDEÓN ---
-                // Recorre todos los demás elementos del menú
+                // Lógica del acordeón
                 menuItems.forEach(otherItem => {
-                    // Si el otro elemento no es el que se ha clicado...
-                    if (otherItem !== clickedItem) {
+                    if (otherItem !== item) {
                         const otherSubmenu = otherItem.querySelector('.equipos-es, .user2');
                         const otherArrow = otherItem.querySelector('.flecha-icon');
 
-                        // ...cierra su submenú si estaba abierto
                         if (otherSubmenu && otherSubmenu.style.display === 'flex') {
                             otherSubmenu.style.display = 'none';
                             otherArrow.style.transform = 'rotate(0deg)';
+                            otherItem.classList.remove('expanded');
                         }
                     }
                 });
-                // --- FIN DE LA LÓGICA DEL ACORDEÓN ---
 
-                // --- LÓGICA ORIGINAL PARA ABRIR/CERRAR EL MENÚ CLICADO ---
+                // Abrir/cerrar menú clicado
                 if (submenu.style.display === 'flex') {
-                    // Si ya estaba abierto, lo cierra
                     submenu.style.display = 'none';
                     arrow.style.transform = 'rotate(0deg)';
+                    item.classList.remove('expanded');
                 } else {
-                    // Si estaba cerrado, lo abre
                     submenu.style.display = 'flex';
                     arrow.style.transform = 'rotate(180deg)';
+                    item.classList.add('expanded');
                 }
             });
+
+            // Evitar que el clic en el submenú cierre el menú
+            if (submenu) {
+                submenu.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+            }
         });
+
+        // Inicializar detección de menú activo
+        checkActiveMenu();
+    }
+
+    // Función para verificar y marcar el menú activo
+    function checkActiveMenu() {
+        // Remover resaltado de todos los menús primero
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.classList.remove('active-parent');
+        });
+
+        // Buscar elementos activos en los submenús
+        const activeSubItems = document.querySelectorAll('.administrar .active');
+
+        activeSubItems.forEach(activeItem => {
+            // Encontrar el menú padre del elemento activo
+            let parent = activeItem.closest('.user2, .equipos-es');
+            if (parent) {
+                let menuItem = parent.closest('.menu-item');
+                if (menuItem) {
+                    menuItem.classList.add('active-parent');
+                    // Asegurar que el submenú esté expandido
+                    const submenu = menuItem.querySelector('.equipos-es, .user2');
+                    const arrow = menuItem.querySelector('.flecha-icon');
+                    if (submenu) {
+                        submenu.style.display = 'flex';
+                        arrow.style.transform = 'rotate(180deg)';
+                        menuItem.classList.add('expanded');
+                    }
+                }
+            }
+        });
+
+        // También verificar después de un pequeño delay para asegurar que Blazor haya aplicado las clases
+        setTimeout(() => {
+            const activeSubItemsDelay = document.querySelectorAll('.administrar .active');
+            activeSubItemsDelay.forEach(activeItem => {
+                let parent = activeItem.closest('.user2, .equipos-es');
+                if (parent) {
+                    let menuItem = parent.closest('.menu-item');
+                    if (menuItem) {
+                        menuItem.classList.add('active-parent');
+                        // Asegurar que el submenú esté expandido
+                        const submenu = menuItem.querySelector('.equipos-es, .user2');
+                        const arrow = menuItem.querySelector('.flecha-icon');
+                        if (submenu) {
+                            submenu.style.display = 'flex';
+                            arrow.style.transform = 'rotate(180deg)';
+                            menuItem.classList.add('expanded');
+                        }
+                    }
+                }
+            });
+        }, 100);
+    }
+
+    // Llamar a checkActiveMenu cuando cambie la ruta
+    window.addEventListener('popstate', checkActiveMenu);
+
+    // Para Blazor: llamar esta función cuando se navegue
+    window.navigationHandler = function() {
+        setTimeout(checkActiveMenu, 150);
+    }
+
+    // Cerrar menú al hacer clic fuera (para móviles)
+    document.addEventListener('click', function(e) {
+        if (window.innerWidth <= 768) {
+            const nav = document.querySelector('.cerrar');
+            const isClickInsideNav = nav.contains(e.target);
+
+            if (!isClickInsideNav && nav.classList.contains('mobile-open')) {
+                nav.classList.remove('mobile-open');
+            }
+        }
+    });
+
+    // Función para toggle del menú en móviles
+    window.toggleMobileMenu = function() {
+        const nav = document.querySelector('.cerrar');
+        nav.classList.toggle('mobile-open');
     }
 </script>
-
 @code {
     [Inject] public IJSRuntime JS { get; set; }
     [Inject] public NavigationManager Navigation { get; set; }

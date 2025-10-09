@@ -68,7 +68,7 @@
 
     <!-- Botón para añadir equipo -->
     <div class="botonera">
-        <button class="botn3" data-bs-toggle="modal" data-bs-target="#modalCrearEquipo" onclick="window.cargarSelects()">
+        <button class="botn3" data-bs-toggle="modal" data-bs-target="#modalCrearEquipo" onclick="limpiarFormularioCrear()">
             <i class="bi bi-plus-lg"></i> Añadir Equipo
         </button>
     </div>
@@ -115,6 +115,24 @@
                                             <label>MAC Equipo</label>
                                             <input type="text" id="macEquipo" name="macEquipo" placeholder="Ej: 00:1B:44:11:3A:B7" />
                                         </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-section">
+                                                    <label>Latitud</label>
+                                                    <input type="number" step="any" id="latitud" name="latitud" placeholder="0.000000" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-section">
+                                                    <label>Longitud</label>
+                                                    <input type="number" step="any" id="longitud" name="longitud" placeholder="0.000000" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @* <div class="form-section">
+                                            <label>Versión Software</label>
+                                            <input type="text" id="versionSoftware" name="versionSoftware" placeholder="Ej: v1.0.0" />
+                                        </div> *@
                                     </div>
                                 </div>
                             </div>
@@ -126,6 +144,12 @@
                                         <span class="seccion-titulo">⚙️ Características</span>
                                     </div>
                                     <div class="seccion-datos">
+                                        @* <div class="form-section">
+                                            <label>Equipo Personal</label>
+                                            <select id="equipoPersonal" name="equipoPersonal">
+                                                <option value="">Seleccionar...</option>
+                                            </select>
+                                        </div> *@
                                         <div class="form-section">
                                             <label>Tipo de Dispositivo</label>
                                             <select id="tipoDispositivo" name="tipoDispositivo">
@@ -164,85 +188,89 @@
                                                 <option value="">-- Selecciona un usuario --</option>
                                             </select>
                                         </div>
+                                        @* <div class="form-section">
+                                            <label>Ubicación</label>
+                                            <input type="text" id="ubicacion" name="ubicacion" placeholder="Ej: Oficina 1" />
+                                        </div> *@                                        
+                                        <!-- 🆕 FORMULARIO DESPLEGABLE DE INFORMACIÓN DEL USUARIO -->
+                                        <div id="formUsuarioInfo" style="display: none; margin-top: 15px; animation: slideDown 0.3s ease-out; width: 100%;">
+                                            <div class="seccion-modal" style="border-radius: 12px; border: 1px solid #e0e0e0; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                                                <div class="seccion-header" style="background: linear-gradient(135deg, #E9002B 0%, #a70120 100%); border-radius: 12px 12px 0 0; padding: 12px 20px;">
+                                                    <span class="seccion-titulo" style="color: white; font-size: 18px; font-weight: 600;">👤 Información del Usuario</span>
+                                                </div>
+                                                <div class="seccion-datos" style="padding: 15px 20px;">
+                                                    <div class="row" style="margin-bottom: 10px;">
+                                                        <div class="col-md-3" style="padding: 0 5px;">
+                                                            <div class="form-section" style="margin-bottom: 12px;">
+                                                                <label style="font-size: 14px; font-weight: 600; color: #393e42; margin-bottom: 5px;">Tipo de Documento <span style="color: #E9002B;">*</span></label>
+                                                                <select id="tipoDocumento" name="tipoDocumento" required style="padding: 8px 10px; border: 1px solid #ced4da; border-radius: 6px; font-size: 14px; height: 38px;">
+                                                                    <option value="">Seleccionar...</option>
+                                                                    <option value="CC">Cédula de Ciudadanía</option>
+                                                                    <option value="CE">Cédula de Extranjería</option>
+                                                                    <option value="TI">Tarjeta de Identidad</option>
+                                                                    <option value="PA">Pasaporte</option>
+                                                                    <option value="RC">Registro Civil</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-3" style="padding: 0 5px;">
+                                                            <div class="form-section" style="margin-bottom: 12px;">
+                                                                <label style="font-size: 14px; font-weight: 600; color: #393e42; margin-bottom: 5px;">Número de Documento <span style="color: #E9002B;">*</span></label>
+                                                                <input type="text" id="numeroDocumento" name="numeroDocumento" required placeholder="Ej: 1234567890" style="padding: 8px 10px; border: 1px solid #ced4da; border-radius: 6px; font-size: 14px; height: 38px;" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-3" style="padding: 0 5px;">
+                                                            <div class="form-section" style="margin-bottom: 12px;">
+                                                                <label style="font-size: 14px; font-weight: 600; color: #393e42; margin-bottom: 5px;">Nombres <span style="color: #E9002B;">*</span></label>
+                                                                <input type="text" id="nombres" name="nombres" readonly style="background-color: #f8f9fa; cursor: not-allowed; padding: 8px 10px; border: 1px solid #ced4da; border-radius: 6px; font-size: 14px; height: 38px;" placeholder="(Extraído del AD)" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-3" style="padding: 0 5px;">
+                                                            <div class="form-section" style="margin-bottom: 12px;">
+                                                                <label style="font-size: 14px; font-weight: 600; color: #393e42; margin-bottom: 5px;">Apellidos <span style="color: #E9002B;">*</span></label>
+                                                                <input type="text" id="apellidos" name="apellidos" readonly style="background-color: #f8f9fa; cursor: not-allowed; padding: 8px 10px; border: 1px solid #ced4da; border-radius: 6px; font-size: 14px; height: 38px;" placeholder="(Extraído del AD)" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6" style="padding: 0 5px;">
+                                                            <div class="form-section" style="margin-bottom: 12px;">
+                                                                <label style="font-size: 14px; font-weight: 600; color: #393e42; margin-bottom: 5px;">Área <span style="color: #E9002B;">*</span></label>
+                                                                <select id="area" name="area" required style="padding: 8px 10px; border: 1px solid #ced4da; border-radius: 6px; font-size: 14px; height: 38px;">
+                                                                    <option value="">Seleccionar...</option>
+                                                                    <option value="1">Tecnología</option>
+                                                                    <option value="2">Recursos Humanos</option>
+                                                                    <option value="3">Operaciones</option>
+                                                                    <option value="4">Comercial</option>
+                                                                    <option value="5">Financiero</option>
+                                                                    <option value="6">Marketing</option>
+                                                                    <option value="7">Atención al Cliente</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6" style="padding: 0 5px;">
+                                                            <div class="form-section" style="margin-bottom: 12px;">
+                                                                <label style="font-size: 14px; font-weight: 600; color: #393e42; margin-bottom: 5px;">Campaña <span style="color: #E9002B;">*</span></label>
+                                                                <select id="campana" name="campana" required style="padding: 8px 10px; border: 1px solid #ced4da; border-radius: 6px; font-size: 14px; height: 38px;">
+                                                                    <option value="">Seleccionar...</option>
+                                                                    <option value="1">Campaña Digital 2025</option>
+                                                                    <option value="2">Ventas Q1</option>
+                                                                    <option value="3">Soporte Premium</option>
+                                                                    <option value="4">Retención</option>
+                                                                    <option value="5">Cobranzas</option>
+                                                                    <option value="6">Back Office</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </form>
-                </div>
-                <!-- 🆕 FORMULARIO DESPLEGABLE EN LA POSICIÓN CORRECTA -->
-                <div id="formUsuarioInfo" style="display: none; margin-top: 8px; width: 100%;">
-                    <div class="seccion-modal" style="border-radius: 8px; border: 1px solid #e0e0e0; box-shadow: 0 2px 4px rgba(0,0,0,0.08);">
-                        <div class="seccion-header" style="background: linear-gradient(135deg, #E9002B 0%, #a70120 100%); border-radius: 8px 8px 0 0; padding: 6px 12px;">
-                            <span class="seccion-titulo" style="color: white; font-size: 13px; font-weight: 600;">👤 Información del Usuario</span>
-                        </div>
-                        <div class="seccion-datos" style="padding: 8px 10px;">
-                            <div class="row" style="margin-bottom: 6px;">
-                                <div class="col-md-3" style="padding: 0 4px;">
-                                    <div class="form-section" style="margin-bottom: 6px;">
-                                        <label style="font-size: 11px; font-weight: 600; color: #393e42; margin-bottom: 1px;">Tipo de Documento <span style="color: #E9002B;">*</span></label>
-                                        <select id="tipoDocumento" name="tipoDocumento" required style="padding: 4px 6px; border: 1px solid #ced4da; border-radius: 4px; font-size: 11px; height: 28px;">
-                                            <option value="">Seleccionar...</option>
-                                            <option value="CC">Cédula de Ciudadanía</option>
-                                            <option value="CE">Cédula de Extranjería</option>
-                                            <option value="TI">Tarjeta de Identidad</option>
-                                            <option value="PA">Pasaporte</option>
-                                            <option value="RC">Registro Civil</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-3" style="padding: 0 4px;">
-                                    <div class="form-section" style="margin-bottom: 6px;">
-                                        <label style="font-size: 11px; font-weight: 600; color: #393e42; margin-bottom: 1px;">Número de Documento <span style="color: #E9002B;">*</span></label>
-                                        <input type="text" id="numeroDocumento" name="numeroDocumento" required placeholder="Ej: 1234567890" style="padding: 4px 6px; border: 1px solid #ced4da; border-radius: 4px; font-size: 11px; height: 28px;" />
-                                    </div>
-                                </div>
-                                <div class="col-md-3" style="padding: 0 4px;">
-                                    <div class="form-section" style="margin-bottom: 6px;">
-                                        <label style="font-size: 11px; font-weight: 600; color: #393e42; margin-bottom: 1px;">Nombres <span style="color: #E9002B;">*</span></label>
-                                        <input type="text" id="nombres" name="nombres" readonly style="background-color: #f8f9fa; cursor: not-allowed; padding: 4px 6px; border: 1px solid #ced4da; border-radius: 4px; font-size: 11px; height: 28px;" placeholder="(Extraído del AD)" />
-                                    </div>
-                                </div>
-                                <div class="col-md-3" style="padding: 0 4px;">
-                                    <div class="form-section" style="margin-bottom: 6px;">
-                                        <label style="font-size: 11px; font-weight: 600; color: #393e42; margin-bottom: 1px;">Apellidos <span style="color: #E9002B;">*</span></label>
-                                        <input type="text" id="apellidos" name="apellidos" readonly style="background-color: #f8f9fa; cursor: not-allowed; padding: 4px 6px; border: 1px solid #ced4da; border-radius: 4px; font-size: 11px; height: 28px;" placeholder="(Extraído del AD)" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6" style="padding: 0 4px;">
-                                    <div class="form-section" style="margin-bottom: 6px;">
-                                        <label style="font-size: 11px; font-weight: 600; color: #393e42; margin-bottom: 1px;">Área <span style="color: #E9002B;">*</span></label>
-                                        <select id="area" name="area" required style="padding: 4px 6px; border: 1px solid #ced4da; border-radius: 4px; font-size: 11px; height: 28px;">
-                                            <option value="">Seleccionar...</option>
-                                            <option value="1">Tecnología</option>
-                                            <option value="2">Recursos Humanos</option>
-                                            <option value="3">Operaciones</option>
-                                            <option value="4">Comercial</option>
-                                            <option value="5">Financiero</option>
-                                            <option value="6">Marketing</option>
-                                            <option value="7">Atención al Cliente</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-6" style="padding: 0 4px;">
-                                    <div class="form-section" style="margin-bottom: 6px;">
-                                        <label style="font-size: 11px; font-weight: 600; color: #393e42; margin-bottom: 1px;">Campaña <span style="color: #E9002B;">*</span></label>
-                                        <select id="campana" name="campana" required style="padding: 4px 6px; border: 1px solid #ced4da; border-radius: 4px; font-size: 11px; height: 28px;">
-                                            <option value="">Seleccionar...</option>
-                                            <option value="1">Campaña Digital 2025</option>
-                                            <option value="2">Ventas Q1</option>
-                                            <option value="3">Soporte Premium</option>
-                                            <option value="4">Retención</option>
-                                            <option value="5">Cobranzas</option>
-                                            <option value="6">Back Office</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
                 <div class="modal-footer-equipgo">
                     <button class="boton-modal-equipgo boton-modal-secundario" data-bs-dismiss="modal">Cancelar</button>
@@ -375,6 +403,20 @@
                                             <label>MAC Equipo</label>
                                             <input type="text" id="editarMacEquipo" />
                                         </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-section">
+                                                    <label>Latitud</label>
+                                                    <input type="number" step="any" id="editarLatitud" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-section">
+                                                    <label>Longitud</label>
+                                                    <input type="number" step="any" id="editarLongitud" />
+                                                </div>
+                                            </div>
+                                        </div>
                                         @* <div class="form-section">
                                             <label>Versión Software</label>
                                             <input type="text" id="editarVersionSoftware" />
@@ -427,100 +469,86 @@
                                         @* <div class="form-section">
                                             <label>Ubicación</label>
                                             <input type="text" id="editarUbicacion" />
-                                        </div> *@
-                                        @* <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="form-section">
-                                                    <label>Latitud</label>
-                                                    <input type="number" step="any" id="editarLatitud" />
+                                        </div> *@                                        
+                                        <!-- 🆕 FORMULARIO DESPLEGABLE DE INFORMACIÓN DEL USUARIO -->
+                                        <div id="formUsuarioInfo" style="display: none; margin-top: 15px; animation: slideDown 0.3s ease-out; width: 100%;">
+                                            <div class="seccion-modal" style="border-radius: 12px; border: 1px solid #e0e0e0; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                                                <div class="seccion-header" style="background: linear-gradient(135deg, #E9002B 0%, #a70120 100%); border-radius: 12px 12px 0 0; padding: 12px 20px;">
+                                                    <span class="seccion-titulo" style="color: white; font-size: 18px; font-weight: 600;">👤 Información del Usuario</span>
+                                                </div>
+                                                <div class="seccion-datos" style="padding: 15px 20px;">
+                                                    <div class="row" style="margin-bottom: 10px;">
+                                                        <div class="col-md-3" style="padding: 0 5px;">
+                                                            <div class="form-section" style="margin-bottom: 12px;">
+                                                                <label style="font-size: 14px; font-weight: 600; color: #393e42; margin-bottom: 5px;">Tipo de Documento <span style="color: #E9002B;">*</span></label>
+                                                                <select id="tipoDocumento" name="tipoDocumento" required style="padding: 8px 10px; border: 1px solid #ced4da; border-radius: 6px; font-size: 14px; height: 38px;">
+                                                                    <option value="">Seleccionar...</option>
+                                                                    <option value="CC">Cédula de Ciudadanía</option>
+                                                                    <option value="CE">Cédula de Extranjería</option>
+                                                                    <option value="TI">Tarjeta de Identidad</option>
+                                                                    <option value="PA">Pasaporte</option>
+                                                                    <option value="RC">Registro Civil</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-3" style="padding: 0 5px;">
+                                                            <div class="form-section" style="margin-bottom: 12px;">
+                                                                <label style="font-size: 14px; font-weight: 600; color: #393e42; margin-bottom: 5px;">Número de Documento <span style="color: #E9002B;">*</span></label>
+                                                                <input type="text" id="numeroDocumento" name="numeroDocumento" required placeholder="Ej: 1234567890" style="padding: 8px 10px; border: 1px solid #ced4da; border-radius: 6px; font-size: 14px; height: 38px;" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-3" style="padding: 0 5px;">
+                                                            <div class="form-section" style="margin-bottom: 12px;">
+                                                                <label style="font-size: 14px; font-weight: 600; color: #393e42; margin-bottom: 5px;">Nombres <span style="color: #E9002B;">*</span></label>
+                                                                <input type="text" id="nombres" name="nombres" readonly style="background-color: #f8f9fa; cursor: not-allowed; padding: 8px 10px; border: 1px solid #ced4da; border-radius: 6px; font-size: 14px; height: 38px;" placeholder="(Extraído del AD)" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-3" style="padding: 0 5px;">
+                                                            <div class="form-section" style="margin-bottom: 12px;">
+                                                                <label style="font-size: 14px; font-weight: 600; color: #393e42; margin-bottom: 5px;">Apellidos <span style="color: #E9002B;">*</span></label>
+                                                                <input type="text" id="apellidos" name="apellidos" readonly style="background-color: #f8f9fa; cursor: not-allowed; padding: 8px 10px; border: 1px solid #ced4da; border-radius: 6px; font-size: 14px; height: 38px;" placeholder="(Extraído del AD)" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6" style="padding: 0 5px;">
+                                                            <div class="form-section" style="margin-bottom: 12px;">
+                                                                <label style="font-size: 14px; font-weight: 600; color: #393e42; margin-bottom: 5px;">Área <span style="color: #E9002B;">*</span></label>
+                                                                <select id="area" name="area" required style="padding: 8px 10px; border: 1px solid #ced4da; border-radius: 6px; font-size: 14px; height: 38px;">
+                                                                    <option value="">Seleccionar...</option>
+                                                                    <option value="1">Tecnología</option>
+                                                                    <option value="2">Recursos Humanos</option>
+                                                                    <option value="3">Operaciones</option>
+                                                                    <option value="4">Comercial</option>
+                                                                    <option value="5">Financiero</option>
+                                                                    <option value="6">Marketing</option>
+                                                                    <option value="7">Atención al Cliente</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6" style="padding: 0 5px;">
+                                                            <div class="form-section" style="margin-bottom: 12px;">
+                                                                <label style="font-size: 14px; font-weight: 600; color: #393e42; margin-bottom: 5px;">Campaña <span style="color: #E9002B;">*</span></label>
+                                                                <select id="campana" name="campana" required style="padding: 8px 10px; border: 1px solid #ced4da; border-radius: 6px; font-size: 14px; height: 38px;">
+                                                                    <option value="">Seleccionar...</option>
+                                                                    <option value="1">Campaña Digital 2025</option>
+                                                                    <option value="2">Ventas Q1</option>
+                                                                    <option value="3">Soporte Premium</option>
+                                                                    <option value="4">Retención</option>
+                                                                    <option value="5">Cobranzas</option>
+                                                                    <option value="6">Back Office</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-6">
-                                                <div class="form-section">
-                                                    <label>Longitud</label>
-                                                    <input type="number" step="any" id="editarLongitud" />
-                                                </div>
-                                            </div>
-                                        </div> *@
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </form>
-                </div>
-                <!-- 🆕 FORMULARIO DESPLEGABLE EN LA POSICIÓN CORRECTA -->
-                <div id="formUsuarioInfo" style="display: none; margin-top: 8px; width: 100%;">
-                    <div class="seccion-modal" style="border-radius: 8px; border: 1px solid #e0e0e0; box-shadow: 0 2px 4px rgba(0,0,0,0.08);">
-                        <div class="seccion-header" style="background: linear-gradient(135deg, #E9002B 0%, #a70120 100%); border-radius: 8px 8px 0 0; padding: 6px 12px;">
-                            <span class="seccion-titulo" style="color: white; font-size: 13px; font-weight: 600;">👤 Información del Usuario</span>
-                        </div>
-                        <div class="seccion-datos" style="padding: 8px 10px;">
-                            <div class="row" style="margin-bottom: 6px;">
-                                <div class="col-md-3" style="padding: 0 4px;">
-                                    <div class="form-section" style="margin-bottom: 6px;">
-                                        <label style="font-size: 11px; font-weight: 600; color: #393e42; margin-bottom: 1px;">Tipo de Documento <span style="color: #E9002B;">*</span></label>
-                                        <select id="tipoDocumento" name="tipoDocumento" required style="padding: 4px 6px; border: 1px solid #ced4da; border-radius: 4px; font-size: 11px; height: 28px;">
-                                            <option value="">Seleccionar...</option>
-                                            <option value="CC">Cédula de Ciudadanía</option>
-                                            <option value="CE">Cédula de Extranjería</option>
-                                            <option value="TI">Tarjeta de Identidad</option>
-                                            <option value="PA">Pasaporte</option>
-                                            <option value="RC">Registro Civil</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-3" style="padding: 0 4px;">
-                                    <div class="form-section" style="margin-bottom: 6px;">
-                                        <label style="font-size: 11px; font-weight: 600; color: #393e42; margin-bottom: 1px;">Número de Documento <span style="color: #E9002B;">*</span></label>
-                                        <input type="text" id="numeroDocumento" name="numeroDocumento" required placeholder="Ej: 1234567890" style="padding: 4px 6px; border: 1px solid #ced4da; border-radius: 4px; font-size: 11px; height: 28px;" />
-                                    </div>
-                                </div>
-                                <div class="col-md-3" style="padding: 0 4px;">
-                                    <div class="form-section" style="margin-bottom: 6px;">
-                                        <label style="font-size: 11px; font-weight: 600; color: #393e42; margin-bottom: 1px;">Nombres <span style="color: #E9002B;">*</span></label>
-                                        <input type="text" id="nombres" name="nombres" readonly style="background-color: #f8f9fa; cursor: not-allowed; padding: 4px 6px; border: 1px solid #ced4da; border-radius: 4px; font-size: 11px; height: 28px;" placeholder="(Extraído del AD)" />
-                                    </div>
-                                </div>
-                                <div class="col-md-3" style="padding: 0 4px;">
-                                    <div class="form-section" style="margin-bottom: 6px;">
-                                        <label style="font-size: 11px; font-weight: 600; color: #393e42; margin-bottom: 1px;">Apellidos <span style="color: #E9002B;">*</span></label>
-                                        <input type="text" id="apellidos" name="apellidos" readonly style="background-color: #f8f9fa; cursor: not-allowed; padding: 4px 6px; border: 1px solid #ced4da; border-radius: 4px; font-size: 11px; height: 28px;" placeholder="(Extraído del AD)" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6" style="padding: 0 4px;">
-                                    <div class="form-section" style="margin-bottom: 6px;">
-                                        <label style="font-size: 11px; font-weight: 600; color: #393e42; margin-bottom: 1px;">Área <span style="color: #E9002B;">*</span></label>
-                                        <select id="area" name="area" required style="padding: 4px 6px; border: 1px solid #ced4da; border-radius: 4px; font-size: 11px; height: 28px;">
-                                            <option value="">Seleccionar...</option>
-                                            <option value="1">Tecnología</option>
-                                            <option value="2">Recursos Humanos</option>
-                                            <option value="3">Operaciones</option>
-                                            <option value="4">Comercial</option>
-                                            <option value="5">Financiero</option>
-                                            <option value="6">Marketing</option>
-                                            <option value="7">Atención al Cliente</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-6" style="padding: 0 4px;">
-                                    <div class="form-section" style="margin-bottom: 6px;">
-                                        <label style="font-size: 11px; font-weight: 600; color: #393e42; margin-bottom: 1px;">Campaña <span style="color: #E9002B;">*</span></label>
-                                        <select id="campana" name="campana" required style="padding: 4px 6px; border: 1px solid #ced4da; border-radius: 4px; font-size: 11px; height: 28px;">
-                                            <option value="">Seleccionar...</option>
-                                            <option value="1">Campaña Digital 2025</option>
-                                            <option value="2">Ventas Q1</option>
-                                            <option value="3">Soporte Premium</option>
-                                            <option value="4">Retención</option>
-                                            <option value="5">Cobranzas</option>
-                                            <option value="6">Back Office</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
                 <div class="modal-footer-equipgo">
                     <button class="boton-modal-equipgo boton-modal-secundario" data-bs-dismiss="modal">Cancelar</button>

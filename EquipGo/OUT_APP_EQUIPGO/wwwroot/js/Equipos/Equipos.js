@@ -1,6 +1,70 @@
 ﻿// 🧠 Cache global para usuarios del Active Directory
 window._usuariosCache = null;
 
+// 🧹 Función mejorada para limpiar el formulario
+window.limpiarFormularioCrear = function () {
+    console.log("🧹 Limpiando formulario de crear equipo...");
+
+    try {
+        const form = document.getElementById('formCrearEquipo');
+        if (!form) {
+            console.error("❌ No se encontró el formulario formCrearEquipo");
+            return;
+        }
+
+        // 1. Remover data-id para evitar modo edición
+        form.removeAttribute('data-id');
+
+        // 2. Limpiar campos de texto y número
+        const camposTextoLimpios = [
+            'marca', 'modelo', 'serial', 'codigoBarras', 'sistemaOperativo',
+            'macEquipo', 'latitud', 'longitud'
+        ];
+
+        camposTextoLimpios.forEach(id => {
+            const elemento = document.getElementById(id);
+            if (elemento) {
+                elemento.value = '';
+                console.log(`✅ Campo ${id} limpiado`);
+            }
+        });
+
+        // 3. Limpiar selects con TomSelect
+        const selectsIds = ['usuarioInfo', 'estado', 'sede', 'tipoDispositivo', 'proveedor'];
+        selectsIds.forEach(id => {
+            const select = document.getElementById(id);
+            if (select) {
+                if (select.tomselect) {
+                    select.tomselect.setValue('', true); // true para silenciar eventos
+                } else {
+                    select.value = '';
+                }
+                console.log(`✅ Select ${id} limpiado`);
+            }
+        });
+
+        // 4. Ocultar y limpiar formulario de usuario
+        const formUsuarioInfo = document.getElementById('formUsuarioInfo');
+        if (formUsuarioInfo) {
+            formUsuarioInfo.style.display = 'none';
+
+            // Limpiar campos del formulario de usuario
+            const camposUsuario = ['tipoDocumento', 'numeroDocumento', 'nombres', 'apellidos', 'area', 'campana'];
+            camposUsuario.forEach(campoId => {
+                const campo = document.getElementById(campoId);
+                if (campo) campo.value = '';
+            });
+
+            console.log("✅ Formulario de usuario limpiado y ocultado");
+        }
+
+        console.log("🎉 Formulario completamente limpiado");
+
+    } catch (error) {
+        console.error("❌ Error al limpiar el formulario:", error);
+    }
+};
+
 // 🧩 Guardar o actualizar equipo
 window.guardarEquipo = async function () {
     const form = document.getElementById('formCrearEquipo');
@@ -11,10 +75,10 @@ window.guardarEquipo = async function () {
         modelo: document.getElementById('modelo').value,
         serial: document.getElementById('serial').value,
         codigoBarras: document.getElementById('codigoBarras').value,
-        ubicacion: document.getElementById('ubicacion').value,
+/*        ubicacion: document.getElementById('ubicacion').value,*/
         idUsuarioInfo: parseInt(document.getElementById('usuarioInfo').value) || null,
         idEstado: parseInt(document.getElementById('estado').value) || null,
-        idEquipoPersonal: parseInt(document.getElementById('equipoPersonal').value) || null,
+/*        idEquipoPersonal: parseInt(document.getElementById('equipoPersonal').value) || null,*/
         idSede: parseInt(document.getElementById('sede').value) || null,
         idTipoDispositivo: parseInt(document.getElementById('tipoDispositivo').value) || null,
         idProveedor: parseInt(document.getElementById('proveedor').value) || null,
@@ -22,7 +86,7 @@ window.guardarEquipo = async function () {
         longitud: parseFloat(document.getElementById('longitud').value) || null,
         sistemaOperativo: document.getElementById('sistemaOperativo').value,
         macEquipo: document.getElementById('macEquipo').value,
-        versionSoftware: document.getElementById('versionSoftware').value
+/*        versionSoftware: document.getElementById('versionSoftware').value*/
     };
 
     const url = equipoId ? `/api/equipos/admin/${equipoId}` : `/api/equipos/admin`;
@@ -37,8 +101,9 @@ window.guardarEquipo = async function () {
 
         if (response.ok) {
             alert(`✅ Equipo ${equipoId ? 'actualizado' : 'registrado'} correctamente.`);
-            form.reset();
-            form.removeAttribute('data-id');
+
+            // 🧹 LIMPIAR FORMULARIO DESPUÉS DE GUARDAR
+            window.limpiarFormularioCrear();
 
             const modalElement = document.getElementById('modalCrearEquipo');
             const modalInstance = bootstrap.Modal.getInstance(modalElement);
@@ -76,10 +141,10 @@ window.guardarCambiosEquipo = async function () {
         modelo: document.getElementById('editarModelo').value,
         serial: document.getElementById('editarSerial').value,
         codigoBarras: document.getElementById('editarCodigoBarras').value,
-        ubicacion: document.getElementById('editarUbicacion').value,
+/*        ubicacion: document.getElementById('editarUbicacion').value,*/
         idUsuarioInfo: parseInt(document.getElementById('editarUsuarioInfo').value) || null,
         idEstado: parseInt(document.getElementById('editarEstado').value) || null,
-        idEquipoPersonal: parseInt(document.getElementById('editarEquipoPersonal').value) || null,
+/*        idEquipoPersonal: parseInt(document.getElementById('editarEquipoPersonal').value) || null,*/
         idSede: parseInt(document.getElementById('editarSede').value) || null,
         idTipoDispositivo: parseInt(document.getElementById('editarTipoDispositivo').value) || null,
         idProveedor: parseInt(document.getElementById('editarProveedor').value) || null,
@@ -87,7 +152,7 @@ window.guardarCambiosEquipo = async function () {
         longitud: parseFloat(document.getElementById('editarLongitud').value) || null,
         sistemaOperativo: document.getElementById('editarSistemaOperativo').value,
         macEquipo: document.getElementById('editarMacEquipo').value,
-        versionSoftware: document.getElementById('editarVersionSoftware').value
+/*        versionSoftware: document.getElementById('editarVersionSoftware').value*/
     };
 
     try {
@@ -177,47 +242,90 @@ window.abrirModalEditar = async function (idEquipo) {
 // 🧩 Editar equipo (reutiliza el modal de crear)
 window.editarEquipo = async function (id) {
     try {
+        console.log("🔄 Iniciando edición del equipo:", id);
+
+        // Cargar selects primero
         await cargarSelects();
+
+        // Obtener datos del equipo
         const response = await fetch(`/api/equipos/${id}`);
         if (!response.ok) throw new Error("No se pudo obtener el equipo");
         const equipo = await response.json();
 
-        document.getElementById('marca').value = equipo.marca || "";
-        document.getElementById('modelo').value = equipo.modelo || "";
-        document.getElementById('serial').value = equipo.serial || "";
-        document.getElementById('codigoBarras').value = equipo.codigoBarras || "";
-        //document.getElementById('ubicacion').value = equipo.ubicacion || "";
-        //document.getElementById('latitud').value = equipo.latitud || "";
-        //document.getElementById('longitud').value = equipo.longitud || "";
-        document.getElementById('sistemaOperativo').value = equipo.sistemaOperativo || "";
-        document.getElementById('macEquipo').value = equipo.macEquipo || "";
-        /*document.getElementById('versionSoftware').value = equipo.versionSoftware || "";*/
+        console.log("📦 Datos del equipo recibidos:", equipo);
 
-        document.getElementById('formCrearEquipo').setAttribute('data-id', id);
+        // 🔍 VERIFICAR QUE LOS ELEMENTOS EXISTEN ANTES DE ASIGNAR VALORES
+        const campos = [
+            { id: 'marca', value: equipo.marca || "" },
+            { id: 'modelo', value: equipo.modelo || "" },
+            { id: 'serial', value: equipo.serial || "" },
+            { id: 'codigoBarras', value: equipo.codigoBarras || "" },
+            { id: 'ubicacion', value: equipo.ubicacion || "" },
+            { id: 'latitud', value: equipo.latitud || "" },
+            { id: 'longitud', value: equipo.longitud || "" },
+            { id: 'sistemaOperativo', value: equipo.sistemaOperativo || "" },
+            { id: 'macEquipo', value: equipo.macEquipo || "" }
+            // 'versionSoftware' está comentado en el HTML, por eso lo omitimos
+        ];
 
+        // Asignar valores solo si los elementos existen
+        campos.forEach(campo => {
+            const elemento = document.getElementById(campo.id);
+            if (elemento) {
+                elemento.value = campo.value;
+                console.log(`✅ Campo ${campo.id} asignado:`, campo.value);
+            } else {
+                console.warn(`⚠️ Campo no encontrado: ${campo.id}`);
+            }
+        });
+
+        // Establecer el ID del equipo en el formulario
+        const form = document.getElementById('formCrearEquipo');
+        if (form) {
+            form.setAttribute('data-id', id);
+            console.log("✅ ID del equipo establecido en el formulario:", id);
+        }
+
+        // Configurar selects con TomSelect después de un breve delay
         setTimeout(() => {
-            const selectIds = [
+            const selectConfigs = [
                 { id: 'usuarioInfo', value: equipo.idUsuarioInfo },
                 { id: 'estado', value: equipo.idEstado },
-                /*{ id: 'equipoPersonal', value: equipo.idEquipoPersonal },*/
                 { id: 'sede', value: equipo.idSede },
                 { id: 'tipoDispositivo', value: equipo.idTipoDispositivo },
                 { id: 'proveedor', value: equipo.idProveedor }
             ];
 
-            selectIds.forEach(({ id, value }) => {
-                const element = document.getElementById(id);
-                if (element && element.tomselect && value) {
-                    element.tomselect.setValue(value);
+            selectConfigs.forEach(({ id, value }) => {
+                const selectElement = document.getElementById(id);
+                if (selectElement && selectElement.tomselect && value) {
+                    try {
+                        selectElement.tomselect.setValue(value);
+                        console.log(`✅ Select ${id} configurado:`, value);
+                    } catch (error) {
+                        console.error(`❌ Error configurando select ${id}:`, error);
+                    }
+                } else if (!selectElement) {
+                    console.warn(`⚠️ Select no encontrado: ${id}`);
+                } else if (!selectElement.tomselect) {
+                    console.warn(`⚠️ TomSelect no inicializado en: ${id}`);
                 }
             });
-        }, 200);
+        }, 500); // Aumentamos el delay para asegurar que TomSelect esté listo
 
-        const modal = new bootstrap.Modal(document.getElementById('modalCrearEquipo'));
-        modal.show();
+        // Mostrar el modal
+        const modalElement = document.getElementById('modalCrearEquipo');
+        if (modalElement) {
+            const modal = new bootstrap.Modal(modalElement);
+            modal.show();
+            console.log("✅ Modal de edición abierto");
+        } else {
+            console.error("❌ No se encontró el modal modalCrearEquipo");
+        }
+
     } catch (error) {
-        alert("❌ Error al cargar el equipo.");
-        console.error(error);
+        console.error("❌ Error completo en editarEquipo:", error);
+        alert("❌ Error al cargar el equipo para edición.");
     }
 };
 
