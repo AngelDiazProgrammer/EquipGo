@@ -1,4 +1,5 @@
 ﻿using OUT_OS_APP.EQUIPGO.DTO.DTOs.Active_Directory;
+using OUT_OS_APP.EQUIPGO.DTO.DTOs.Active_Directory.OUT_OS_APP.EQUIPGO.DTO.DTOs.Active_Directory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
