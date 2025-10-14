@@ -7,6 +7,8 @@ using Interface.Services.Sedes;
 using Interface.Services.TipoDispositivos;
 using Interface.Services.Usuarios;
 using Microsoft.AspNetCore.Mvc;
+using OUT_DOMAIN_EQUIPGO.Entities.Procesos;
+using OUT_DOMAIN_EQUIPGO.Entities.Smart;
 using OUT_OS_APP.EQUIPGO.DTO.DTOs.Equipo;
 
 [ApiController]
@@ -16,7 +18,7 @@ public class EquiposController : ControllerBase
     private readonly IEquipoService _equipoService;
     private readonly IUsuariosInformacionService _usuariosInformacionService;
     private readonly IEstadoService _estadoService;
-    private readonly ISedesService  _sedesService;
+    private readonly ISedesService _sedesService;
     private readonly ITipoDispositivosService _tipoDispositivosService;
     private readonly IProveedoresService _proveedoresService;
     private readonly IActiveDirectoryService _activeDirectoryService;
@@ -39,6 +41,55 @@ public class EquiposController : ControllerBase
         {
             await _equipoService.CrearEquipoAdminAsync(equipoDto);
             return Ok(new { message = "Equipo creado correctamente." });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
+
+    // Nuevo método para crear equipo con usuario
+    [HttpPost("Admin/ConUsuario")]
+    public async Task<IActionResult> CrearEquipoConUsuario([FromBody] EquipoUsuarioDto dto)
+    {
+        try
+        {
+            // 1. Crear el usuario primero
+            var usuario = new UsuariosInformacion
+            {
+                IdTipodocumento = dto.IdTipoDocumento,
+                NumeroDocumento = dto.NumeroDocumento,
+                Nombres = dto.Nombres,
+                Apellidos = dto.Apellidos,
+                IdArea = dto.IdArea,
+                IdCampaña = dto.IdCampaña,
+                FechaCreacion = DateTime.UtcNow,
+                UltimaModificacion = DateTime.UtcNow
+            };
+
+            var usuarioId = await _equipoService.CrearUsuarioAsync(usuario);
+
+            // 2. Crear el equipo asociado al usuario
+            var equipo = new OUT_DOMAIN_EQUIPGO.Entities.Configuracion.Equipos
+            {
+                Marca = dto.Marca,
+                Modelo = dto.Modelo,
+                Serial = dto.Serial,
+                CodigoBarras = dto.CodigoBarras,
+                IdUsuarioInfo = usuarioId, // Asociar el equipo al usuario recién creado
+                IdEstado = dto.IdEstado,
+                IdSede = dto.IdSede,
+                IdTipoDispositivo = dto.IdTipoDispositivo,
+                IdProveedor = dto.IdProveedor,
+                SistemaOperativo = dto.SistemaOperativo,
+                MacEquipo = dto.MacEquipo,
+                FechaCreacion = DateTime.UtcNow,
+                UltimaModificacion = DateTime.UtcNow
+            };
+
+            await _equipoService.CrearEquipoAsync(equipo);
+
+            return Ok(new { message = "Equipo y usuario creados correctamente." });
         }
         catch (Exception ex)
         {
@@ -89,6 +140,9 @@ public class EquiposController : ControllerBase
         var sedes = await _sedesService.ObtenerTodasAsync();
         var tiposDispositivo = await _tipoDispositivosService.ObtenerTodasAsync();
         var proveedores = await _proveedoresService.ObtenerTodasAsync();
+        var tiposDocumento = await _equipoService.ObtenerTipoDocumentoAsync();
+        var areas = await _equipoService.ObtenerAreasAsync();
+        var campanas = await _equipoService.ObtenerCampañasAsync();
 
         return Ok(new
         {
@@ -97,7 +151,10 @@ public class EquiposController : ControllerBase
             equiposPersonales,
             sedes,
             tiposDispositivo,
-            proveedores
+            proveedores,
+            tiposDocumento,
+            areas,
+            campanas
         });
     }
 
@@ -116,5 +173,4 @@ public class EquiposController : ControllerBase
 
         return BadRequest(resultado); // 400 BadRequest por validaciones fallidas
     }
-
 }

@@ -30,7 +30,7 @@ window.limpiarFormularioCrear = function () {
         });
 
         // 3. Limpiar selects con TomSelect
-        const selectsIds = ['usuarioInfo', 'estado', 'sede', 'tipoDispositivo', 'proveedor'];
+        const selectsIds = ['usuarioInfo', 'estado', 'sede', 'tipoDispositivo', 'proveedor', 'tipoDocumento', 'area', 'campana'];
         selectsIds.forEach(id => {
             const select = document.getElementById(id);
             if (select) {
@@ -65,38 +65,97 @@ window.limpiarFormularioCrear = function () {
     }
 };
 
-// 🧩 Guardar o actualizar equipo
+// 🧩 Guardar o actualizar equipo con usuario
 window.guardarEquipo = async function () {
     const form = document.getElementById('formCrearEquipo');
     const equipoId = form.getAttribute('data-id'); // puede ser null o string
 
-    const equipoDto = {
-        marca: document.getElementById('marca').value,
-        modelo: document.getElementById('modelo').value,
-        serial: document.getElementById('serial').value,
-        codigoBarras: document.getElementById('codigoBarras').value,
-/*        ubicacion: document.getElementById('ubicacion').value,*/
-        idUsuarioInfo: parseInt(document.getElementById('usuarioInfo').value) || null,
-        idEstado: parseInt(document.getElementById('estado').value) || null,
-/*        idEquipoPersonal: parseInt(document.getElementById('equipoPersonal').value) || null,*/
-        idSede: parseInt(document.getElementById('sede').value) || null,
-        idTipoDispositivo: parseInt(document.getElementById('tipoDispositivo').value) || null,
-        idProveedor: parseInt(document.getElementById('proveedor').value) || null,
-        latitud: parseFloat(document.getElementById('latitud').value) || null,
-        longitud: parseFloat(document.getElementById('longitud').value) || null,
-        sistemaOperativo: document.getElementById('sistemaOperativo').value,
-        macEquipo: document.getElementById('macEquipo').value,
-/*        versionSoftware: document.getElementById('versionSoftware').value*/
-    };
+    // Verificar si se está creando un nuevo usuario
+    const formUsuarioVisible = document.getElementById('formUsuarioInfo').style.display !== 'none';
 
-    const url = equipoId ? `/api/equipos/admin/${equipoId}` : `/api/equipos/admin`;
-    const method = equipoId ? 'PUT' : 'POST';
+    let url, method, requestBody;
+
+    if (equipoId) {
+        // Si estamos editando un equipo existente, usamos el método original
+        const equipoDto = {
+            marca: document.getElementById('marca').value,
+            modelo: document.getElementById('modelo').value,
+            serial: document.getElementById('serial').value,
+            codigoBarras: document.getElementById('codigoBarras').value,
+            idUsuarioInfo: parseInt(document.getElementById('usuarioInfo').value) || null,
+            idEstado: parseInt(document.getElementById('estado').value) || null,
+            idSede: parseInt(document.getElementById('sede').value) || null,
+            idTipoDispositivo: parseInt(document.getElementById('tipoDispositivo').value) || null,
+            idProveedor: parseInt(document.getElementById('proveedor').value) || null,
+            latitud: parseFloat(document.getElementById('latitud').value) || null,
+            longitud: parseFloat(document.getElementById('longitud').value) || null,
+            sistemaOperativo: document.getElementById('sistemaOperativo').value,
+            macEquipo: document.getElementById('macEquipo').value,
+        };
+
+        url = `/api/equipos/admin/${equipoId}`;
+        method = 'PUT';
+        requestBody = JSON.stringify(equipoDto);
+    } else {
+        // Si estamos creando un nuevo equipo
+        if (formUsuarioVisible) {
+            // Si el formulario de usuario está visible, usamos el nuevo endpoint que crea usuario y equipo
+            const equipoUsuarioDto = {
+                // Datos del equipo
+                marca: document.getElementById('marca').value,
+                modelo: document.getElementById('modelo').value,
+                serial: document.getElementById('serial').value,
+                codigoBarras: document.getElementById('codigoBarras').value,
+                idEstado: parseInt(document.getElementById('estado').value) || null,
+                idSede: parseInt(document.getElementById('sede').value) || null,
+                idTipoDispositivo: parseInt(document.getElementById('tipoDispositivo').value) || null,
+                idProveedor: parseInt(document.getElementById('proveedor').value) || null,
+                latitud: parseFloat(document.getElementById('latitud').value) || null,
+                longitud: parseFloat(document.getElementById('longitud').value) || null,
+                sistemaOperativo: document.getElementById('sistemaOperativo').value,
+                macEquipo: document.getElementById('macEquipo').value,
+
+                // Datos del usuario
+                idTipoDocumento: parseInt(document.getElementById('tipoDocumento').value),
+                numeroDocumento: document.getElementById('numeroDocumento').value,
+                nombres: document.getElementById('nombres').value,
+                apellidos: document.getElementById('apellidos').value,
+                idArea: parseInt(document.getElementById('area').value),
+                idCampaña: parseInt(document.getElementById('campana').value)
+            };
+
+            url = '/api/equipos/admin/conusuario';
+            method = 'POST';
+            requestBody = JSON.stringify(equipoUsuarioDto);
+        } else {
+            // Si el formulario de usuario no está visible, usamos el método original
+            const equipoDto = {
+                marca: document.getElementById('marca').value,
+                modelo: document.getElementById('modelo').value,
+                serial: document.getElementById('serial').value,
+                codigoBarras: document.getElementById('codigoBarras').value,
+                idUsuarioInfo: parseInt(document.getElementById('usuarioInfo').value) || null,
+                idEstado: parseInt(document.getElementById('estado').value) || null,
+                idSede: parseInt(document.getElementById('sede').value) || null,
+                idTipoDispositivo: parseInt(document.getElementById('tipoDispositivo').value) || null,
+                idProveedor: parseInt(document.getElementById('proveedor').value) || null,
+                latitud: parseFloat(document.getElementById('latitud').value) || null,
+                longitud: parseFloat(document.getElementById('longitud').value) || null,
+                sistemaOperativo: document.getElementById('sistemaOperativo').value,
+                macEquipo: document.getElementById('macEquipo').value,
+            };
+
+            url = '/api/equipos/admin';
+            method = 'POST';
+            requestBody = JSON.stringify(equipoDto);
+        }
+    }
 
     try {
         const response = await fetch(url, {
             method,
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(equipoDto)
+            body: requestBody
         });
 
         if (response.ok) {
@@ -329,11 +388,151 @@ window.editarEquipo = async function (id) {
     }
 };
 
+// ⚙️ Cargar selects para el modal de CREAR/EDITAR (reutilizable)
+window.cargarSelects = async function () {
+    try {
+        const response = await fetch('/api/equipos/admin/form-data');
+        if (!response.ok) throw new Error('Error al cargar datos del formulario');
+        const data = await response.json();
+
+        // Guardar usuarios en caché si no existe
+        if (!window._usuariosCache && data.usuarios?.length) {
+            window._usuariosCache = data.usuarios;
+        }
+
+        const selects = [
+            {
+                id: 'usuarioInfo',
+                list: [{ usuario: 'nuevo', nombreCompleto: 'Crear nuevo usuario' }, ...(window._usuariosCache || data.usuarios)],
+                value: 'usuario',
+                text: item => item.usuario === 'nuevo' ? item.nombreCompleto : `${item.nombreCompleto} (${item.correo || item.usuario})`
+            },
+            { id: 'estado', list: data.estados, value: 'id', text: item => item.nombreEstado },
+            { id: 'equipoPersonal', list: data.equiposPersonales, value: 'id', text: item => item.nombrePersonal },
+            { id: 'sede', list: data.sedes, value: 'id', text: item => item.nombreSede },
+            { id: 'tipoDispositivo', list: data.tiposDispositivo, value: 'id', text: item => item.nombreTipo },
+            { id: 'proveedor', list: data.proveedores, value: 'id', text: item => item.nombreProveedor },
+            // CORRECCIÓN: Usar 'nombreDocumento' en lugar de 'TipoDocumento'
+            { id: 'tipoDocumento', list: data.tiposDocumento, value: 'id', text: item => item.nombreDocumento },
+            { id: 'area', list: data.areas, value: 'id', text: item => item.nombreArea },
+            { id: 'campana', list: data.campanas, value: 'id', text: item => item.nombreCampaña }
+        ];
+
+        for (const { id, list, value, text } of selects) {
+            const select = document.getElementById(id);
+            if (!select) continue;
+
+            // Destruir TomSelect existente si hay uno
+            if (select.tomselect) {
+                select.tomselect.destroy();
+            }
+
+            select.innerHTML = '<option value="">Seleccionar...</option>';
+
+            requestAnimationFrame(() => {
+                list.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item[value];
+                    option.text = text(item);
+                    select.appendChild(option);
+                });
+
+                new TomSelect(select, {
+                    placeholder: 'Buscar...',
+                    maxOptions: 500,
+                    allowEmptyOption: true,
+                    sortField: { field: "text", direction: "asc" },
+                    searchField: ['text', 'value'],
+                    onChange: function (value) {
+                        // Detectar cambio en el select de usuario
+                        if (id === 'usuarioInfo') {
+                            window.manejarCambioUsuario(select, false);
+                        }
+                    }
+                });
+            });
+        }
+    } catch (error) {
+        console.error('❌ Error en cargarSelects:', error);
+    }
+};
+
+// ⚙️ Cargar selects para el modal de EDITAR
+window.cargarSelectsEditar = async function () {
+    try {
+        const response = await fetch('/api/equipos/admin/form-data');
+        if (!response.ok) throw new Error('Error al cargar datos del formulario');
+        const data = await response.json();
+
+        if (!window._usuariosCache && data.usuarios?.length) {
+            window._usuariosCache = data.usuarios;
+        }
+
+        const selects = [
+            {
+                id: 'editarUsuarioInfo',
+                list: [{ usuario: 'nuevo', nombreCompleto: 'Crear nuevo usuario' }, ...(window._usuariosCache || data.usuarios)],
+                value: 'usuario',
+                text: item => item.usuario === 'nuevo' ? item.nombreCompleto : `${item.nombreCompleto} (${item.correo || item.usuario})`
+            },
+            { id: 'editarEstado', list: data.estados, value: 'id', text: item => item.nombreEstado },
+            { id: 'editarEquipoPersonal', list: data.equiposPersonales, value: 'id', text: item => item.nombrePersonal },
+            { id: 'editarSede', list: data.sedes, value: 'id', text: item => item.nombreSede },
+            { id: 'editarTipoDispositivo', list: data.tiposDispositivo, value: 'id', text: item => item.nombreTipo },
+            { id: 'editarProveedor', list: data.proveedores, value: 'id', text: item => item.nombreProveedor },
+            // CORRECCIÓN: Usar 'nombreDocumento'
+            { id: 'editarTipoDocumento', list: data.tiposDocumento, value: 'id', text: item => item.nombreDocumento },
+            { id: 'editarArea', list: data.areas, value: 'id', text: item => item.nombreArea },
+            { id: 'editarCampana', list: data.campanas, value: 'id', text: item => item.nombreCampaña }
+        ];
+
+        for (const { id, list, value, text } of selects) {
+            const select = document.getElementById(id);
+            if (!select) continue;
+
+            if (select.tomselect) {
+                select.tomselect.destroy();
+            }
+
+            select.innerHTML = '<option value="">Seleccionar...</option>';
+
+            requestAnimationFrame(() => {
+                list.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item[value];
+                    option.text = text(item);
+                    select.appendChild(option);
+                });
+
+                new TomSelect(select, {
+                    placeholder: 'Buscar...',
+                    maxOptions: 500,
+                    allowEmptyOption: true,
+                    sortField: { field: "text", direction: "asc" },
+                    onChange: function (value) {
+                        if (id === 'editarUsuarioInfo') {
+                            window.manejarCambioUsuario(select, true);
+                        }
+                    }
+                });
+            });
+        }
+    } catch (error) {
+        console.error('❌ Error en cargarSelectsEditar:', error);
+    }
+};
+
 // 🆕 Función para manejar el cambio de usuario y mostrar/ocultar formulario adicional
 window.manejarCambioUsuario = function (selectElement, esEditar = false) {
     const formId = esEditar ? 'formUsuarioInfoEditar' : 'formUsuarioInfo';
     const formUsuario = document.getElementById(formId);
     const usuarioSeleccionado = selectElement.value;
+
+    // Si se selecciona "Crear nuevo usuario", mostrar el formulario
+    if (usuarioSeleccionado === 'nuevo') {
+        formUsuario.style.display = 'block';
+        return;
+    }
 
     if (usuarioSeleccionado) {
         // Buscar información del usuario en el caché
@@ -375,148 +574,6 @@ window.manejarCambioUsuario = function (selectElement, esEditar = false) {
         document.getElementById(numDocId).value = '';
         document.getElementById(areaId).value = '';
         document.getElementById(campanaId).value = '';
-    }
-};
-
-// ⚙️ Cargar selects para el modal de CREAR/EDITAR (reutilizable)
-window.cargarSelects = async function () {
-    try {
-        const response = await fetch('/api/equipos/admin/form-data');
-        if (!response.ok) throw new Error('Error al cargar datos del formulario');
-        const data = await response.json();
-
-        // Guardar usuarios en caché si no existe
-        if (!window._usuariosCache && data.usuarios?.length) {
-            window._usuariosCache = data.usuarios;
-        }
-
-        const selects = [
-            { id: 'usuarioInfo', list: window._usuariosCache || data.usuarios, value: 'usuario', text: item => `${item.nombreCompleto} (${item.correo || item.usuario})` },
-            { id: 'estado', list: data.estados, value: 'id', text: item => item.nombreEstado },
-            { id: 'equipoPersonal', list: data.equiposPersonales, value: 'id', text: item => item.nombrePersonal },
-            { id: 'sede', list: data.sedes, value: 'id', text: item => item.nombreSede },
-            { id: 'tipoDispositivo', list: data.tiposDispositivo, value: 'id', text: item => item.nombreTipo },
-            { id: 'proveedor', list: data.proveedores, value: 'id', text: item => item.nombreProveedor }
-        ];
-
-        for (const { id, list, value, text } of selects) {
-            const select = document.getElementById(id);
-            if (!select) continue;
-
-            // Destruir TomSelect existente si hay uno
-            if (select.tomselect) {
-                select.tomselect.destroy();
-            }
-
-            select.innerHTML = '<option value="">Seleccionar...</option>';
-
-            requestAnimationFrame(() => {
-                list.forEach(item => {
-                    const option = document.createElement('option');
-                    option.value = item[value];
-                    option.text = text(item);
-                    select.appendChild(option);
-                });
-
-                const tomSelectInstance = new TomSelect(select, {
-                    placeholder: 'Buscar...',
-                    maxOptions: 500,
-                    allowEmptyOption: true,
-                    sortField: { field: "text", direction: "asc" },
-                    searchField: ['text', 'value'],
-                    score: function (search) {
-                        const normalize = str => str
-                            .toLowerCase()
-                            .normalize("NFD")
-                            .replace(/[\u0300-\u036f]/g, "");
-                        const words = normalize(search).split(/\s+/).filter(Boolean);
-                        return function (item) {
-                            const text = normalize(item.text);
-                            return words.every(word => text.includes(word)) ? 1 : 0;
-                        };
-                    },
-                    onChange: function (value) {
-                        // 🆕 Detectar cambio en el select de usuario
-                        if (id === 'usuarioInfo') {
-                            window.manejarCambioUsuario(select, false);
-                        }
-                    }
-                });
-            });
-        }
-    } catch (error) {
-        console.error('❌ Error en cargarSelects:', error);
-    }
-};
-
-// ⚙️ Cargar selects para el modal de EDITAR
-window.cargarSelectsEditar = async function () {
-    try {
-        const response = await fetch('/api/equipos/admin/form-data');
-        if (!response.ok) throw new Error('Error al cargar datos del formulario');
-        const data = await response.json();
-
-        // Guardar usuarios en caché si no existe
-        if (!window._usuariosCache && data.usuarios?.length) {
-            window._usuariosCache = data.usuarios;
-        }
-
-        const selects = [
-            { id: 'editarUsuarioInfo', list: window._usuariosCache || data.usuarios, value: 'usuario', text: item => `${item.nombreCompleto} (${item.correo || item.usuario})` },
-            { id: 'editarEstado', list: data.estados, value: 'id', text: item => item.nombreEstado },
-            { id: 'editarEquipoPersonal', list: data.equiposPersonales, value: 'id', text: item => item.nombrePersonal },
-            { id: 'editarSede', list: data.sedes, value: 'id', text: item => item.nombreSede },
-            { id: 'editarTipoDispositivo', list: data.tiposDispositivo, value: 'id', text: item => item.nombreTipo },
-            { id: 'editarProveedor', list: data.proveedores, value: 'id', text: item => item.nombreProveedor }
-        ];
-
-        for (const { id, list, value, text } of selects) {
-            const select = document.getElementById(id);
-            if (!select) continue;
-
-            // Destruir TomSelect existente si hay uno
-            if (select.tomselect) {
-                select.tomselect.destroy();
-            }
-
-            select.innerHTML = '<option value="">Seleccionar...</option>';
-
-            requestAnimationFrame(() => {
-                list.forEach(item => {
-                    const option = document.createElement('option');
-                    option.value = item[value];
-                    option.text = text(item);
-                    select.appendChild(option);
-                });
-
-                const tomSelectInstance = new TomSelect(select, {
-                    placeholder: 'Buscar...',
-                    maxOptions: 500,
-                    allowEmptyOption: true,
-                    sortField: { field: "text", direction: "asc" },
-                    searchField: ['text', 'value'],
-                    score: function (search) {
-                        const normalize = str => str
-                            .toLowerCase()
-                            .normalize("NFD")
-                            .replace(/[\u0300-\u036f]/g, "");
-                        const words = normalize(search).split(/\s+/).filter(Boolean);
-                        return function (item) {
-                            const text = normalize(item.text);
-                            return words.every(word => text.includes(word)) ? 1 : 0;
-                        };
-                    },
-                    onChange: function (value) {
-                        // 🆕 Detectar cambio en el select de usuario (modal editar)
-                        if (id === 'editarUsuarioInfo') {
-                            window.manejarCambioUsuario(select, true);
-                        }
-                    }
-                });
-            });
-        }
-    } catch (error) {
-        console.error('❌ Error en cargarSelectsEditar:', error);
     }
 };
 
