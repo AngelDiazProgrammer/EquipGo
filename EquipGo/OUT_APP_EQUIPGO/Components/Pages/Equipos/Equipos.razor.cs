@@ -83,6 +83,8 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
             }
         }
 
+
+
         private void Filtrar()
         {
             if (equipos != null)

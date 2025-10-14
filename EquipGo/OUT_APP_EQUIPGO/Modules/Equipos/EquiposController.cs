@@ -23,7 +23,14 @@ public class EquiposController : ControllerBase
     private readonly IProveedoresService _proveedoresService;
     private readonly IActiveDirectoryService _activeDirectoryService;
 
-    public EquiposController(IEquipoService equipoService, IUsuariosInformacionService usuariosInformacionService, IEstadoService estadoService, ISedesService sedesService, ITipoDispositivosService tipoDispositivosService, IProveedoresService proveedoresService, IActiveDirectoryService activeDirectoryService)
+    public EquiposController(
+        IEquipoService equipoService,
+        IUsuariosInformacionService usuariosInformacionService,
+        IEstadoService estadoService,
+        ISedesService sedesService,
+        ITipoDispositivosService tipoDispositivosService,
+        IProveedoresService proveedoresService,
+        IActiveDirectoryService activeDirectoryService)
     {
         _equipoService = equipoService;
         _usuariosInformacionService = usuariosInformacionService;
@@ -48,48 +55,142 @@ public class EquiposController : ControllerBase
         }
     }
 
-    // Nuevo método para crear equipo con usuario
+    // UpSert Asignacion de equipos
     [HttpPost("Admin/ConUsuario")]
-    public async Task<IActionResult> CrearEquipoConUsuario([FromBody] EquipoUsuarioDto dto)
+    public async Task<IActionResult> GuardarEquipoConUsuario([FromBody] EquipoUsuarioDto dto)
     {
         try
         {
-            // 1. Crear el usuario primero
-            var usuario = new UsuariosInformacion
+            // --- LÓGICA PARA EL USUARIO (UPSERT) ---
+            int usuarioId;
+            // ✅ CAMBIO: Usamos el servicio de usuarios para buscar por documento
+            var usuarioExistente = await _usuariosInformacionService.ConsultarUsuarioPorDocumentoAsync(dto.NumeroDocumento);
+
+            if (usuarioExistente != null)
             {
-                IdTipodocumento = dto.IdTipoDocumento,
-                NumeroDocumento = dto.NumeroDocumento,
-                Nombres = dto.Nombres,
-                Apellidos = dto.Apellidos,
-                IdArea = dto.IdArea,
-                IdCampaña = dto.IdCampaña,
-                FechaCreacion = DateTime.UtcNow,
-                UltimaModificacion = DateTime.UtcNow
-            };
+                // Si el usuario existe, lo ACTUALIZAMOS con los nuevos datos
+                Console.WriteLine($"✅ Usuario existente encontrado con ID: {usuarioExistente.Id}. Actualizando...");
 
-            var usuarioId = await _equipoService.CrearUsuarioAsync(usuario);
+                usuarioExistente.IdTipodocumento = dto.IdTipoDocumento;
+                usuarioExistente.Nombres = dto.Nombres;
+                usuarioExistente.Apellidos = dto.Apellidos;
+                usuarioExistente.IdArea = dto.IdArea;
+                usuarioExistente.IdCampaña = dto.IdCampaña;
+                usuarioExistente.UltimaModificacion = DateTime.UtcNow;
 
-            // 2. Crear el equipo asociado al usuario
-            var equipo = new OUT_DOMAIN_EQUIPGO.Entities.Configuracion.Equipos
+                // ✅ CAMBIO: Usamos el servicio de usuarios para actualizar
+                await _usuariosInformacionService.ActualizarUsuarioAsync(usuarioExistente);
+                usuarioId = usuarioExistente.Id;
+            }
+            else
             {
-                Marca = dto.Marca,
-                Modelo = dto.Modelo,
-                Serial = dto.Serial,
-                CodigoBarras = dto.CodigoBarras,
-                IdUsuarioInfo = usuarioId, // Asociar el equipo al usuario recién creado
-                IdEstado = dto.IdEstado,
-                IdSede = dto.IdSede,
-                IdTipoDispositivo = dto.IdTipoDispositivo,
-                IdProveedor = dto.IdProveedor,
-                SistemaOperativo = dto.SistemaOperativo,
-                MacEquipo = dto.MacEquipo,
-                FechaCreacion = DateTime.UtcNow,
-                UltimaModificacion = DateTime.UtcNow
-            };
+                // Si el usuario no existe, lo creamos
+                Console.WriteLine($"🆕 Creando nuevo usuario con Documento: {dto.NumeroDocumento}...");
+                var nuevoUsuario = new UsuariosInformacion
+                {
+                    IdTipodocumento = dto.IdTipoDocumento,
+                    NumeroDocumento = dto.NumeroDocumento,
+                    Nombres = dto.Nombres,
+                    Apellidos = dto.Apellidos,
+                    IdArea = dto.IdArea,
+                    IdCampaña = dto.IdCampaña,
+                    IdEstado = 1, // Estado por defecto "Activo"
+                    FechaCreacion = DateTime.UtcNow,
+                    UltimaModificacion = DateTime.UtcNow
+                };
+                // ✅ CAMBIO: Usamos el servicio de usuarios para crear
+                usuarioId = await _usuariosInformacionService.CrearUsuarioAsync(nuevoUsuario);
+                Console.WriteLine($"🆕 Nuevo usuario creado con ID: {usuarioId}. Documento: {dto.NumeroDocumento}");
+            }
 
-            await _equipoService.CrearEquipoAsync(equipo);
+            // --- LÓGICA PARA EL EQUIPO (UPSERT) ---
+            var equipoExistente = await _equipoService.ConsultarPorSerialAsync(dto.Serial);
 
-            return Ok(new { message = "Equipo y usuario creados correctamente." });
+            if (equipoExistente != null)
+            {
+                // Si el equipo existe, lo actualizamos
+                Console.WriteLine($"✅ Equipo existente encontrado con ID: {equipoExistente.Id}. Serial: {dto.Serial}. Actualizando...");
+
+                equipoExistente.Marca = dto.Marca;
+                equipoExistente.Modelo = dto.Modelo;
+                equipoExistente.CodigoBarras = string.IsNullOrWhiteSpace(dto.CodigoBarras)
+                    ? equipoExistente.CodigoBarras
+                    : dto.CodigoBarras;
+                equipoExistente.IdUsuarioInfo = usuarioId;
+                equipoExistente.IdEstado = dto.IdEstado ?? equipoExistente.IdEstado;
+                equipoExistente.IdSede = dto.IdSede ?? equipoExistente.IdSede;
+                equipoExistente.IdTipoDispositivo = dto.IdTipoDispositivo ?? equipoExistente.IdTipoDispositivo;
+                equipoExistente.IdProveedor = dto.IdProveedor ?? equipoExistente.IdProveedor;
+                equipoExistente.SistemaOperativo = dto.SistemaOperativo ?? equipoExistente.SistemaOperativo;
+                equipoExistente.MacEquipo = dto.MacEquipo ?? equipoExistente.MacEquipo;
+                equipoExistente.UltimaModificacion = DateTime.UtcNow;
+
+                await _equipoService.ActualizarEquipoAsync(equipoExistente);
+
+                return Ok(new { message = "Equipo y usuario actualizados correctamente." });
+            }
+            else
+            {
+                // Si el equipo no existe, lo creamos
+                Console.WriteLine($"🆕 Creando nuevo equipo con Serial: {dto.Serial}...");
+
+                var nuevoEquipo = new OUT_DOMAIN_EQUIPGO.Entities.Configuracion.Equipos
+                {
+                    Marca = dto.Marca,
+                    Modelo = dto.Modelo,
+                    Serial = dto.Serial,
+                    CodigoBarras = string.IsNullOrWhiteSpace(dto.CodigoBarras)
+                        ? $"SIN-ASIGNAR-{Guid.NewGuid()}"
+                        : dto.CodigoBarras,
+                    IdUsuarioInfo = usuarioId,
+                    IdEstado = dto.IdEstado,
+                    IdSede = dto.IdSede,
+                    IdTipoDispositivo = dto.IdTipoDispositivo,
+                    IdProveedor = dto.IdProveedor,
+                    SistemaOperativo = dto.SistemaOperativo,
+                    MacEquipo = dto.MacEquipo,
+                    FechaCreacion = DateTime.UtcNow,
+                    UltimaModificacion = DateTime.UtcNow
+                };
+
+                await _equipoService.CrearEquipoAsync(nuevoEquipo);
+                return Ok(new { message = "Equipo y usuario creados correctamente." });
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"❌ Error en GuardarEquipoConUsuario: {ex.Message}");
+            return BadRequest(new { error = ex.Message });
+        }
+    }
+
+    //Consultar usuario por nombres en la base local
+    [HttpGet("admin/usuario-por-nombre")]
+    public async Task<IActionResult> ConsultarUsuarioPorNombre([FromQuery] string nombres, [FromQuery] string apellidos)
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(nombres) || string.IsNullOrEmpty(apellidos))
+            {
+                return BadRequest(new { error = "Los nombres y apellidos son requeridos." });
+            }
+
+            // ✅ CAMBIO: Usamos el servicio de usuarios para buscar por nombre
+            var usuario = await _usuariosInformacionService.ConsultarUsuarioPorNombreAsync(nombres, apellidos);
+
+            if (usuario == null)
+            {
+                return NotFound(new { message = "Usuario no encontrado en la base de datos local." });
+            }
+
+            // Devolvemos un DTO con la información relevante para el formulario
+            return Ok(new
+            {
+                usuario.IdTipodocumento,
+                usuario.NumeroDocumento,
+                usuario.IdArea,
+                usuario.IdCampaña
+            });
         }
         catch (Exception ex)
         {

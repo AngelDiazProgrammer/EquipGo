@@ -1,4 +1,5 @@
-﻿using OUT_OS_APP.EQUIPGO.DTO.DTOs.Usuarios;
+﻿using OUT_DOMAIN_EQUIPGO.Entities.Procesos;
+using OUT_OS_APP.EQUIPGO.DTO.DTOs.Usuarios;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,9 @@ namespace Interface.Services.Usuarios
     {
         public Task<List<UsuarioInformacionDto?>> ObtenerTodosLosUsuariosInformacionAsync();
 
-
+        Task<UsuariosInformacion?> ConsultarUsuarioPorDocumentoAsync(string documento);
+        Task<UsuariosInformacion?> ConsultarUsuarioPorNombreAsync(string nombres, string apellidos);
+        Task<int> CrearUsuarioAsync(UsuariosInformacion usuario);
+        Task<bool> ActualizarUsuarioAsync(UsuariosInformacion usuario);
     }
 }

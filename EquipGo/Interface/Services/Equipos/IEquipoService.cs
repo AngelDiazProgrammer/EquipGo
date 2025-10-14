@@ -12,6 +12,8 @@ namespace Interface.Services.Equipos
     {
         Task<List<EquipoDto>> ObtenerTodosLosEquiposAsync();
         Task<EquipoEscaneadoDto?> ConsultarPorCodigoBarrasAsync(string codigoBarras);
+        Task<OUT_DOMAIN_EQUIPGO.Entities.Configuracion.Equipos?> ConsultarPorSerialAsync(string serial);
+        Task<bool> ActualizarEquipoAsync(OUT_DOMAIN_EQUIPGO.Entities.Configuracion.Equipos equipo);
         Task<bool> CrearEquipoAdminAsync(CrearEquipoDto equipoDto);
 
         Task<EquipoDto?> ObtenerPorIdAsync(int id);

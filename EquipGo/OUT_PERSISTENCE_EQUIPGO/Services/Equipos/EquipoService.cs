@@ -67,6 +67,17 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Equipos
             };
         }
 
+        public async Task<OUT_DOMAIN_EQUIPGO.Entities.Configuracion.Equipos?> ConsultarPorSerialAsync(string serial)
+        {
+            if (string.IsNullOrEmpty(serial))
+                return null;
+
+            // Usamos el Query del UnitOfWork para obtener la entidad directamente.
+            // SIN AsNoTracking() para que Entity Framework pueda rastrearla y actualizarla.
+            return await _unitOfWork.Equipos.Query()
+                .FirstOrDefaultAsync(e => e.Serial == serial);
+        }
+
         public async Task<List<EquipoDto>> ObtenerTodosLosEquiposAsync()
         {
             var equipos = await _unitOfWork.Equipos.Query()
@@ -212,6 +223,17 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Equipos
             return true;
         }
 
+        // ✅ AÑADE ESTA NUEVA IMPLEMENTACIÓN
+public async Task<bool> ActualizarEquipoAsync(OUT_DOMAIN_EQUIPGO.Entities.Configuracion.Equipos equipo)
+{
+    if (equipo == null) return false;
+    
+    // La entidad ya está siendo rastreada por el DbContext,
+    // así que solo necesitamos llamar a CompleteAsync para guardar los cambios.
+    await _unitOfWork.CompleteAsync();
+    return true;
+}
+
         public async Task<bool> EliminarAsync(int id)
         {
             try
@@ -285,7 +307,6 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Equipos
 
 
         #endregion
-
 
 
 
