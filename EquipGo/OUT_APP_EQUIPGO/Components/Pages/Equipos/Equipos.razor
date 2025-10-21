@@ -14,20 +14,20 @@
     <div class="info">
         <div class="card-registros">
             <div class="datos">
-                <span class="b">150</span>
+                <span class="b">@EquiposRegistradosFiltrados</span>
                 <span class="transacciones-de-hoy">Equipos Registrados</span>
             </div>
         </div>
         <div class="dashboard-card-registros">
             <div class="datos">
-                <span class="b">90</span>
-                <span class="transacciones-de-hoy">Equipos Personales</span>
+                <span class="b">@EquiposActivosFiltrados</span>
+                <span class="transacciones-de-hoy">Equipos Activos</span>
             </div>
         </div>
         <div class="card-alerta">
             <div class="datos">
-                <span class="b">20</span>
-                <span class="transacciones-de-hoy">Equipos Corporativos</span>
+                <span class="b">@EquiposInactivosFiltrados</span>
+                <span class="transacciones-de-hoy">Equipos Inactivos</span>
             </div>
         </div>
     </div>
@@ -205,7 +205,8 @@
                                 <td>@equipo.CodigoBarras</td>
                                 <td>
                                     <button class="btn btn-sm btn-outline-info" @onclick="@(() => MostrarDetallesEquipo(equipo.Id))">🔍</button>
-                                    <button class="btn btn-sm btn-outline-danger" onclick="editarEquipo(@equipo.Id)">👤</button>
+                                    @* Implementacion futura *@
+                                    @* <button class="btn btn-sm btn-outline-danger" onclick="editarEquipo(@equipo.Id)">👤</button> *@
                                     <button class="btn btn-sm btn-outline-primary" onclick="editarEquipo(@equipo.Id)">✏️</button>
                                 </td>
                             </tr>

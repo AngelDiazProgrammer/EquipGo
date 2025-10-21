@@ -40,6 +40,16 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
 
         //Loader
         private bool isCargandoEquipos = true;
+
+        // Propiedades para las tarjetas (igual que en usuarios)
+        private int EquiposRegistrados => equipos?.Count ?? 0;
+        private int EquiposActivos => equipos?.Count(e => e.EstadoNombre?.Trim().ToLower() == "activo") ?? 0;
+        private int EquiposInactivos => equipos?.Count(e => e.EstadoNombre?.Trim().ToLower() == "inactivo") ?? 0;
+
+        private int EquiposRegistradosFiltrados => equiposFiltrados?.Count ?? 0;
+        private int EquiposActivosFiltrados => equiposFiltrados?.Count(e => e.EstadoNombre?.Trim().ToLower() == "activo") ?? 0;
+        private int EquiposInactivosFiltrados => equiposFiltrados?.Count(e => e.EstadoNombre?.Trim().ToLower() == "inactivo") ?? 0;
+
         protected override async Task OnInitializedAsync()
         {
             apiKey = Configuration["GoogleMaps:ApiKey"];
@@ -73,17 +83,13 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
             }
         }
 
-
-
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
             {
-                
+
             }
         }
-
-
 
         private void Filtrar()
         {
@@ -100,9 +106,9 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
                     .ToList();
 
                 paginaActual = 1;
+                StateHasChanged();
             }
         }
-
 
         private void LimpiarFiltros()
         {
@@ -114,8 +120,8 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
                 .OrderByDescending(e => e.FechaCreacion)
                 .ToList();
             paginaActual = 1;
+            StateHasChanged();
         }
-
 
         private void SiguientePagina()
         {
@@ -204,10 +210,5 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
                 await JSRuntime.InvokeVoidAsync("mostrarModalDetallesEquipo", dotNetRef);
             }
         }
-
-
-        
-
-
     }
 }

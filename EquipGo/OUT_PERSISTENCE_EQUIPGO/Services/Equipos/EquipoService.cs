@@ -81,14 +81,14 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Equipos
         public async Task<List<EquipoDto>> ObtenerTodosLosEquiposAsync()
         {
             var equipos = await _unitOfWork.Equipos.Query()
-                                       .Include(e => e.Estado)
-                                       .Include(e => e.IdUsuarioInfoNavigation)
-                                       .Include(e => e.IdEquipoPersonalNavigation)
-                                       .Include(e => e.IdSedeNavigation)
-                                       .Include(e => e.IdTipoDispositivoNavigation)
-                                       .Include(e => e.IdProveedorNavigation)
-                                       .AsNoTracking()
-                                       .ToListAsync();
+                                           .Include(e => e.Estado)
+                                           .Include(e => e.IdUsuarioInfoNavigation)
+                                           .Include(e => e.IdEquipoPersonalNavigation)
+                                           .Include(e => e.IdSedeNavigation)
+                                           .Include(e => e.IdTipoDispositivoNavigation)
+                                           .Include(e => e.IdProveedorNavigation)
+                                           .AsNoTracking()
+                                           .ToListAsync();
 
             var lista = equipos.Select(e => new EquipoDto
             {
@@ -99,21 +99,22 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Equipos
                 CodigoBarras = e.CodigoBarras,
                 Ubicacion = e.Ubicacion,
                 UsuarioNombreCompleto = e.IdUsuarioInfoNavigation != null ?
-        $"{e.IdUsuarioInfoNavigation.Nombres} {e.IdUsuarioInfoNavigation.Apellidos}" : "",
+                    $"{e.IdUsuarioInfoNavigation.Nombres} {e.IdUsuarioInfoNavigation.Apellidos}" : "",
                 EstadoNombre = e.Estado?.NombreEstado,
+                // ✅ AGREGAR ESTA LÍNEA
+                IdEstado = e.IdEstado,  // 👈 ESTO ES LO QUE FALTA
                 EquipoPersonalNombre = e.IdEquipoPersonalNavigation?.NombrePersonal,
                 SedeNombre = e.IdSedeNavigation?.NombreSede,
                 TipoDispositivoNombre = e.IdTipoDispositivoNavigation?.NombreTipo,
                 ProveedorNombre = e.IdProveedorNavigation?.NombreProveedor,
-                Latitud = e.Latitud,       // 👈 Conversión explícita
-                Longitud = e.Longitud,     // 👈 Conversión explícita
+                Latitud = e.Latitud,
+                Longitud = e.Longitud,
                 SistemaOperativo = e.SistemaOperativo,
                 MacEquipo = e.MacEquipo,
                 VersionSoftware = e.VersionSoftware,
                 FechaCreacion = e.FechaCreacion,
                 UltimaModificacion = e.UltimaModificacion
             }).ToList();
-
 
             return lista;
         }
@@ -178,16 +179,17 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Equipos
                 MacEquipo = equipo.MacEquipo,
                 VersionSoftware = equipo.VersionSoftware,
                 IdUsuarioInfo = equipo.IdUsuarioInfo,
-                IdEstado = equipo.IdEstado,
+                // ✅ AGREGAR ESTA LÍNEA
+                IdEstado = equipo.IdEstado,  // 👈 ESTO ES LO QUE FALTA
                 IdEquipoPersonal = equipo.IdEquipoPersonal,
                 IdSede = equipo.IdSede,
                 IdTipoDispositivo = equipo.IdTipoDispositivo,
                 IdProveedor = equipo.IdProveedor,
 
-                // ✅ Agrega estas propiedades de texto
+                // ✅ Propiedades de texto
                 UsuarioNombreCompleto = equipo.IdUsuarioInfoNavigation != null
-        ? $"{equipo.IdUsuarioInfoNavigation.Nombres} {equipo.IdUsuarioInfoNavigation.Apellidos}"
-        : "Sin asignar",
+                    ? $"{equipo.IdUsuarioInfoNavigation.Nombres} {equipo.IdUsuarioInfoNavigation.Apellidos}"
+                    : "Sin asignar",
                 EstadoNombre = equipo.Estado?.NombreEstado ?? "Sin estado",
                 EquipoPersonalNombre = equipo.IdEquipoPersonalNavigation?.NombrePersonal ?? "No definido",
                 TipoDispositivoNombre = equipo.IdTipoDispositivoNavigation?.NombreTipo ?? "No definido",
