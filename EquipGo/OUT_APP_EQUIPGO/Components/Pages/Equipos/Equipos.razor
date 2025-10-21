@@ -75,196 +75,56 @@
 
     <!-- Modal Crear Equipo -->
     <div class="modal fade modal-equipgo" id="modalCrearEquipo" tabindex="-1" aria-labelledby="modalCrearEquipoLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header-equipgo">
                     <h5 class="modal-title-equipgo">Registrar Equipo</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+
                 <div class="modal-body-equipgo">
                     <form id="formCrearEquipo">
-                        <div class="row">
-                            <!-- Columna izquierda -->
-                            <div class="col-md-6">
-                                <div class="seccion-modal">
-                                    <div class="seccion-header">
-                                        <span class="seccion-titulo">💻 Datos del Equipo</span>
-                                    </div>
-                                    <div class="seccion-datos">
-                                        <div class="form-section">
-                                            <label>Marca</label>
-                                            <input type="text" id="marca" name="marca" required placeholder="Ej: Dell" />
-                                        </div>
-                                        <div class="form-section">
-                                            <label>Modelo</label>
-                                            <input type="text" id="modelo" name="modelo" required placeholder="Ej: Latitude 5510" />
-                                        </div>
-                                        <div class="form-section">
-                                            <label>Serial</label>
-                                            <input type="text" id="serial" name="serial" placeholder="Ej: ABC123" />
-                                        </div>
-                                        <div class="form-section">
-                                            <label>Código de Barras</label>
-                                            <input type="text" id="codigoBarras" name="codigoBarras" placeholder="Ej: CB001" />
-                                        </div>
-                                        <div class="form-section">
-                                            <label>Sistema Operativo</label>
-                                            <input type="text" id="sistemaOperativo" name="sistemaOperativo" placeholder="Ej: Windows 11" />
-                                        </div>
-                                        <div class="form-section">
-                                            <label>MAC Equipo</label>
-                                            <input type="text" id="macEquipo" name="macEquipo" placeholder="Ej: 00:1B:44:11:3A:B7" />
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="form-section">
-                                                    <label>Latitud</label>
-                                                    <input type="number" step="any" id="latitud" name="latitud" placeholder="0.000000" />
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-section">
-                                                    <label>Longitud</label>
-                                                    <input type="number" step="any" id="longitud" name="longitud" placeholder="0.000000" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                        @* <div class="form-section">
-                                            <label>Versión Software</label>
-                                            <input type="text" id="versionSoftware" name="versionSoftware" placeholder="Ej: v1.0.0" />
-                                        </div> *@
-                                    </div>
-                                </div>
+                        <div class="seccion-modal">
+                            <div class="seccion-header">
+                                <span class="seccion-titulo">💻 Datos del Equipo</span>
                             </div>
-
-                            <!-- Columna derecha -->
-                            <div class="col-md-6">
-                                <div class="seccion-modal">
-                                    <div class="seccion-header">
-                                        <span class="seccion-titulo">⚙️ Características</span>
-                                    </div>
-                                    <div class="seccion-datos">
-                                        @* <div class="form-section">
-                                            <label>Equipo Personal</label>
-                                            <select id="equipoPersonal" name="equipoPersonal">
-                                                <option value="">Seleccionar...</option>
-                                            </select>
-                                        </div> *@
-                                        <div class="form-section">
-                                            <label>Tipo de Dispositivo</label>
-                                            <select id="tipoDispositivo" name="tipoDispositivo">
-                                                <option value="">Seleccionar...</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-section">
-                                            <label>Estado</label>
-                                            <select id="estado" name="estado">
-                                                <option value="">Seleccionar...</option>
-                                            </select>
-                                        </div>
-                                    </div>
+                            <div class="seccion-datos">
+                                <div class="form-section">
+                                    <label>Marca</label>
+                                    <input type="text" id="marca" name="marca" required placeholder="Ej: Dell" />
+                                </div>
+                                <div class="form-section">
+                                    <label>Modelo</label>
+                                    <input type="text" id="modelo" name="modelo" required placeholder="Ej: Latitude 5510" />
+                                </div>
+                                <div class="form-section">
+                                    <label>Serial</label>
+                                    <input type="text" id="serial" name="serial" placeholder="Ej: ABC123" />
+                                </div>
+                                <div class="form-section">
+                                    <label>Código de Barras</label>
+                                    <input type="text" id="codigoBarras" name="codigoBarras" placeholder="Ej: CB001" />
+                                </div>
+                                <div class="form-section">
+                                    <label>Sistema Operativo</label>
+                                    <input type="text" id="sistemaOperativo" name="sistemaOperativo" placeholder="Ej: Windows 11" />
+                                </div>
+                                <div class="form-section">
+                                    <label>MAC Equipo</label>
+                                    <input type="text" id="macEquipo" name="macEquipo" placeholder="Ej: 00:1B:44:11:3A:B7" />
                                 </div>
 
-                                <div class="seccion-modal">
-                                    <div class="seccion-header">
-                                        <span class="seccion-titulo">📍 Asignación</span>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-section">
+                                            <label>Latitud</label>
+                                            <input type="number" step="any" id="latitud" name="latitud" placeholder="0.000000" />
+                                        </div>
                                     </div>
-                                    <div class="seccion-datos">
+                                    <div class="col-md-6">
                                         <div class="form-section">
-                                            <label>Proveedor</label>
-                                            <select id="proveedor" name="proveedor">
-                                                <option value="">Seleccionar...</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-section">
-                                            <label>Sede</label>
-                                            <select id="sede" name="sede">
-                                                <option value="">Seleccionar...</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-section">
-                                            <label>Asignado a</label>
-                                            <select id="usuarioInfo" name="usuarioInfo">
-                                                <option value="">-- Selecciona un usuario --</option>
-                                            </select>
-                                        </div>
-                                        @* <div class="form-section">
-                                            <label>Ubicación</label>
-                                            <input type="text" id="ubicacion" name="ubicacion" placeholder="Ej: Oficina 1" />
-                                        </div> *@                                        
-                                        <!-- 🆕 FORMULARIO DESPLEGABLE DE INFORMACIÓN DEL USUARIO -->
-                                        <div id="formUsuarioInfo" style="display: none; margin-top: 15px; animation: slideDown 0.3s ease-out; width: 100%;">
-                                            <div class="seccion-modal" style="border-radius: 12px; border: 1px solid #e0e0e0; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                                                <div class="seccion-header" style="background: linear-gradient(135deg, #E9002B 0%, #a70120 100%); border-radius: 12px 12px 0 0; padding: 12px 20px;">
-                                                    <span class="seccion-titulo" style="color: white; font-size: 18px; font-weight: 600;">👤 Información del Usuario</span>
-                                                </div>
-                                                <div class="seccion-datos" style="padding: 15px 20px;">
-                                                    <div class="row" style="margin-bottom: 10px;">
-                                                        <div class="col-md-3" style="padding: 0 5px;">
-                                                            <div class="form-section" style="margin-bottom: 12px;">
-                                                                <label style="font-size: 14px; font-weight: 600; color: #393e42; margin-bottom: 5px;">Tipo de Documento <span style="color: #E9002B;">*</span></label>
-                                                                <select id="tipoDocumento" name="tipoDocumento" required style="padding: 8px 10px; border: 1px solid #ced4da; border-radius: 6px; font-size: 14px; height: 38px;">
-                                                                    <option value="">Seleccionar...</option>
-                                                                    <option value="CC">Cédula de Ciudadanía</option>
-                                                                    <option value="CE">Cédula de Extranjería</option>
-                                                                    <option value="TI">Tarjeta de Identidad</option>
-                                                                    <option value="PA">Pasaporte</option>
-                                                                    <option value="RC">Registro Civil</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-3" style="padding: 0 5px;">
-                                                            <div class="form-section" style="margin-bottom: 12px;">
-                                                                <label style="font-size: 14px; font-weight: 600; color: #393e42; margin-bottom: 5px;">Número de Documento <span style="color: #E9002B;">*</span></label>
-                                                                <input type="text" id="numeroDocumento" name="numeroDocumento" required placeholder="Ej: 1234567890" style="padding: 8px 10px; border: 1px solid #ced4da; border-radius: 6px; font-size: 14px; height: 38px;" />
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-3" style="padding: 0 5px;">
-                                                            <div class="form-section" style="margin-bottom: 12px;">
-                                                                <label style="font-size: 14px; font-weight: 600; color: #393e42; margin-bottom: 5px;">Nombres <span style="color: #E9002B;">*</span></label>
-                                                                <input type="text" id="nombres" name="nombres" readonly style="background-color: #f8f9fa; cursor: not-allowed; padding: 8px 10px; border: 1px solid #ced4da; border-radius: 6px; font-size: 14px; height: 38px;" placeholder="(Extraído del AD)" />
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-3" style="padding: 0 5px;">
-                                                            <div class="form-section" style="margin-bottom: 12px;">
-                                                                <label style="font-size: 14px; font-weight: 600; color: #393e42; margin-bottom: 5px;">Apellidos <span style="color: #E9002B;">*</span></label>
-                                                                <input type="text" id="apellidos" name="apellidos" readonly style="background-color: #f8f9fa; cursor: not-allowed; padding: 8px 10px; border: 1px solid #ced4da; border-radius: 6px; font-size: 14px; height: 38px;" placeholder="(Extraído del AD)" />
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-6" style="padding: 0 5px;">
-                                                            <div class="form-section" style="margin-bottom: 12px;">
-                                                                <label style="font-size: 14px; font-weight: 600; color: #393e42; margin-bottom: 5px;">Área <span style="color: #E9002B;">*</span></label>
-                                                                <select id="area" name="area" required style="padding: 8px 10px; border: 1px solid #ced4da; border-radius: 6px; font-size: 14px; height: 38px;">
-                                                                    <option value="">Seleccionar...</option>
-                                                                    <option value="1">Tecnología</option>
-                                                                    <option value="2">Recursos Humanos</option>
-                                                                    <option value="3">Operaciones</option>
-                                                                    <option value="4">Comercial</option>
-                                                                    <option value="5">Financiero</option>
-                                                                    <option value="6">Marketing</option>
-                                                                    <option value="7">Atención al Cliente</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6" style="padding: 0 5px;">
-                                                            <div class="form-section" style="margin-bottom: 12px;">
-                                                                <label style="font-size: 14px; font-weight: 600; color: #393e42; margin-bottom: 5px;">Campaña <span style="color: #E9002B;">*</span></label>
-                                                                <select id="campana" name="campana" required style="padding: 8px 10px; border: 1px solid #ced4da; border-radius: 6px; font-size: 14px; height: 38px;">
-                                                                    <option value="">Seleccionar...</option>
-                                                                    <option value="1">Campaña Digital 2025</option>
-                                                                    <option value="2">Ventas Q1</option>
-                                                                    <option value="3">Soporte Premium</option>
-                                                                    <option value="4">Retención</option>
-                                                                    <option value="5">Cobranzas</option>
-                                                                    <option value="6">Back Office</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            <label>Longitud</label>
+                                            <input type="number" step="any" id="longitud" name="longitud" placeholder="0.000000" />
                                         </div>
                                     </div>
                                 </div>
@@ -272,6 +132,7 @@
                         </div>
                     </form>
                 </div>
+
                 <div class="modal-footer-equipgo">
                     <button class="boton-modal-equipgo boton-modal-secundario" data-bs-dismiss="modal">Cancelar</button>
                     <button class="boton-modal-equipgo" onclick="guardarEquipo()">Guardar</button>
@@ -279,6 +140,7 @@
             </div>
         </div>
     </div>
+
 
     <!-- Tabla con animación de carga -->
     <div style="position: relative; width: 100%;">
@@ -343,6 +205,7 @@
                                 <td>@equipo.CodigoBarras</td>
                                 <td>
                                     <button class="btn btn-sm btn-outline-info" @onclick="@(() => MostrarDetallesEquipo(equipo.Id))">🔍</button>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="editarEquipo(@equipo.Id)">👤</button>
                                     <button class="btn btn-sm btn-outline-primary" onclick="editarEquipo(@equipo.Id)">✏️</button>
                                 </td>
                             </tr>

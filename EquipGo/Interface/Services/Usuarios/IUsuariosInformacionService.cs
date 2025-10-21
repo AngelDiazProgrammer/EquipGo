@@ -16,5 +16,7 @@ namespace Interface.Services.Usuarios
         Task<UsuariosInformacion?> ConsultarUsuarioPorNombreAsync(string nombres, string apellidos);
         Task<int> CrearUsuarioAsync(UsuariosInformacion usuario);
         Task<bool> ActualizarUsuarioAsync(UsuariosInformacion usuario);
+
+        Task<List<object>> ObtenerUsuariosCombinadosAsync();
     }
 }

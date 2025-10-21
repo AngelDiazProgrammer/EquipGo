@@ -232,10 +232,55 @@ public class EquiposController : ControllerBase
         return resultado ? Ok() : NotFound();
     }
 
+    //[HttpGet("admin/form-data")]
+    //public async Task<IActionResult> ObtenerFormData()
+    //{
+    //    var usuariosAD = await _activeDirectoryService.ObtenerUsuariosAsync();
+    //    var estados = await _estadoService.ObtenerTodasAsync();
+    //    var equiposPersonales = await _equipoService.ObtenerEquiposPersonalesAsync();
+    //    var sedes = await _sedesService.ObtenerTodasAsync();
+    //    var tiposDispositivo = await _tipoDispositivosService.ObtenerTodasAsync();
+    //    var proveedores = await _proveedoresService.ObtenerTodasAsync();
+    //    var tiposDocumento = await _equipoService.ObtenerTipoDocumentoAsync();
+    //    var areas = await _equipoService.ObtenerAreasAsync();
+    //    var campanas = await _equipoService.ObtenerCampañasAsync();
+
+    //    return Ok(new
+    //    {
+    //        usuarios = usuariosAD,
+    //        estados,
+    //        equiposPersonales,
+    //        sedes,
+    //        tiposDispositivo,
+    //        proveedores,
+    //        tiposDocumento,
+    //        areas,
+    //        campanas
+    //    });
+    //}
+
+    // En Controllers/EquiposController.cs
+
+    [HttpGet("admin/usuarios-combinados")]
+    public async Task<IActionResult> ObtenerUsuariosCombinados()
+    {
+        try
+        {
+            var usuariosCombinados = await _usuariosInformacionService.ObtenerUsuariosCombinadosAsync();
+            return Ok(usuariosCombinados);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"❌ Error en ObtenerUsuariosCombinados: {ex.Message}");
+            return BadRequest(new { error = "Error al obtener usuarios combinados" });
+        }
+    }
+
+    // Modificar el endpoint existente para incluir usuarios combinados
     [HttpGet("admin/form-data")]
     public async Task<IActionResult> ObtenerFormData()
     {
-        var usuariosAD = await _activeDirectoryService.ObtenerUsuariosAsync();
+        var usuariosCombinados = await _usuariosInformacionService.ObtenerUsuariosCombinadosAsync();
         var estados = await _estadoService.ObtenerTodasAsync();
         var equiposPersonales = await _equipoService.ObtenerEquiposPersonalesAsync();
         var sedes = await _sedesService.ObtenerTodasAsync();
@@ -247,7 +292,7 @@ public class EquiposController : ControllerBase
 
         return Ok(new
         {
-            usuarios = usuariosAD,
+            usuarios = usuariosCombinados, // ✅ Cambiado a usuarios combinados
             estados,
             equiposPersonales,
             sedes,
