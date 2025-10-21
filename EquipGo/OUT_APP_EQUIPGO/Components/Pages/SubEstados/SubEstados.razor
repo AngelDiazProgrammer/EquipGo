@@ -1,9 +1,9 @@
-﻿@page "/estados"
+﻿@page "/subestados"
 
 <div class="equipos-container">
     <!-- Encabezado -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #ccc; padding-bottom: 4px;">
-        <h4 style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 700; font-size: 1.5rem; line-height: 40px; margin: 0; padding: 0; color: #000;">Dashboard</h4>
+        <h4 style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 700; font-size: 1.5rem; line-height: 40px; margin: 0; padding: 0; color: #000;">Subestados</h4>
         <img src="img/logoOutsourcing.png" alt="Logo" style="height: 40px;" />
     </div>
 
@@ -11,44 +11,44 @@
     <div class="row g-3 mb-4">
         <div class="col-12 col-md-4">
             <div class="bg-dark text-white rounded p-3 text-center shadow">
-                <h4 class="mb-0">150</h4>
-                <p>Estados Totales</p>
+                <h4 class="mb-0">@subEstados?.Count()</h4>
+                <p>Subestados Totales</p>
             </div>
         </div>
         <div class="col-12 col-md-4">
             <div class="bg-secondary text-white rounded p-3 text-center shadow">
-                <h4 class="mb-0">90</h4>
-                <p>Estados Activos</p>
+                <h4 class="mb-0">0</h4>
+                <p>Activos</p>
             </div>
         </div>
         <div class="col-12 col-md-4">
             <div class="text-white rounded p-3 text-center shadow" style="background-color: #E9002B;">
-                <h4 class="mb-0">20</h4>
-                <p>Estados Inactivos</p>
+                <h4 class="mb-0">0</h4>
+                <p>Inactivos</p>
             </div>
         </div>
     </div>
 
-    <!-- Botón para añadir estado -->
+    <!-- Botón para añadir subestado -->
     <div class="mb-3 d-flex justify-content-end">
-        <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalCrearEstado">
-            <i class="bi bi-plus-lg"></i> Añadir Estado
+        <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalCrearSubEstado">
+            <i class="bi bi-plus-lg"></i> Añadir Subestado
         </button>
     </div>
 
-    <!-- Modal para crear estado -->
-    <div class="modal fade" id="modalCrearEstado" tabindex="-1" aria-labelledby="modalCrearEstadoLabel" aria-hidden="true">
+    <!-- Modal para crear subestado -->
+    <div class="modal fade" id="modalCrearSubEstado" tabindex="-1" aria-labelledby="modalCrearSubEstadoLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalCrearEstadoLabel">Registrar Estado</h5>
+                    <h5 class="modal-title" id="modalCrearSubEstadoLabel">Registrar Subestado</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="formCrearEstado">
+                    <form id="formCrearSubEstado">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label for="nombre" class="form-label">Nombre del Estado</label>
+                                <label for="nombre" class="form-label">Nombre del Subestado</label>
                                 <input type="text" class="form-control" id="nombre" name="nombre" required />
                             </div>
                         </div>
@@ -56,20 +56,20 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" onclick="guardarEstado()">Guardar</button>
+                    <button type="button" class="btn btn-primary" onclick="guardarSubEstado()">Guardar</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Tabla de estados -->
-    @if (estados == null)
+    <!-- Tabla de subestados -->
+    @if (subEstados == null)
     {
-        <p>Cargando estados...</p>
+        <p>Cargando subestados...</p>
     }
-    else if (!estados.Any())
+    else if (!subEstados.Any())
     {
-        <p>No hay estados registrados.</p>
+        <p>No hay subestados registrados.</p>
     }
     else
     {
@@ -78,19 +78,19 @@
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Nombre</th>
+                        <th>Nombre del Subestado</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var estado in estados)
+                    @foreach (var sub in subEstados)
                     {
                         <tr>
-                            <td>@estado.Id</td>
-                            <td>@estado.NombreEstado</td>
+                            <td>@sub.Id</td>
+                            <td>@sub.NombreSubEstado</td>
                             <td>
-                                <button class="btn btn-sm btn-outline-primary" onclick="editarEstado(@estado.Id)">✏️</button>
-                                <button class="btn btn-sm btn-outline-danger" onclick="abrirModalEliminarEstado(@estado.Id)">🗑️</button>
+                                <button class="btn btn-sm btn-outline-primary" onclick="editarSubEstado(@sub.Id)">✏️</button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="abrirModalEliminarSubEstado(@sub.Id)">🗑️</button>
                             </td>
                         </tr>
                     }
@@ -98,45 +98,45 @@
             </table>
         </div>
 
-        <!-- Modal para editar estado -->
-        <div class="modal fade" id="modalEditarEstado" tabindex="-1" aria-labelledby="modalEditarEstadoLabel" aria-hidden="true">
+        <!-- Modal editar -->
+        <div class="modal fade" id="modalEditarSubEstado" tabindex="-1" aria-labelledby="modalEditarSubEstadoLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="modalEditarEstadoLabel">Editar Estado</h5>
+                        <h5 class="modal-title" id="modalEditarSubEstadoLabel">Editar Subestado</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                     </div>
                     <div class="modal-body">
-                        <form id="formEditarEstado">
+                        <form id="formEditarSubEstado">
                             <input type="hidden" id="editarId" />
                             <div class="mb-3">
-                                <label for="editarNombreEstado" class="form-label">Nombre del Estado</label>
-                                <input type="text" class="form-control" id="editarNombreEstado" />
+                                <label for="editarNombreSubEstado" class="form-label">Nombre del Subestado</label>
+                                <input type="text" class="form-control" id="editarNombreSubEstado" />
                             </div>
                         </form>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="button" class="btn btn-primary" onclick="guardarCambiosEstado()">Guardar Cambios</button>
+                        <button type="button" class="btn btn-primary" onclick="guardarCambiosSubEstado()">Guardar Cambios</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Modal eliminar estado -->
-        <div class="modal fade" id="modalEliminarEstado" tabindex="-1" aria-labelledby="modalEliminarEstadoLabel" aria-hidden="true">
+        <!-- Modal eliminar -->
+        <div class="modal fade" id="modalEliminarSubEstado" tabindex="-1" aria-labelledby="modalEliminarSubEstadoLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="modalEliminarEstadoLabel">Confirmar eliminación</h5>
+                        <h5 class="modal-title" id="modalEliminarSubEstadoLabel">Confirmar eliminación</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                     </div>
                     <div class="modal-body">
-                        ¿Estás seguro de que deseas eliminar este estado?
+                        ¿Estás seguro de que deseas eliminar este subestado?
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="button" class="btn btn-danger" onclick="confirmarEliminarEstado()">Eliminar</button>
+                        <button type="button" class="btn btn-danger" onclick="confirmarEliminarSubEstado()">Eliminar</button>
                     </div>
                 </div>
             </div>

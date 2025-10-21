@@ -22,6 +22,7 @@ namespace OUT_PERSISTENCE_EQUIPGO.UnitOfWork
             EquiposPersonal = new EquipoPersonalRepository(_context); 
             TipoDocumento = new TipoDocumentoRepository(_context);
             Estados = new EstadosRepository(_context);
+            SubEstados = new SubEstadoRepository(_context);
             Sedes = new SedesRepository(_context);
             TipoDispositivo = new TipoDispositivoRepository(_context);
         }
@@ -35,6 +36,7 @@ namespace OUT_PERSISTENCE_EQUIPGO.UnitOfWork
         public IEquipoPersonalRepositoy EquiposPersonal { get; }
         public ITipoDocumentoRepository TipoDocumento { get; }
         public IEstadosRepository Estados { get; }
+        public ISubEstadoRepository SubEstados { get; }
         public ISedesRepository Sedes { get; }
         public ITipoDispositivoRepository TipoDispositivo { get; }
         public async Task<int> CompleteAsync()

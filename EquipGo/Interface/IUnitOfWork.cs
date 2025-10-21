@@ -15,6 +15,7 @@ namespace Interface
         IEquipoPersonalRepositoy EquiposPersonal { get; }
         ITipoDocumentoRepository TipoDocumento { get; }
         IEstadosRepository Estados { get; }
+        ISubEstadoRepository SubEstados { get; }
         ISedesRepository Sedes { get; }
         Task<int> CompleteAsync(); // Guarda cambios
     }

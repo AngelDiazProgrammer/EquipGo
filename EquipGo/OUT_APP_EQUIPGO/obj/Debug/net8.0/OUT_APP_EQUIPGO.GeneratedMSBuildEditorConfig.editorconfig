@@ -64,16 +64,16 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFc2NhbmVvXFNjYW5uZXIucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/User/Documents/GitHub/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/Pages/Estados/Estados.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFc3RhZG9zXEVzdGFkb3MucmF6b3I=
-build_metadata.AdditionalFiles.CssScope = 
-
 [C:/Users/User/Documents/GitHub/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/Pages/Home.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xIb21lLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/User/Documents/GitHub/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/Pages/Maps/Mapa.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xNYXBzXE1hcGEucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/User/Documents/GitHub/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/Pages/SubEstados/SubEstados.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xTdWJFc3RhZG9zXFN1YkVzdGFkb3MucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/User/Documents/GitHub/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/Pages/Usuarios/Component.razor]

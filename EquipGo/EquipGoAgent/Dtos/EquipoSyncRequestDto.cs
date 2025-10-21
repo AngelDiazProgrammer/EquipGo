@@ -19,6 +19,7 @@ namespace EquipGoAgent.Dtos
         public string CodigoBarras { get; set; }
         public int? IdUsuarioInfo { get; set; }
         public int? IdEstado { get; set; }
+        public int? IdSubEstado { get; set; }
         public int? IdSede { get; set; }
         public int? IdEquipoPersonal { get; set; }
         public int? IdTipoDispositivo { get; set; }

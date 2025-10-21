@@ -42,9 +42,6 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
         private bool isCargandoEquipos = true;
 
         // Propiedades para las tarjetas (igual que en usuarios)
-        private int EquiposRegistrados => equipos?.Count ?? 0;
-        private int EquiposActivos => equipos?.Count(e => e.EstadoNombre?.Trim().ToLower() == "activo") ?? 0;
-        private int EquiposInactivos => equipos?.Count(e => e.EstadoNombre?.Trim().ToLower() == "inactivo") ?? 0;
 
         private int EquiposRegistradosFiltrados => equiposFiltrados?.Count ?? 0;
         private int EquiposActivosFiltrados => equiposFiltrados?.Count(e => e.EstadoNombre?.Trim().ToLower() == "activo") ?? 0;

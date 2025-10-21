@@ -16,6 +16,7 @@ namespace OUT_PERSISTENCE_EQUIPGO.Context
 
         // SMART
         public DbSet<Estado> Estados { get; set; }
+        public DbSet<SubEstado> SubEstados { get; set; }
         public DbSet<Area> Areas { get; set; }
         public DbSet<Campaña> Campañas { get; set; }
         public DbSet<EquiposPersonal> EquiposPersonales { get; set; }

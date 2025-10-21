@@ -14,6 +14,7 @@ namespace OUT_OS_APP.EQUIPGO.DTO.DTOs.Equipo
         public string Serial { get; set; }
         public string CodigoBarras { get; set; }
         public int? IdEstado { get; set; }
+        public int? IdSubEstado { get; set; }
         public int? IdSede { get; set; }
         public int? IdTipoDispositivo { get; set; }
         public int? IdProveedor { get; set; }

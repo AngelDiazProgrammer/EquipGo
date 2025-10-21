@@ -16,10 +16,10 @@ namespace OUT_OS_APP.EQUIPGO.DTO.DTOs.Equipo
         public string VersionSoftware { get; set; }
         public double Latitud { get; set; }
         public double Longitud { get; set; }
-
         public string? CodigoBarras { get; set; }
         public int? IdUsuarioInfo { get; set; }
         public int? IdEstado { get; set; }
+        public int? IdSubEstado { get; set; }
         public int? IdSede { get; set; }
         public int? IdEquipoPersonal { get; set; }
         public int? IdTipoDispositivo { get; set; }
