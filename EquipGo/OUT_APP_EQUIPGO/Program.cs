@@ -35,7 +35,7 @@ using OUT_PERSISTENCE_EQUIPGO.Services.TipoDispositivos;
 using OUT_PERSISTENCE_EQUIPGO.Services.Transacciones;
 using OUT_PERSISTENCE_EQUIPGO.Services.Usuarios;
 using OUT_PERSISTENCE_EQUIPGO.UnitOfWork;
-
+using OfficeOpenXml;
 // ====================
 // 📌 Builder
 // ====================

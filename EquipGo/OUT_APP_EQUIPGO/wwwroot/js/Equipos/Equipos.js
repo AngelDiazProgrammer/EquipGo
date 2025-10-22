@@ -1,14 +1,264 @@
-﻿// 🧠 Cache global para usuarios del Active Directory
+﻿// Cache global para usuarios del Active Directory
 window._usuariosCache = null;
+// Variable global para almacenar información temporal
+window.equipoAsignacionActual = null;
 
-// 🧹 Función mejorada para limpiar el formulario
+// Función para abrir el modal de asignación
+window.abrirModalAsignarUsuario = async function (equipoId) {
+    try {
+        console.log("🔄 Abriendo modal de asignación para equipo:", equipoId);
+
+        // Guardar información del equipo
+        window.equipoAsignacionActual = { equipoId };
+
+        // Limpiar formulario
+        limpiarFormularioAsignacion();
+
+        // Cargar selects necesarios
+        await cargarSelectsAsignacion();
+
+        // Cargar información del usuario actual (si existe)
+        await cargarEstadoActualAsignacion(equipoId);
+
+        // Mostrar el modal
+        const modal = new bootstrap.Modal(document.getElementById('modalAsignarUsuario'));
+        modal.show();
+
+        console.log("✅ Modal de asignación abierto correctamente");
+
+    } catch (error) {
+        console.error("❌ Error al abrir modal de asignación:", error);
+        alert("Error al cargar el modal de asignación");
+    }
+};
+
+// Función para cargar el estado actual de asignación
+window.cargarEstadoActualAsignacion = async function (equipoId) {
+    try {
+        const response = await fetch(`/api/equipos/${equipoId}`);
+        if (!response.ok) return;
+
+        const equipo = await response.json();
+        const estadoDiv = document.getElementById('estadoActualAsignacion');
+        const btnDesasignar = document.getElementById('btnDesasignar');
+        const tituloAsignacion = document.getElementById('tituloAsignacion');
+
+        if (equipo.idUsuarioInfo && equipo.usuarioNombreCompleto) {
+            // Hay un usuario asignado
+            estadoDiv.className = 'alert alert-warning';
+            estadoDiv.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-person-check me-2" style="font-size: 1.2rem;"></i>
+                    <div>
+                        <strong>Usuario actualmente asignado:</strong><br>
+                        <span class="fw-bold">${equipo.usuarioNombreCompleto}</span><br>
+                        ${equipo.usuarioDocumento ? `<small>Documento: ${equipo.usuarioDocumento}</small><br>` : ''}
+                        ${equipo.usuarioArea ? `<small>Área: ${equipo.usuarioArea}</small>` : ''}
+                    </div>
+                </div>
+            `;
+            btnDesasignar.style.display = 'block';
+            tituloAsignacion.textContent = 'Gestionar Usuario Asignado';
+        } else {
+            // No hay usuario asignado
+            estadoDiv.className = 'alert alert-secondary';
+            estadoDiv.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-person-x me-2" style="font-size: 1.2rem;"></i>
+                    <div>
+                        <strong>Estado:</strong> Sin usuario asignado<br>
+                        <small>Selecciona o crea un usuario para asignar a este equipo</small>
+                    </div>
+                </div>
+            `;
+            btnDesasignar.style.display = 'none';
+            tituloAsignacion.textContent = 'Asignar Usuario al Equipo';
+        }
+
+    } catch (error) {
+        console.error("❌ Error cargando estado actual:", error);
+        document.getElementById('estadoActualAsignacion').innerHTML = `
+            <div class="alert alert-danger">
+                <i class="bi bi-exclamation-triangle"></i> Error al cargar información del usuario actual
+            </div>
+        `;
+    }
+};
+
+// Función para cargar los selects del modal de asignación
+window.cargarSelectsAsignacion = async function () {
+    try {
+        console.log("🔄 Cargando selects para asignación...");
+
+        const response = await fetch('/api/equipos/admin/form-data');
+        if (!response.ok) throw new Error('Error al cargar datos del formulario');
+        const data = await response.json();
+
+        // Cargar select de usuarios
+        await cargarSelectUsuarios(data.usuarios || []);
+
+        // Cargar selects para nuevo usuario
+        await cargarSelectsNuevoUsuario(data);
+
+        console.log("✅ Selects de asignación cargados correctamente");
+
+    } catch (error) {
+        console.error("❌ Error cargando selects de asignación:", error);
+    }
+};
+
+// Función para cargar el select de usuarios
+window.cargarSelectUsuarios = async function (usuarios) {
+    const select = document.getElementById('asignarUsuarioSelect');
+    if (!select) return;
+
+    // Limpiar select
+    select.innerHTML = '<option value="">-- Buscar usuario existente --</option>';
+
+    if (usuarios && usuarios.length > 0) {
+        usuarios.forEach(usuario => {
+            // Solo agregar usuarios que no sean la opción "nuevo"
+            if (usuario.usuario !== 'nuevo') {
+                const option = document.createElement('option');
+                option.value = usuario.usuario || usuario.id;
+
+                let texto = usuario.nombreCompleto || `${usuario.nombres} ${usuario.apellidos}`;
+                if (usuario.correo) {
+                    texto += ` (${usuario.correo})`;
+                }
+                if (usuario.numeroDocumento) {
+                    texto += ` - ${usuario.numeroDocumento}`;
+                }
+
+                option.textContent = texto;
+                select.appendChild(option);
+            }
+        });
+    }
+
+    // Inicializar TomSelect si está disponible
+    if (typeof TomSelect !== 'undefined' && !select.tomselect) {
+        new TomSelect(select, {
+            placeholder: 'Buscar usuario por nombre, email o documento...',
+            maxOptions: 500,
+            allowEmptyOption: true,
+            sortField: { field: "text", direction: "asc" },
+            searchField: ['text']
+        });
+    }
+};
+
+// Función para cargar selects del formulario de nuevo usuario
+window.cargarSelectsNuevoUsuario = async function (data) {
+    const selects = [
+        { id: 'asignarTipoDocumento', list: data.tiposDocumento, value: 'id', text: 'nombreDocumento' },
+        { id: 'asignarArea', list: data.areas, value: 'id', text: 'nombreArea' },
+        { id: 'asignarCampana', list: data.campanas, value: 'id', text: 'nombreCampaña' }
+    ];
+
+    selects.forEach(({ id, list, value, text }) => {
+        const select = document.getElementById(id);
+        if (select && list) {
+            select.innerHTML = '<option value="">Seleccionar...</option>';
+            list.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item[value];
+                option.textContent = item[text];
+                select.appendChild(option);
+            });
+
+            // Inicializar TomSelect para estos también
+            if (typeof TomSelect !== 'undefined' && !select.tomselect) {
+                new TomSelect(select, {
+                    placeholder: 'Seleccionar...',
+                    allowEmptyOption: true
+                });
+            }
+        }
+    });
+};
+
+// Función para mostrar/ocultar formulario de nuevo usuario
+window.toggleFormularioNuevoUsuario = function () {
+    const checkbox = document.getElementById('crearNuevoUsuarioCheckbox');
+    const formulario = document.getElementById('formularioNuevoUsuario');
+    const selectUsuario = document.getElementById('asignarUsuarioSelect');
+
+    if (checkbox.checked) {
+        formulario.style.display = 'block';
+        if (selectUsuario.tomselect) {
+            selectUsuario.tomselect.disable();
+        } else {
+            selectUsuario.disabled = true;
+        }
+        // Limpiar selección de usuario existente
+        if (selectUsuario.tomselect) {
+            selectUsuario.tomselect.setValue('', true);
+        } else {
+            selectUsuario.value = '';
+        }
+    } else {
+        formulario.style.display = 'none';
+        if (selectUsuario.tomselect) {
+            selectUsuario.tomselect.enable();
+        } else {
+            selectUsuario.disabled = false;
+        }
+    }
+};
+
+// Función para limpiar el formulario de asignación
+window.limpiarFormularioAsignacion = function () {
+    // Limpiar checkbox
+    document.getElementById('crearNuevoUsuarioCheckbox').checked = false;
+
+    // Ocultar formulario nuevo usuario
+    document.getElementById('formularioNuevoUsuario').style.display = 'none';
+
+    // Limpiar select de usuarios
+    const selectUsuario = document.getElementById('asignarUsuarioSelect');
+    if (selectUsuario.tomselect) {
+        selectUsuario.tomselect.setValue('', true);
+        selectUsuario.tomselect.enable();
+    } else {
+        selectUsuario.value = '';
+        selectUsuario.disabled = false;
+    }
+
+    // Limpiar formulario nuevo usuario
+    document.getElementById('asignarNumeroDocumento').value = '';
+    document.getElementById('asignarNombres').value = '';
+    document.getElementById('asignarApellidos').value = '';
+
+    const selectsNuevo = ['asignarTipoDocumento', 'asignarArea', 'asignarCampana'];
+    selectsNuevo.forEach(id => {
+        const select = document.getElementById(id);
+        if (select && select.tomselect) {
+            select.tomselect.setValue('', true);
+        }
+    });
+};
+
+// Funciones placeholder (las implementaremos después)
+window.guardarAsignacionUsuario = async function () {
+    alert("🔄 Función de guardar asignación - En desarrollo");
+    // Aquí implementaremos la lógica completa después
+};
+
+window.desasignarUsuario = async function () {
+    alert("🔄 Función de desasignar usuario - En desarrollo");
+    // Aquí implementaremos la lógica completa después
+};
+
+
+// Función para limpiar el formulario
 window.limpiarFormularioCrear = function () {
-    console.log("🧹 Limpiando formulario de crear equipo...");
+    console.log("Limpiando formulario de crear equipo...");
 
     try {
         const form = document.getElementById('formCrearEquipo');
         if (!form) {
-            console.error("❌ No se encontró el formulario formCrearEquipo");
+            console.error("No se encontró el formulario formCrearEquipo");
             return;
         }
 
@@ -47,7 +297,7 @@ window.limpiarFormularioCrear = function () {
         const motivoContainer = document.getElementById('motivoContainer');
         if (motivoContainer) {
             motivoContainer.style.display = 'none';
-            console.log("✅ Contenedor de motivo ocultado");
+            console.log("Contenedor de motivo ocultado");
         }
 
         // 5. Ocultar y limpiar formulario de usuario
@@ -62,17 +312,17 @@ window.limpiarFormularioCrear = function () {
                 if (campo) campo.value = '';
             });
 
-            console.log("✅ Formulario de usuario limpiado y ocultado");
+            console.log("Formulario de usuario limpiado y ocultado");
         }
 
-        console.log("🎉 Formulario completamente limpiado");
+        console.log("Formulario completamente limpiado");
 
     } catch (error) {
-        console.error("❌ Error al limpiar el formulario:", error);
+        console.error("Error al limpiar el formulario:", error);
     }
 };
 
-// 🧩 Guardar o actualizar equipo con usuario (versión tolerante a null)
+// Guardar o actualizar equipo con usuario (versión tolerante a null)
 window.guardarEquipo = async function () {
     const form = document.getElementById('formCrearEquipo');
     const equipoId = form?.getAttribute('data-id') || null;
@@ -221,7 +471,7 @@ window.guardarEquipo = async function () {
     }
 };
 
-// 🧩 Guardar cambios del equipo editado (modal de edición)
+// Guardar cambios del equipo editado (modal de edición)
 window.guardarCambiosEquipo = async function () {
     const equipoId = document.getElementById('editarId').value;
 
@@ -356,7 +606,7 @@ window.guardarCambiosEquipo = async function () {
     }
 };
 
-// 🧩 Abrir modal de edición con carga de selects
+// Abrir modal de edición con carga de selects
 window.abrirModalEditar = async function (idEquipo) {
     try {
         // Cargar los selects primero
@@ -412,7 +662,7 @@ window.abrirModalEditar = async function (idEquipo) {
     }
 };
 
-// 🧩 Editar equipo (reutiliza el modal de crear)
+// Editar equipo (reutiliza el modal de crear)
 window.editarEquipo = async function (id) {
     try {
         console.log("🔄 Iniciando edición del equipo:", id);
@@ -486,7 +736,7 @@ window.editarEquipo = async function (id) {
     }
 };
 
-// 🎯 Función MEJORADA para detectar cuando se selecciona "Inactivo" en el estado
+// Función MEJORADA para detectar cuando se selecciona "Inactivo" en el estado
 window.manejarCambioEstado = function (esEditar = false) {
     const estadoSelectId = esEditar ? 'editarEstado' : 'estado';
     const motivoContainerId = esEditar ? 'motivoContainerEditar' : 'motivoContainer';
@@ -561,7 +811,7 @@ window.manejarCambioEstado = function (esEditar = false) {
     }
 };
 
-// 🎯 Función MEJORADA para cargar los subestados en el select
+// Función MEJORADA para cargar los subestados en el select
 window.cargarSubEstados = function (subEstados, esEditar = false) {
     const selectId = esEditar ? 'editarSubEstado' : 'subEstado';
     const select = document.getElementById(selectId);
@@ -669,7 +919,7 @@ window.cargarSubEstados = function (subEstados, esEditar = false) {
     console.log(`🏁 cargarSubEstados finalizado para ${selectId}`);
 };
 
-// ⚙️ ACTUALIZACIÓN para cargarSelects - Modal CREAR
+// ACTUALIZACIÓN para cargarSelects - Modal CREAR
 window.cargarSelects = async function () {
     try {
         const response = await fetch('/api/equipos/admin/form-data');
@@ -772,7 +1022,7 @@ window.cargarSelects = async function () {
     }
 };
 
-// ⚙️ ACTUALIZACIÓN para cargarSelectsEditar - Modal EDITAR
+// ACTUALIZACIÓN para cargarSelectsEditar - Modal EDITAR
 window.cargarSelectsEditar = async function () {
     try {
         const response = await fetch('/api/equipos/admin/form-data');
@@ -885,7 +1135,7 @@ window.cargarSelectsEditar = async function () {
     }
 };
 
-// ... (el resto del código permanece igual)
+//Manejo de cambio de usuario entre AD y Local
 window.manejarCambioUsuario = async function (selectElement, esEditar = false) {
     const formId = esEditar ? 'formUsuarioInfoEditar' : 'formUsuarioInfo';
     const formUsuario = document.getElementById(formId);
@@ -1044,7 +1294,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-// 🗑️ Manejo de eliminación de equipos
+// Manejo de eliminación de equipos
 let equipoIdAEliminar = null;
 
 window.abrirModalEliminar = function (id) {
@@ -1074,3 +1324,592 @@ window.confirmarEliminarEquipo = async function () {
         alert("❌ Error de red o servidor.");
     }
 };
+
+
+
+// CARGA MASIVA 
+
+// Variables globales
+window.equiposParaCargar = [];
+window.erroresCarga = [];
+
+// INICIALIZAR MODAL DE CARGA MASIVA
+window.inicializarCargaMasiva = function () {
+    console.log("🔄 Inicializando modal de carga masiva...");
+
+    // Limpiar estado anterior
+    window.equiposParaCargar = [];
+    // Los errores se limpian en limpiarTodo()
+
+    // Configurar evento del file input
+    const fileInput = document.getElementById('fileCargaMasiva');
+    if (fileInput) {
+        fileInput.addEventListener('change', window.manejarSeleccionArchivo);
+    }
+
+    // Limpiar solo la info del archivo
+    const infoArchivo = document.getElementById('infoArchivo');
+    if (infoArchivo) {
+        infoArchivo.style.display = 'none';
+    }
+
+    // Deshabilitar botón procesar
+    const procesarBtn = document.getElementById('procesarCargaBtn');
+    if (procesarBtn) {
+        procesarBtn.disabled = true;
+    }
+
+    console.log("✅ Modal de carga masiva inicializado");
+};
+
+// Manejar selección de archivo
+window.manejarSeleccionArchivo = async function (event) {
+    console.log("📁 ARCHIVO SELECCIONADO");
+
+    const file = event.target.files[0];
+    if (!file) return;
+
+    console.log("📦 Archivo:", file.name, file.size, "bytes");
+
+    const btnProcesar = document.getElementById('procesarCargaBtn');
+
+    try {
+        // Mostrar estado de carga
+        if (btnProcesar) {
+            btnProcesar.disabled = true;
+            btnProcesar.innerHTML = '<i class="bi bi-arrow-repeat spinner"></i> Leyendo...';
+        }
+
+        // Leer archivo
+        window.equiposParaCargar = await leerArchivoExcel(file);
+        console.log("✅ Equipos leídos:", window.equiposParaCargar.length);
+
+        if (window.equiposParaCargar.length === 0) {
+            alert('❌ El archivo no contiene equipos válidos.');
+            if (btnProcesar) {
+                btnProcesar.disabled = true;
+                btnProcesar.innerHTML = '<i class="bi bi-upload"></i> Procesar Carga Masiva';
+            }
+            return;
+        }
+
+        // Mostrar info del archivo
+        document.getElementById('nombreArchivo').textContent = file.name;
+        document.getElementById('cantidadEquipos').textContent = `${window.equiposParaCargar.length} equipos`;
+        document.getElementById('infoArchivo').style.display = 'block';
+
+        // HABILITAR BOTÓN
+        if (btnProcesar) {
+            btnProcesar.disabled = false;
+            btnProcesar.innerHTML = '<i class="bi bi-upload"></i> Procesar Carga Masiva';
+            console.log("🎯 BOTÓN HABILITADO");
+        }
+
+    } catch (error) {
+        console.error("❌ Error:", error);
+        alert('Error al leer el archivo: ' + error.message);
+        if (btnProcesar) {
+            btnProcesar.disabled = true;
+            btnProcesar.innerHTML = '<i class="bi bi-upload"></i> Procesar Carga Masiva';
+        }
+    }
+};
+
+// Leer archivo Excel
+function leerArchivoExcel(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+            try {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+                if (jsonData.length === 0) {
+                    reject(new Error('El archivo está vacío'));
+                    return;
+                }
+
+                const equipos = jsonData
+                    .map((row, index) => {
+                        const marca = row.Marca?.toString().trim() || '';
+                        const modelo = row.Modelo?.toString().trim() || '';
+
+                        if (!marca || !modelo) {
+                            console.warn(`Fila ${index + 2} ignorada`);
+                            return null;
+                        }
+
+                        return {
+                            marca,
+                            modelo,
+                            serial: row.Serial?.toString().trim() || '',
+                            codigoBarras: row.CodigoBarras?.toString().trim() || '',
+                            sistemaOperativo: row.SistemaOperativo?.toString().trim() || '',
+                            macEquipo: row.MacEquipo?.toString().trim() || '',
+                            versionSoftware: row.VersionSoftware?.toString().trim() || '',
+                            ubicacion: row.Ubicacion?.toString().trim() || '',
+                            idEstado: 1,
+                            idSubEstado: null
+                        };
+                    })
+                    .filter(e => e !== null);
+
+                resolve(equipos);
+            } catch (error) {
+                reject(new Error('Formato inválido: ' + error.message));
+            }
+        };
+
+        reader.onerror = () => reject(new Error('Error al leer archivo'));
+        reader.readAsArrayBuffer(file);
+    });
+}
+
+// Procesar carga masiva
+window.procesarCargaMasiva = async function () {
+    console.log("🎯 PROCESANDO CARGA MASIVA");
+    console.log("📊 Equipos:", window.equiposParaCargar.length);
+
+    if (!window.equiposParaCargar || window.equiposParaCargar.length === 0) {
+        alert('❌ No hay equipos para procesar');
+        return;
+    }
+
+    const btnProcesar = document.getElementById('procesarCargaBtn');
+    if (!btnProcesar) return;
+
+    btnProcesar.disabled = true;
+    btnProcesar.innerHTML = '<i class="bi bi-arrow-repeat spinner"></i> Procesando...';
+
+    try {
+        const response = await fetch('/api/equipos/admin/carga-masiva', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(window.equiposParaCargar)
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || 'Error del servidor');
+        }
+
+        const resultado = await response.json();
+        console.log("✅ Resultado:", resultado);
+
+        mostrarResultadosCarga(resultado);
+
+    } catch (error) {
+        console.error("❌ Error:", error);
+        alert('Error en la carga: ' + error.message);
+    } finally {
+        btnProcesar.disabled = false;
+        btnProcesar.innerHTML = '<i class="bi bi-upload"></i> Procesar Carga Masiva';
+    }
+};
+
+// Mostrar resultados de la carga - VERSIÓN CON DESCARGA AUTOMÁTICA
+window.mostrarResultadosCarga = function (resultado) {
+    console.log("📊 Mostrando resultados:", resultado);
+
+    // Mostrar sección de resultados
+    document.getElementById('resultadosCarga').style.display = 'block';
+
+    // Actualizar resumen
+    document.getElementById('totalRegistros').textContent = resultado.totalRegistros;
+    document.getElementById('registrosExitosos').textContent = resultado.registrosExitosos;
+    document.getElementById('registrosFallidos').textContent = resultado.registrosFallidos;
+
+    // Guardar errores para posible exportación
+    window.erroresCarga = resultado.errores || [];
+
+    // Mostrar mensaje principal
+    const mensajeElement = document.getElementById('mensajeResultado');
+
+    // 🔥 DETERMINAR TIPO DE MENSAJE SEGÚN EL RESULTADO
+    if (resultado.registrosExitosos > 0 && resultado.registrosFallidos === 0) {
+        // ✅ ÉXITO COMPLETO - Recargar página
+        mensajeElement.className = 'alert alert-success';
+        mensajeElement.innerHTML = `
+            <strong>${resultado.mensaje}</strong>
+            <div class="mt-2">
+                <span class="badge bg-primary">Total: ${resultado.totalRegistros}</span>
+                <span class="badge bg-success">Éxitos: ${resultado.registrosExitosos}</span>
+                <span class="badge bg-danger">Fallidos: ${resultado.registrosFallidos}</span>
+            </div>
+            <div class="mt-2">
+                <small class="text-success">🔄 La página se recargará automáticamente...</small>
+            </div>
+        `;
+
+        // Recargar página después de 3 segundos
+        setTimeout(() => {
+            const modalElement = document.getElementById('modalCargaMasiva');
+            if (modalElement) {
+                const modal = bootstrap.Modal.getInstance(modalElement);
+                if (modal) {
+                    modal.hide();
+                    modalElement.addEventListener('hidden.bs.modal', function () {
+                        window.location.reload();
+                    }, { once: true });
+                }
+            }
+        }, 3000);
+
+    } else if (resultado.registrosExitosos === 0 && resultado.registrosFallidos > 0) {
+        // 🔥 ERRORES - Cerrar modal y descargar Excel automáticamente
+        mensajeElement.className = 'alert alert-danger';
+        mensajeElement.innerHTML = `
+            <strong>${resultado.mensaje}</strong>
+            <div class="mt-2">
+                <span class="badge bg-primary">Total: ${resultado.totalRegistros}</span>
+                <span class="badge bg-success">Éxitos: ${resultado.registrosExitosos}</span>
+                <span class="badge bg-danger">Fallidos: ${resultado.registrosFallidos}</span>
+            </div>
+            <div class="mt-2">
+                <small class="text-danger">📊 Se descargará automáticamente un archivo Excel con los errores...</small>
+                <br>
+                <small class="text-danger">⏳ El modal se cerrará en <span id="contadorCierre">5</span> segundos</small>
+            </div>
+        `;
+
+        // Mostrar errores en la tabla
+        if (window.erroresCarga.length > 0) {
+            window.mostrarErrores(window.erroresCarga);
+            document.getElementById('panelErrores').style.display = 'block';
+        }
+
+        // 🔥 DESCARGAR EXCEL AUTOMÁTICAMENTE Y CERRAR MODAL
+        window.descargarYcerrarModal();
+
+    } else {
+        // ⚠️ CASO MIXTO (no debería ocurrir con la nueva lógica)
+        mensajeElement.className = 'alert alert-warning';
+        mensajeElement.innerHTML = `
+            <strong>${resultado.mensaje}</strong>
+            <div class="mt-2">
+                <span class="badge bg-primary">Total: ${resultado.totalRegistros}</span>
+                <span class="badge bg-success">Éxitos: ${resultado.registrosExitosos}</span>
+                <span class="badge bg-danger">Fallidos: ${resultado.registrosFallidos}</span>
+            </div>
+        `;
+    }
+
+    // Scroll a resultados
+    document.getElementById('resultadosCarga').scrollIntoView({ behavior: 'smooth' });
+};
+// DESCARGAR EXCEL Y CERRAR MODAL AUTOMÁTICAMENTE
+window.descargarYcerrarModal = function () {
+    console.log("🔥 Iniciando descarga automática y cierre del modal...");
+
+    let segundos = 5;
+    const contadorElement = document.getElementById('contadorCierre');
+
+    // Contador regresivo
+    const contadorInterval = setInterval(() => {
+        segundos--;
+        if (contadorElement) {
+            contadorElement.textContent = segundos;
+        }
+
+        if (segundos <= 0) {
+            clearInterval(contadorInterval);
+
+            // 1. Primero descargar el Excel de errores
+            window.descargarErroresAutomatico();
+
+            // 2. Esperar un poco para que inicie la descarga y luego cerrar el modal
+            setTimeout(() => {
+                const modalElement = document.getElementById('modalCargaMasiva');
+                if (modalElement) {
+                    const modal = bootstrap.Modal.getInstance(modalElement);
+                    if (modal) {
+                        modal.hide();
+
+                        // 🔥 LIMPIAR TODO después de cerrar el modal
+                        setTimeout(() => {
+                            window.limpiarTodo();
+                        }, 300);
+
+                        console.log("✅ Modal cerrado y limpiado automáticamente");
+                    }
+                }
+            }, 1000); // 1 segundo después de iniciar la descarga
+        }
+    }, 1000);
+};
+
+// DESCARGAR ERRORES AUTOMÁTICAMENTE
+window.descargarErroresAutomatico = function () {
+    if (window.erroresCarga.length === 0) {
+        console.log("❌ No hay errores para descargar");
+        return;
+    }
+
+    try {
+        console.log("📊 Generando Excel de errores automáticamente...");
+
+        // Crear datos para el Excel
+        const datosErrores = window.erroresCarga.map(error => ({
+            'Fila': error.indiceFila,
+            'Marca': error.marca || '',
+            'Modelo': error.modelo || '',
+            'Serial': error.serial || '',
+            'Error': error.error || 'Error desconocido'
+        }));
+
+        // Crear workbook
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.json_to_sheet(datosErrores);
+
+        // Agregar hoja al workbook
+        XLSX.utils.book_append_sheet(wb, ws, 'ErroresCargaMasiva');
+
+        // Generar nombre del archivo con timestamp
+        const nombreArchivo = `Errores_Carga_Masiva_${new Date().toISOString().slice(0, 16).replace(/[-:T]/g, '')}.xlsx`;
+
+        // Descargar archivo
+        XLSX.writeFile(wb, nombreArchivo);
+
+        console.log("✅ Excel de errores descargado automáticamente:", nombreArchivo);
+
+    } catch (error) {
+        console.error('❌ Error al descargar errores automáticamente:', error);
+    }
+};
+
+// Función para recargar la página
+window.recargarPagina = function () {
+    console.log("🎯 Recargando página manualmente...");
+
+    // Cerrar el modal primero
+    const modal = document.getElementById('modalCargaMasiva');
+    if (modal) {
+        const modalInstance = bootstrap.Modal.getInstance(modal);
+        if (modalInstance) {
+            modalInstance.hide();
+        }
+    }
+
+    // Recargar después de que el modal se cierre
+    setTimeout(() => {
+        window.location.reload();
+    }, 300);
+};
+
+
+// LIMPIAR TODO COMPLETAMENTE (para cuando se cierra el modal)
+window.limpiarTodo = function () {
+    console.log("🧹 Limpiando todo el modal...");
+
+    const fileInput = document.getElementById('fileCargaMasiva');
+    const procesarBtn = document.getElementById('procesarCargaBtn');
+    const infoArchivo = document.getElementById('infoArchivo');
+    const resultadosCarga = document.getElementById('resultadosCarga');
+    const mensajeResultado = document.getElementById('mensajeResultado');
+    const tbodyErrores = document.getElementById('tbodyErrores');
+    const panelErrores = document.getElementById('panelErrores');
+    const panelExitosos = document.getElementById('panelExitosos');
+
+    // 1. Limpiar inputs y botones
+    if (fileInput) fileInput.value = '';
+    if (procesarBtn) procesarBtn.disabled = true;
+    if (infoArchivo) infoArchivo.style.display = 'none';
+
+    // 2. Limpiar sección de resultados
+    if (resultadosCarga) resultadosCarga.style.display = 'none';
+    if (mensajeResultado) {
+        mensajeResultado.className = 'alert';
+        mensajeResultado.innerHTML = '';
+    }
+
+    // 3. Limpiar tabla de errores
+    if (tbodyErrores) tbodyErrores.innerHTML = '';
+    if (panelErrores) panelErrores.style.display = 'none';
+    if (panelExitosos) panelExitosos.style.display = 'none';
+
+    // 4. Limpiar variables globales
+    window.equiposParaCargar = [];
+    window.erroresCarga = [];
+
+    console.log("✅ Modal completamente limpiado");
+};
+
+// Contador para recarga automática
+function iniciarContadorRecarga() {
+    let segundos = 5;
+    const contadorElement = document.getElementById('contadorRecarga');
+    const contadorInterval = setInterval(() => {
+        segundos--;
+        if (contadorElement) {
+            contadorElement.textContent = segundos;
+        }
+
+        if (segundos <= 0) {
+            clearInterval(contadorInterval);
+            window.recargarPagina();
+        }
+    }, 1000);
+}
+
+// Mostrar errores
+function mostrarErrores(errores) {
+    const tbody = document.getElementById('tbodyErrores');
+    tbody.innerHTML = '';
+
+    errores.forEach(error => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td class="fw-bold">${error.indiceFila}</td>
+            <td>${error.marca || '-'}</td>
+            <td>${error.modelo || '-'}</td>
+            <td>${error.serial || '-'}</td>
+            <td class="text-danger">${error.error}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// Exportar errores a Excel (versión manual)
+window.exportarErrores = async function () {
+    if (window.erroresCarga.length === 0) {
+        alert('No hay errores para exportar');
+        return;
+    }
+
+    try {
+        // Crear datos para el Excel
+        const datosErrores = window.erroresCarga.map(error => ({
+            'Fila': error.indiceFila,
+            'Marca': error.marca,
+            'Modelo': error.modelo,
+            'Serial': error.serial,
+            'Error': error.error
+        }));
+
+        // Crear workbook
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.json_to_sheet(datosErrores);
+
+        // Agregar hoja al workbook
+        XLSX.utils.book_append_sheet(wb, ws, 'ErroresCargaMasiva');
+
+        // Generar nombre del archivo
+        const nombreArchivo = `Errores_Carga_Masiva_${new Date().toISOString().slice(0, 16).replace(/[-:T]/g, '')}.xlsx`;
+
+        // Descargar archivo
+        XLSX.writeFile(wb, nombreArchivo);
+
+        console.log("✅ Excel de errores descargado manualmente");
+
+    } catch (error) {
+        console.error('Error exportando errores:', error);
+        alert('❌ Error al exportar errores');
+    }
+};
+
+// Limpiar
+window.limpiarArchivo = function () {
+    const fileInput = document.getElementById('fileCargaMasiva');
+    if (fileInput) fileInput.value = '';
+
+    const btnProcesar = document.getElementById('procesarCargaBtn');
+    if (btnProcesar) btnProcesar.disabled = true;
+
+    document.getElementById('infoArchivo').style.display = 'none';
+    window.equiposParaCargar = [];
+};
+
+window.limpiarModalCarga = function () {
+    limpiarArchivo();
+    document.getElementById('resultadosCarga').style.display = 'none';
+};
+
+// Descargar plantilla
+window.descargarPlantillaCargaMasiva = async function () {
+    try {
+        const boton = event.target;
+        const textoOriginal = boton.innerHTML;
+        boton.innerHTML = '<i class="bi bi-arrow-repeat spinner"></i> Generando...';
+        boton.disabled = true;
+
+        const response = await fetch('/api/equipos/admin/descargar-plantilla');
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || 'Error al generar plantilla');
+        }
+
+        const blob = await response.blob();
+        if (blob.size === 0) throw new Error('Archivo vacío');
+
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Plantilla_Equipos_${new Date().toISOString().slice(0, 16).replace(/[-:T]/g, '')}.xlsx`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+
+        console.log("✅ Plantilla descargada");
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error al descargar plantilla: ' + error.message);
+    } finally {
+        if (event?.target) {
+            event.target.innerHTML = '<i class="bi bi-download"></i> Descargar Plantilla Excel';
+            event.target.disabled = false;
+        }
+    }
+};
+
+// Inicialización (SOLO UNA VEZ)
+document.addEventListener('DOMContentLoaded', function () {
+    const modal = document.getElementById('modalCargaMasiva');
+    if (modal) {
+        // Cuando se ABRE el modal
+        modal.addEventListener('show.bs.modal', function () {
+            console.log("🎯 Modal de carga masiva abierto");
+            window.inicializarCargaMasiva();
+        });
+
+        // Cuando se CIERRA el modal (por cualquier razón)
+        modal.addEventListener('hidden.bs.modal', function () {
+            console.log("🎯 Modal de carga masiva cerrado - limpiando todo");
+            window.limpiarTodo();
+        });
+    }
+});
+
+
+// SOLUCIÓN DIRECTA: Forzar inicialización cuando el modal ya está visible
+setInterval(function () {
+    const modal = document.getElementById('modalCargaMasiva');
+    const fileInput = document.getElementById('fileCargaMasiva');
+
+    // Si el modal está visible Y el input existe pero no tiene listener
+    if (modal && modal.classList.contains('show') && fileInput) {
+        // Verificar si el input ya tiene el listener (evitar duplicados)
+        if (!fileInput.dataset.listenerAdded) {
+            console.log("🔧 Agregando listener al input (método directo)");
+
+            fileInput.dataset.listenerAdded = 'true';
+            fileInput.addEventListener('change', window.manejarSeleccionArchivo);
+
+            // Asegurar que el botón también tenga su listener
+            const btnProcesar = document.getElementById('procesarCargaBtn');
+            if (btnProcesar && !btnProcesar.dataset.listenerAdded) {
+                console.log("🔧 Agregando listener al botón (método directo)");
+                btnProcesar.dataset.listenerAdded = 'true';
+                btnProcesar.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    console.log("🎯 CLICK EN PROCESAR");
+                    window.procesarCargaMasiva();
+                });
+            }
+        }
+    }
+}, 500); // Revisar cada 500ms

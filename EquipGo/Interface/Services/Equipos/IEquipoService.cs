@@ -16,6 +16,8 @@ namespace Interface.Services.Equipos
         Task<bool> ActualizarEquipoAsync(OUT_DOMAIN_EQUIPGO.Entities.Configuracion.Equipos equipo);
         Task<bool> CrearEquipoAdminAsync(CrearEquipoDto equipoDto);
 
+        Task<ResultadoCargaMasivaDto> CargaMasivaEquiposAsync(List<CrearEquipoDto> equiposDto);
+        Task<byte[]> GenerarPlantillaCargaMasivaAsync();
         Task<EquipoDto?> ObtenerPorIdAsync(int id);
         Task<bool> ActualizarEquipoAdminAsync(int id, CrearEquipoDto dto);
         Task<bool> EliminarAsync(int id);

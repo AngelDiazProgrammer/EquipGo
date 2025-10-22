@@ -71,7 +71,186 @@
         <button class="botn3" data-bs-toggle="modal" data-bs-target="#modalCrearEquipo" onclick="limpiarFormularioCrear()">
             <i class="bi bi-plus-lg"></i> Añadir Equipo
         </button>
+        <button class="botn3" data-bs-toggle="modal" data-bs-target="#modalCargaMasiva">
+            <i class="bi bi-upload"></i> Carga Masiva
+        </button>
     </div>
+
+    <!-- Modal Carga Masiva -->
+    <div class="modal fade modal-equipgo" id="modalCargaMasiva" tabindex="-1" aria-labelledby="modalCargaMasivaLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header-equipgo">
+                    <h5 class="modal-title-equipgo">Carga Masiva de Equipos</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body-equipgo">
+                    <!-- Instrucciones -->
+                    <div class="seccion-modal">
+                        <div class="seccion-header">
+                            <span class="seccion-titulo">📋 Instrucciones</span>
+                        </div>
+                        <div class="seccion-datos">
+                            <div class="alert alert-info">
+                                <strong>Pasos para la carga masiva:</strong>
+                                <ol class="mb-0 mt-2">
+                                    <li>Descarga la plantilla Excel</li>
+                                    <li>Llena los datos de los equipos</li>
+                                    <li>Sube el archivo completado</li>
+                                    <li>Revisa los resultados</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Plantilla -->
+                    <div class="seccion-modal">
+                        <div class="seccion-header">
+                            <span class="seccion-titulo">📄 Plantilla</span>
+                        </div>
+                        <div class="seccion-datos">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <p>Descarga la plantilla Excel para cargar los equipos de forma masiva:</p>
+                                    <button class="botn3" onclick="descargarPlantillaCargaMasiva()">
+                                        <i class="bi bi-download"></i> Descargar Plantilla Excel
+                                    </button>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card border-primary">
+                                        <div class="card-body">
+                                            <h6 class="card-title">Columnas requeridas:</h6>
+                                            <ul class="small mb-0">
+                                                <li><strong>Marca</strong> (Obligatorio)</li>
+                                                <li><strong>Modelo</strong> (Obligatorio)</li>  
+                                                <li><strong>Serial</strong> (Obligatorio)</li>
+                                                <li><strong>CódigoBarras</strong> (Obligatorio)</li>
+                                            </ul>                                           
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Subir archivo -->
+                    <div class="seccion-modal">
+                        <div class="seccion-header">
+                            <span class="seccion-titulo">📤 Subir Archivo</span>
+                        </div>
+                        <div class="seccion-datos">
+                            <div class="mb-3">
+                                <label for="fileCargaMasiva" class="form-label fw-bold">Seleccionar archivo Excel:</label>
+                                <input type="file" id="fileCargaMasiva" class="form-control" accept=".xlsx, .xls" />
+                            </div>
+
+                            <!-- Información del archivo -->
+                            <div id="infoArchivo" class="alert alert-light" style="display: none;">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <i class="bi bi-file-earmark-excel text-success"></i>
+                                        <span id="nombreArchivo" class="fw-bold"></span>
+                                        <span id="cantidadEquipos" class="badge bg-primary ms-2"></span>
+                                    </div>
+                                    <button type="button" class="btn-close" onclick="limpiarArchivo()"></button>
+                                </div>
+                            </div>
+
+                            <small class="text-muted">
+                                <i class="bi bi-info-circle"></i> Formatos soportados: Excel (.xlsx, .xls). Tamaño máximo: 10MB
+                            </small>
+                        </div>
+                    </div>
+
+                    <!-- Resultados -->
+                    <div class="seccion-modal" id="resultadosCarga" style="display: none;">
+                        <div class="seccion-header">
+                            <span class="seccion-titulo">📊 Resultados del Procesamiento</span>
+                        </div>
+                        <div class="seccion-datos">
+                            <!-- Resumen -->
+                            <div id="resumenCarga" class="mb-4">
+                                <div class="row text-center">
+                                    <div class="col-md-4">
+                                        <div class="card bg-light">
+                                            <div class="card-body py-3">
+                                                <h4 id="totalRegistros" class="text-primary mb-0">0</h4>
+                                                <small class="text-muted">Total Registros</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card bg-light">
+                                            <div class="card-body py-3">
+                                                <h4 id="registrosExitosos" class="text-success mb-0">0</h4>
+                                                <small class="text-muted">Éxitos</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card bg-light">
+                                            <div class="card-body py-3">
+                                                <h4 id="registrosFallidos" class="text-danger mb-0">0</h4>
+                                                <small class="text-muted">Fallidos</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Mensaje principal -->
+                            <div id="mensajeResultado" class="alert mb-3"></div>
+
+                            <!-- Errores detallados -->
+                            <div id="panelErrores" style="display: none;">
+                                <h6 class="text-danger mb-3">
+                                    <i class="bi bi-exclamation-triangle"></i> Errores encontrados:
+                                </h6>
+                                <div class="table-wrapper" style="max-height: 300px; overflow-y: auto;">
+                                    <table class="table table-sm table-striped">
+                                        <thead class="sticky-top bg-light">
+                                            <tr>
+                                                <th width="80">Fila</th>
+                                                <th>Marca</th>
+                                                <th>Modelo</th>
+                                                <th>Serial</th>
+                                                <th>Error</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tbodyErrores"></tbody>
+                                    </table>
+                                </div>
+                                <div class="mt-2 text-end">
+                                    <button class="btn btn-sm btn-outline-secondary" onclick="exportarErrores()">
+                                        <i class="bi bi-download"></i> Exportar Errores
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Éxitos -->
+                            <div id="panelExitosos" style="display: none;" class="mt-4">
+                                <h6 class="text-success mb-3">
+                                    <i class="bi bi-check-circle"></i> Registros procesados exitosamente
+                                </h6>
+                                <div class="alert alert-success">
+                                    <i class="bi bi-info-circle"></i> Los equipos han sido registrados correctamente en el sistema.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer-equipgo">
+                    <button class="boton-modal-equipgo boton-modal-secundario" data-bs-dismiss="modal" onclick="limpiarModalCarga()">
+                        <i class="bi bi-x-circle"></i> Cancelar
+                    </button>
+                    <button class="boton-modal-equipgo" id="procesarCargaBtn" disabled>
+                        <i class="bi bi-upload"></i> Procesar Carga Masiva
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Modal Crear Equipo -->
     <div class="modal fade modal-equipgo" id="modalCrearEquipo" tabindex="-1" aria-labelledby="modalCrearEquipoLabel" aria-hidden="true">
@@ -205,8 +384,7 @@
                                 <td>@equipo.CodigoBarras</td>
                                 <td>
                                     <button class="btn btn-sm btn-outline-info" @onclick="@(() => MostrarDetallesEquipo(equipo.Id))">🔍</button>
-                                    @* Implementacion futura *@
-                                    @* <button class="btn btn-sm btn-outline-danger" onclick="editarEquipo(@equipo.Id)">👤</button> *@
+                                    <button class="btn btn-sm btn-outline-success" onclick="abrirModalAsignarUsuario(@equipo.Id)">👤</button>
                                     <button class="btn btn-sm btn-outline-primary" onclick="editarEquipo(@equipo.Id)">✏️</button>
                                 </td>
                             </tr>
@@ -223,6 +401,138 @@
             </div>
         }
     </div>
+
+    <!-- Modal Asignar Usuario -->
+    <div class="modal fade modal-equipgo" id="modalAsignarUsuario" tabindex="-1" aria-labelledby="modalAsignarUsuarioLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header-equipgo">
+                    <h5 class="modal-title-equipgo">
+                        <span id="tituloAsignacion">Asignar Usuario</span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body-equipgo">
+                    <form id="formAsignarUsuario">
+                        <input type="hidden" id="asignarEquipoId" />
+
+                        <!-- Estado Actual de Asignación -->
+                        <div class="seccion-modal">
+                            <div class="seccion-header">
+                                <span class="seccion-titulo">📋 Estado Actual</span>
+                            </div>
+                            <div class="seccion-datos">
+                                <div id="estadoActualAsignacion" class="alert alert-info">
+                                    <!-- Aquí se mostrará si hay usuario asignado o no -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Gestión de Usuario -->
+                        <div class="seccion-modal">
+                            <div class="seccion-header">
+                                <span class="seccion-titulo">👤 Gestión de Usuario</span>
+                            </div>
+                            <div class="seccion-datos">
+
+                                <!-- Opción 1: Usuario Existente -->
+                                <div class="form-section">
+                                    <label>Seleccionar Usuario Existente</label>
+                                    <select id="asignarUsuarioSelect">
+                                        <option value="">-- Buscar usuario existente --</option>
+                                    </select>
+                                    <small class="text-muted">Selecciona un usuario del Active Directory o base local</small>
+                                </div>
+
+                                <div class="text-center my-3">
+                                    <strong class="text-muted">O</strong>
+                                </div>
+
+                                <!-- Opción 2: Crear Nuevo Usuario -->
+                                <div class="form-section">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="crearNuevoUsuarioCheckbox" onchange="toggleFormularioNuevoUsuario()" />
+                                        <label class="form-check-label" for="crearNuevoUsuarioCheckbox">
+                                            <strong>Registrar nuevo usuario</strong>
+                                        </label>
+                                    </div>
+                                    <small class="text-muted">Crear un usuario nuevo en el sistema</small>
+                                </div>
+
+                                <!-- Formulario para Nuevo Usuario -->
+                                <div id="formularioNuevoUsuario" style="display: none; margin-top: 20px; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px; background-color: #f8f9fa;">
+                                    <h6 class="mb-3 text-primary">📝 Información del Nuevo Usuario</h6>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-section">
+                                                <label>Tipo de Documento <span class="text-danger">*</span></label>
+                                                <select id="asignarTipoDocumento" required>
+                                                    <option value="">Seleccionar...</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-section">
+                                                <label>Número de Documento <span class="text-danger">*</span></label>
+                                                <input type="text" id="asignarNumeroDocumento" required placeholder="Ej: 1234567890" class="form-control" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-section">
+                                                <label>Nombres <span class="text-danger">*</span></label>
+                                                <input type="text" id="asignarNombres" required placeholder="Ej: Juan" class="form-control" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-section">
+                                                <label>Apellidos <span class="text-danger">*</span></label>
+                                                <input type="text" id="asignarApellidos" required placeholder="Ej: Pérez" class="form-control" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-section">
+                                                <label>Área <span class="text-danger">*</span></label>
+                                                <select id="asignarArea" required>
+                                                    <option value="">Seleccionar...</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-section">
+                                                <label>Campaña <span class="text-danger">*</span></label>
+                                                <select id="asignarCampana" required>
+                                                    <option value="">Seleccionar...</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer-equipgo">
+                    <!-- Botón de Desasignar (solo visible si hay usuario asignado) -->
+                    <button class="boton-modal-equipgo boton-modal-peligro" id="btnDesasignar" style="display: none; margin-right: auto;" onclick="desasignarUsuario()">
+                        🗑️ Desasignar
+                    </button>
+
+                    <button class="boton-modal-equipgo boton-modal-secundario" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="boton-modal-equipgo" onclick="guardarAsignacionUsuario()" id="btnGuardarAsignacion">
+                        💾 Guardar Asignación
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Modal Editar Equipo -->
     <div class="modal fade modal-equipgo" id="modalEditarEquipo" tabindex="-1" aria-labelledby="modalEditarEquipoLabel" aria-hidden="true">

@@ -1,5 +1,6 @@
 ﻿using Infrastructure.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.JSInterop;
 using OUT_OS_APP.EQUIPGO.DTO.DTOs.Active_Directory;
 using OUT_OS_APP.EQUIPGO.DTO.DTOs.Active_Directory.OUT_OS_APP.EQUIPGO.DTO.DTOs.Active_Directory;
@@ -7,6 +8,7 @@ using OUT_OS_APP.EQUIPGO.DTO.DTOs.Equipo;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using OfficeOpenXml;
 using System.Threading.Tasks;
 
 namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
@@ -23,6 +25,12 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
         private List<EquipoDto> equiposFiltrados = new();
         private EquipoDto RegistrarEquipo = new EquipoDto();
         private EquipoDto EditarEquipo = new EquipoDto();
+
+        //Cargue masivo
+        private bool mostrarResultados = false;
+        private bool archivoCargado = false;
+        private ResultadoCargaMasivaDto resultadoCarga = new();
+        private List<CrearEquipoDto> equiposParaCargar = new();
 
         // Filtros
         private string filtroMarca = "";
@@ -84,9 +92,16 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
         {
             if (firstRender)
             {
-
+                await JSRuntime.InvokeVoidAsync("eval", @"
+                if (typeof inicializarCargaMasiva === 'function') {
+                    console.log('✅ Función de carga masiva disponible');
+                }
+            ");
             }
         }
+
+        //Cargue masivo
+
 
         private void Filtrar()
         {

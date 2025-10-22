@@ -1,6 +1,7 @@
 ﻿using Interface;
 using Interface.Services.Equipos;
 using Microsoft.EntityFrameworkCore;
+using ClosedXML.Excel;
 using OUT_DOMAIN_EQUIPGO.Entities.Configuracion;
 using OUT_DOMAIN_EQUIPGO.Entities.Procesos;
 using OUT_DOMAIN_EQUIPGO.Entities.Smart;
@@ -8,6 +9,7 @@ using OUT_OS_APP.EQUIPGO.DTO.DTOs.Equipo;
 using OUT_OS_APP.EQUIPGO.DTO.DTOs.Visitantes;
 using OUT_PERSISTENCE_EQUIPGO.Context;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -275,6 +277,242 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Equipos
             }
         }
 
+        #endregion
+
+        #region Cargue Masivo
+
+        public async Task<ResultadoCargaMasivaDto> CargaMasivaEquiposAsync(List<CrearEquipoDto> equiposDto)
+        {
+            var resultado = new ResultadoCargaMasivaDto
+            {
+                TotalRegistros = equiposDto.Count
+            };
+
+            if (equiposDto == null || !equiposDto.Any())
+            {
+                resultado.Mensaje = "La lista de equipos está vacía";
+                return resultado;
+            }
+
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
+            try
+            {
+                // 🔥 LISTA PARA VERIFICAR DUPLICADOS DENTRO DEL MISMO ARCHIVO
+                var serialesProcesados = new HashSet<string>();
+                var hayErrores = false;
+
+                for (int i = 0; i < equiposDto.Count; i++)
+                {
+                    var equipoDto = equiposDto[i];
+
+                    try
+                    {
+                        // Validación 1: Marca y Modelo obligatorios
+                        if (string.IsNullOrWhiteSpace(equipoDto.Marca) || string.IsNullOrWhiteSpace(equipoDto.Modelo))
+                        {
+                            resultado.Errores.Add(new ErrorCargaMasivaDto
+                            {
+                                IndiceFila = i + 1,
+                                Marca = equipoDto.Marca ?? "",
+                                Modelo = equipoDto.Modelo ?? "",
+                                Serial = equipoDto.Serial ?? "",
+                                Error = "La marca y el modelo son obligatorios"
+                            });
+                            hayErrores = true;
+                            continue;
+                        }
+
+                        // 🔥 Validación 2: Serial obligatorio
+                        var serial = equipoDto.Serial?.Trim();
+                        if (string.IsNullOrWhiteSpace(serial))
+                        {
+                            resultado.Errores.Add(new ErrorCargaMasivaDto
+                            {
+                                IndiceFila = i + 1,
+                                Marca = equipoDto.Marca,
+                                Modelo = equipoDto.Modelo,
+                                Serial = "",
+                                Error = "El serial es obligatorio y no puede estar vacío"
+                            });
+                            hayErrores = true;
+                            continue;
+                        }
+
+                        // 🔥 Validación 3: Verificar duplicados dentro del mismo archivo
+                        if (serialesProcesados.Contains(serial))
+                        {
+                            resultado.Errores.Add(new ErrorCargaMasivaDto
+                            {
+                                IndiceFila = i + 1,
+                                Marca = equipoDto.Marca,
+                                Modelo = equipoDto.Modelo,
+                                Serial = serial,
+                                Error = "Serial duplicado dentro del mismo archivo"
+                            });
+                            hayErrores = true;
+                            continue;
+                        }
+
+                        // 🔥 Validación 4: Verificar si el serial ya existe en la base de datos
+                        var serialExistente = await _unitOfWork.Equipos.Query()
+                            .AnyAsync(e => e.Serial == serial);
+
+                        if (serialExistente)
+                        {
+                            resultado.Errores.Add(new ErrorCargaMasivaDto
+                            {
+                                IndiceFila = i + 1,
+                                Marca = equipoDto.Marca,
+                                Modelo = equipoDto.Modelo,
+                                Serial = serial,
+                                Error = "Ya existe un equipo con este serial en el sistema"
+                            });
+                            hayErrores = true;
+                            continue;
+                        }
+
+                        // 🔥 Validación 5: Código de barras único (si se proporciona)
+                        var codigoBarras = equipoDto.CodigoBarras?.Trim();
+                        if (!string.IsNullOrWhiteSpace(codigoBarras))
+                        {
+                            var codigoBarrasExistente = await _unitOfWork.Equipos.Query()
+                                .AnyAsync(e => e.CodigoBarras == codigoBarras);
+
+                            if (codigoBarrasExistente)
+                            {
+                                resultado.Errores.Add(new ErrorCargaMasivaDto
+                                {
+                                    IndiceFila = i + 1,
+                                    Marca = equipoDto.Marca,
+                                    Modelo = equipoDto.Modelo,
+                                    Serial = serial,
+                                    Error = "Ya existe un equipo con este código de barras en el sistema"
+                                });
+                                hayErrores = true;
+                                continue;
+                            }
+                        }
+
+                        // 🔥 SOLO si no hay errores, agregar a la lista de procesados y crear equipo
+                        serialesProcesados.Add(serial);
+
+                        // Crear el equipo
+                        var equipo = new OUT_DOMAIN_EQUIPGO.Entities.Configuracion.Equipos
+                        {
+                            Marca = equipoDto.Marca.Trim(),
+                            Modelo = equipoDto.Modelo.Trim(),
+                            Serial = serial,
+                            CodigoBarras = codigoBarras,
+                            Ubicacion = equipoDto.Ubicacion?.Trim(),
+                            IdUsuarioInfo = equipoDto.IdUsuarioInfo,
+                            IdEstado = equipoDto.IdEstado,
+                            IdSubEstado = equipoDto.IdSubEstado,
+                            IdEquipoPersonal = equipoDto.IdEquipoPersonal,
+                            IdSede = equipoDto.IdSede,
+                            IdTipoDispositivo = equipoDto.IdTipoDispositivo,
+                            IdProveedor = equipoDto.IdProveedor,
+                            Latitud = equipoDto.Latitud,
+                            Longitud = equipoDto.Longitud,
+                            SistemaOperativo = equipoDto.SistemaOperativo?.Trim(),
+                            MacEquipo = equipoDto.MacEquipo?.Trim(),
+                            VersionSoftware = equipoDto.VersionSoftware?.Trim(),
+                            FechaCreacion = DateTime.UtcNow,
+                            UltimaModificacion = DateTime.UtcNow
+                        };
+
+                        await _unitOfWork.Equipos.AddAsync(equipo);
+                        resultado.RegistrosExitosos++;
+                    }
+                    catch (Exception ex)
+                    {
+                        resultado.Errores.Add(new ErrorCargaMasivaDto
+                        {
+                            IndiceFila = i + 1,
+                            Marca = equipoDto.Marca ?? "",
+                            Modelo = equipoDto.Modelo ?? "",
+                            Serial = equipoDto.Serial ?? "",
+                            Error = $"Error interno: {ex.Message}"
+                        });
+                        hayErrores = true;
+                    }
+                }
+
+                resultado.RegistrosFallidos = resultado.Errores.Count;
+
+                // 🔥 DECISIÓN CRÍTICA: Commit o Rollback
+                if (resultado.RegistrosExitosos > 0 && !hayErrores)
+                {
+                    // ✅ CASO IDEAL: Todos los registros son válidos
+                    await _unitOfWork.CompleteAsync();
+                    await transaction.CommitAsync();
+                    resultado.Mensaje = $"Carga masiva completada exitosamente: {resultado.RegistrosExitosos} equipos registrados";
+                }
+                else if (resultado.RegistrosExitosos > 0 && hayErrores)
+                {
+                    // 🔥 CASO CON ERRORES: Hacemos ROLLBACK - No se guarda NADA
+                    await transaction.RollbackAsync();
+                    resultado.RegistrosExitosos = 0; // Reiniciamos porque no se guardó nada
+                    resultado.Mensaje = "❌ Carga cancelada: Se detectaron errores en el archivo. No se registró ningún equipo. Revise los detalles abajo.";
+                }
+                else
+                {
+                    // ❌ CASO SIN ÉXITOS: Rollback automático
+                    await transaction.RollbackAsync();
+                    resultado.Mensaje = "No se pudo procesar ningún registro. Revise los errores.";
+                }
+
+                return resultado;
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+
+                resultado.Mensaje = $"Error general en la carga masiva: {ex.Message}";
+                resultado.RegistrosExitosos = 0;
+                resultado.RegistrosFallidos = resultado.TotalRegistros;
+
+                return resultado;
+            }
+        }
+
+        public async Task<byte[]> GenerarPlantillaCargaMasivaAsync()
+        {
+            try
+            {
+                Console.WriteLine("🔄 Generando plantilla simple...");
+
+                // Versión mínima para evitar problemas de memoria
+                var workbook = new XLWorkbook();
+                var worksheet = workbook.AddWorksheet("PlantillaEquipos");
+
+                // Solo encabezados básicos
+                worksheet.Cell("A1").Value = "Marca";
+                worksheet.Cell("B1").Value = "Modelo";
+                worksheet.Cell("C1").Value = "Serial";
+                worksheet.Cell("D1").Value = "CodigoBarras";
+
+                // Un solo ejemplo
+                worksheet.Cell("A2").Value = "Dell";
+                worksheet.Cell("B2").Value = "Latitude 5510";
+                worksheet.Cell("C2").Value = "ABC123456";
+                worksheet.Cell("D2").Value = "CB001";
+
+                using var stream = new MemoryStream();
+                workbook.SaveAs(stream);
+
+                var bytes = stream.ToArray();
+                workbook.Dispose(); // 🔥 Liberar recursos explícitamente
+
+                Console.WriteLine($"✅ Plantilla simple generada: {bytes.Length} bytes");
+                return bytes;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error: {ex.Message}");
+                throw;
+            }
+        }
         #endregion
 
         #region Visitantes

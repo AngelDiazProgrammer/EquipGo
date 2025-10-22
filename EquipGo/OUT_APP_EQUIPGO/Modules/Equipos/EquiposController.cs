@@ -170,6 +170,59 @@ public class EquiposController : ControllerBase
         }
     }
 
+
+    //Cargue Masivo
+    [HttpPost("admin/carga-masiva")]
+    public async Task<ActionResult<ResultadoCargaMasivaDto>> CargaMasivaEquipos([FromBody] List<CrearEquipoDto> equiposDto)
+    {
+        try
+        {
+            var resultado = await _equipoService.CargaMasivaEquiposAsync(equiposDto);
+            return Ok(resultado);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { error = ex.Message });
+        }
+    }
+
+    [HttpGet("admin/descargar-plantilla")]
+    public async Task<IActionResult> DescargarPlantilla()
+    {
+        try
+        {
+            Console.WriteLine("📥 Solicitud de descarga de plantilla recibida");
+
+            // 🔥 Usar await para liberar el thread
+            var plantillaBytes = await _equipoService.GenerarPlantillaCargaMasivaAsync();
+
+            if (plantillaBytes == null || plantillaBytes.Length == 0)
+            {
+                return BadRequest(new { error = "No se pudo generar la plantilla" });
+            }
+
+            Console.WriteLine($"✅ Plantilla generada: {plantillaBytes.Length} bytes");
+
+            // 🔥 Forzar garbage collection después de generar archivo grande
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+
+            return File(plantillaBytes,
+                       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                       $"Plantilla_Carga_Masiva_Equipos.xlsx");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"❌ Error en endpoint DescargarPlantilla: {ex.Message}");
+
+            return StatusCode(500, new
+            {
+                error = "Error interno al generar plantilla",
+                detalle = ex.Message
+            });
+        }
+    }
+
     //Consultar usuario por nombres en la base local
     [HttpGet("admin/usuario-por-nombre")]
     public async Task<IActionResult> ConsultarUsuarioPorNombre([FromQuery] string nombres, [FromQuery] string apellidos)
