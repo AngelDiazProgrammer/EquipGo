@@ -402,7 +402,7 @@
         }
     </div>
 
-    <!-- Modal Asignar Usuario -->
+    <!-- Modal Asignar Usuario-->
     <div class="modal fade modal-equipgo" id="modalAsignarUsuario" tabindex="-1" aria-labelledby="modalAsignarUsuarioLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -428,91 +428,82 @@
                             </div>
                         </div>
 
-                        <!-- Gestión de Usuario -->
+                        <!-- Selección de Usuario -->
                         <div class="seccion-modal">
                             <div class="seccion-header">
-                                <span class="seccion-titulo">👤 Gestión de Usuario</span>
+                                <span class="seccion-titulo">👤 Seleccionar Usuario</span>
                             </div>
                             <div class="seccion-datos">
-
-                                <!-- Opción 1: Usuario Existente -->
                                 <div class="form-section">
-                                    <label>Seleccionar Usuario Existente</label>
+                                    <label>Usuario</label>
                                     <select id="asignarUsuarioSelect">
-                                        <option value="">-- Buscar usuario existente --</option>
+                                        <option value="">-- Buscar usuario --</option>
                                     </select>
                                     <small class="text-muted">Selecciona un usuario del Active Directory o base local</small>
                                 </div>
+                            </div>
+                        </div>
 
-                                <div class="text-center my-3">
-                                    <strong class="text-muted">O</strong>
+                        <!-- Formulario de Información del Usuario (SIEMPRE VISIBLE cuando hay selección) -->
+                        <div class="seccion-modal" id="seccionFormularioUsuario" style="display: none;">
+                            <div class="seccion-header">
+                                <span class="seccion-titulo" id="tituloFormularioUsuario">📝 Información del Usuario</span>
+                            </div>
+                            <div class="seccion-datos">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="form-section">
+                                            <label>Tipo de Documento <span class="text-danger">*</span></label>
+                                            <select id="asignarTipoDocumento" required>
+                                                <option value="">Seleccionar...</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-section">
+                                            <label>Número de Documento <span class="text-danger">*</span></label>
+                                            <input type="text" id="asignarNumeroDocumento" required placeholder="Ej: 1234567890" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-section">
+                                            <label>Nombres <span class="text-danger">*</span></label>
+                                            <input type="text" id="asignarNombres" required placeholder="Ej: Juan" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-section">
+                                            <label>Apellidos <span class="text-danger">*</span></label>
+                                            <input type="text" id="asignarApellidos" required placeholder="Ej: Pérez" class="form-control" />
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <!-- Opción 2: Crear Nuevo Usuario -->
-                                <div class="form-section">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="crearNuevoUsuarioCheckbox" onchange="toggleFormularioNuevoUsuario()" />
-                                        <label class="form-check-label" for="crearNuevoUsuarioCheckbox">
-                                            <strong>Registrar nuevo usuario</strong>
-                                        </label>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-section">
+                                            <label>Área <span class="text-danger">*</span></label>
+                                            <select id="asignarArea" required>
+                                                <option value="">Seleccionar...</option>
+                                            </select>
+                                        </div>
                                     </div>
-                                    <small class="text-muted">Crear un usuario nuevo en el sistema</small>
+                                    <div class="col-md-6">
+                                        <div class="form-section">
+                                            <label>Campaña <span class="text-danger">*</span></label>
+                                            <select id="asignarCampana" required>
+                                                <option value="">Seleccionar...</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <!-- Formulario para Nuevo Usuario -->
-                                <div id="formularioNuevoUsuario" style="display: none; margin-top: 20px; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px; background-color: #f8f9fa;">
-                                    <h6 class="mb-3 text-primary">📝 Información del Nuevo Usuario</h6>
-
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-section">
-                                                <label>Tipo de Documento <span class="text-danger">*</span></label>
-                                                <select id="asignarTipoDocumento" required>
-                                                    <option value="">Seleccionar...</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-section">
-                                                <label>Número de Documento <span class="text-danger">*</span></label>
-                                                <input type="text" id="asignarNumeroDocumento" required placeholder="Ej: 1234567890" class="form-control" />
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-section">
-                                                <label>Nombres <span class="text-danger">*</span></label>
-                                                <input type="text" id="asignarNombres" required placeholder="Ej: Juan" class="form-control" />
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-section">
-                                                <label>Apellidos <span class="text-danger">*</span></label>
-                                                <input type="text" id="asignarApellidos" required placeholder="Ej: Pérez" class="form-control" />
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-section">
-                                                <label>Área <span class="text-danger">*</span></label>
-                                                <select id="asignarArea" required>
-                                                    <option value="">Seleccionar...</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-section">
-                                                <label>Campaña <span class="text-danger">*</span></label>
-                                                <select id="asignarCampana" required>
-                                                    <option value="">Seleccionar...</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <!-- Indicador de origen del usuario -->
+                                <div id="indicadorOrigenUsuario" class="alert alert-light mt-3" style="display: none;">
+                                    <small>
+                                        <i class="bi bi-info-circle"></i>
+                                        <span id="textoOrigenUsuario">Usuario cargado desde Active Directory</span>
+                                    </small>
                                 </div>
                             </div>
                         </div>
@@ -533,8 +524,7 @@
         </div>
     </div>
 
-
-    <!-- Modal Editar Equipo -->
+    <!-- Modal Editar Equipo - ORDEN ORIGINAL, SIN USUARIOS -->
     <div class="modal fade modal-equipgo" id="modalEditarEquipo" tabindex="-1" aria-labelledby="modalEditarEquipoLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
@@ -546,7 +536,7 @@
                     <form id="formEditarEquipo">
                         <input type="hidden" id="editarId" />
                         <div class="row">
-                            <!-- Columna izquierda -->
+                            <!-- Columna izquierda - ORDEN ORIGINAL -->
                             <div class="col-md-6">
                                 <div class="seccion-modal">
                                     <div class="seccion-header">
@@ -555,15 +545,15 @@
                                     <div class="seccion-datos">
                                         <div class="form-section">
                                             <label>Marca</label>
-                                            <input type="text" id="editarMarca" />
+                                            <input readonly type="text" id="editarMarca" />
                                         </div>
                                         <div class="form-section">
                                             <label>Modelo</label>
-                                            <input type="text" id="editarModelo" />
+                                            <input readonly type="text" id="editarModelo" />
                                         </div>
                                         <div class="form-section">
                                             <label>Serial</label>
-                                            <input type="text" id="editarSerial" />
+                                            <input readonly type="text" id="editarSerial" />
                                         </div>
                                         <div class="form-section">
                                             <label>Código de Barras</label>
@@ -571,45 +561,37 @@
                                         </div>
                                         <div class="form-section">
                                             <label>Sistema Operativo</label>
-                                            <input type="text" id="editarSistemaOperativo" />
+                                            <input readonly type="text" id="editarSistemaOperativo" />
                                         </div>
                                         <div class="form-section">
                                             <label>MAC Equipo</label>
-                                            <input type="text" id="editarMacEquipo" />
+                                            <input readonly type="text" id="editarMacEquipo" />
                                         </div>
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <div class="form-section">
                                                     <label>Latitud</label>
-                                                    <input type="number" step="any" id="editarLatitud" />
+                                                    <input readonly type="number" step="any" id="editarLatitud" />
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-section">
                                                     <label>Longitud</label>
-                                                    <input type="number" step="any" id="editarLongitud" />
+                                                    <input readonly type="number" step="any" id="editarLongitud" />
                                                 </div>
                                             </div>
                                         </div>
-                                        @* <div class="form-section">
-                                            <label>Versión Software</label>
-                                            <input type="text" id="editarVersionSoftware" />
-                                        </div> *@
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Columna derecha -->
+                            <!-- Columna derecha - ORDEN ORIGINAL -->
                             <div class="col-md-6">
                                 <div class="seccion-modal">
                                     <div class="seccion-header">
                                         <span class="seccion-titulo">⚙️ Características</span>
                                     </div>
                                     <div class="seccion-datos">
-                                        @* <div class="form-section">
-                                            <label>Equipo Personal</label>
-                                            <select id="editarEquipoPersonal"></select>
-                                        </div> *@
                                         <div class="form-section">
                                             <label>Tipo Dispositivo</label>
                                             <select id="editarTipoDispositivo"></select>
@@ -619,7 +601,7 @@
                                             <select id="editarEstado"></select>
                                         </div>
 
-                                        <!-- 🎯 NUEVO: Contenedor para Motivo en edición (inicialmente oculto) -->
+                                        <!-- 🎯 Contenedor para Motivo en edición -->
                                         <div id="motivoContainerEditar" style="display: none;">
                                             <div class="form-section">
                                                 <label>Motivo:</label>
@@ -633,7 +615,7 @@
 
                                 <div class="seccion-modal">
                                     <div class="seccion-header">
-                                        <span class="seccion-titulo">📍 Asignación</span>
+                                        <span class="seccion-titulo">📍 Ubicación</span>
                                     </div>
                                     <div class="seccion-datos">
                                         <div class="form-section">
@@ -644,77 +626,12 @@
                                             <label>Sede</label>
                                             <select id="editarSede"></select>
                                         </div>
-                                        <div class="form-section">
-                                            <label>Asignado a</label>
-                                            <select id="editarUsuarioInfo">
-                                                <option value="">-- Selecciona un usuario --</option>
-                                            </select>
-                                        </div>
-                                        @* <div class="form-section">
-                                            <label>Ubicación</label>
-                                            <input type="text" id="editarUbicacion" />
-                                        </div> *@                                        
+                                        <!-- 🚫 ELIMINADA SECCIÓN DE ASIGNACIÓN -->
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <!-- 🆕 FORMULARIO DESPLEGABLE DE INFORMACIÓN DEL USUARIO -->
-                        <!-- Modal Editar Equipo - CORRECCIÓN DE IDs -->
-                        <div id="formUsuarioInfoEditar" style="display: none; margin-top: 15px; animation: slideDown 0.3s ease-out; width: 100%;">
-                            <div class="seccion-modal" style="border-radius: 12px; border: 1px solid #e0e0e0; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                                <div class="seccion-header" style="background: linear-gradient(135deg, #E9002B 0%, #a70120 100%); border-radius: 12px 12px 0 0; padding: 12px 20px;">
-                                    <span class="seccion-titulo" style="color: white; font-size: 18px; font-weight: 600;">👤 Información del Usuario</span>
-                                </div>
-                                <div class="seccion-datos" style="padding: 15px 20px;">
-                                    <div class="row" style="margin-bottom: 10px;">
-                                        <div class="col-md-3" style="padding: 0 5px;">
-                                            <div class="form-section" style="margin-bottom: 12px;">
-                                                <label style="font-size: 14px; font-weight: 600; color: #393e42; margin-bottom: 5px;">Tipo de Documento <span style="color: #E9002B;">*</span></label>
-                                                <select id="editarTipoDocumento" name="editarTipoDocumento" required style="padding: 8px 10px; border: 1px solid #ced4da; border-radius: 6px; font-size: 14px; height: 38px;">
-                                                    <option value="">Seleccionar...</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3" style="padding: 0 5px;">
-                                            <div class="form-section" style="margin-bottom: 12px;">
-                                                <label style="font-size: 14px; font-weight: 600; color: #393e42; margin-bottom: 5px;">Número de Documento <span style="color: #E9002B;">*</span></label>
-                                                <input type="text" id="editarNumeroDocumento" name="editarNumeroDocumento" required placeholder="Ej: 1234567890" style="padding: 8px 10px; border: 1px solid #ced4da; border-radius: 6px; font-size: 14px; height: 38px;" />
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3" style="padding: 0 5px;">
-                                            <div class="form-section" style="margin-bottom: 12px;">
-                                                <label style="font-size: 14px; font-weight: 600; color: #393e42; margin-bottom: 5px;">Nombres <span style="color: #E9002B;">*</span></label>
-                                                <input type="text" id="editarNombres" name="editarNombres" readonly style="background-color: #f8f9fa; cursor: not-allowed; padding: 8px 10px; border: 1px solid #ced4da; border-radius: 6px; font-size: 14px; height: 38px;" placeholder="(Extraído del AD)" />
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3" style="padding: 0 5px;">
-                                            <div class="form-section" style="margin-bottom: 12px;">
-                                                <label style="font-size: 14px; font-weight: 600; color: #393e42; margin-bottom: 5px;">Apellidos <span style="color: #E9002B;">*</span></label>
-                                                <input type="text" id="editarApellidos" name="editarApellidos" readonly style="background-color: #f8f9fa; cursor: not-allowed; padding: 8px 10px; border: 1px solid #ced4da; border-radius: 6px; font-size: 14px; height: 38px;" placeholder="(Extraído del AD)" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6" style="padding: 0 5px;">
-                                            <div class="form-section" style="margin-bottom: 12px;">
-                                                <label style="font-size: 14px; font-weight: 600; color: #393e42; margin-bottom: 5px;">Área <span style="color: #E9002B;">*</span></label>
-                                                <select id="editarArea" name="editarArea" required style="padding: 8px 10px; border: 1px solid #ced4da; border-radius: 6px; font-size: 14px; height: 38px;">
-                                                    <option value="">Seleccionar...</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6" style="padding: 0 5px;">
-                                            <div class="form-section" style="margin-bottom: 12px;">
-                                                <label style="font-size: 14px; font-weight: 600; color: #393e42; margin-bottom: 5px;">Campaña <span style="color: #E9002B;">*</span></label>
-                                                <select id="editarCampana" name="editarCampana" required style="padding: 8px 10px; border: 1px solid #ced4da; border-radius: 6px; font-size: 14px; height: 38px;">
-                                                    <option value="">Seleccionar...</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <!-- 🚫 ELIMINADO FORMULARIO DE USUARIO COMPLETAMENTE -->
                     </form>
                 </div>
                 <div class="modal-footer-equipgo">
@@ -772,11 +689,7 @@
                                     <div class="seccion-header">
                                         <span class="seccion-titulo">⚙️ Características</span>
                                     </div>
-                                    <div class="seccion-datos">
-                                        <div class="dato-fila">
-                                            <span class="dato-label">Tipo de equipo:</span>
-                                            <span class="dato-valor">@equipoSeleccionado.EquipoPersonalNombre</span>
-                                        </div>
+                                    <div class="seccion-datos">                                        
                                         <div class="dato-fila">
                                             <span class="dato-label">Tipo de dispositivo:</span>
                                             <span class="dato-valor">@equipoSeleccionado.TipoDispositivoNombre</span>
@@ -801,11 +714,7 @@
                                         <div class="dato-fila">
                                             <span class="dato-label">Usuario:</span>
                                             <span class="dato-valor">@equipoSeleccionado.UsuarioNombreCompleto</span>
-                                        </div>
-                                        <div class="dato-fila">
-                                            <span class="dato-label">Ubicación:</span>
-                                            <span class="dato-valor">@equipoSeleccionado.Ubicacion</span>
-                                        </div>
+                                        </div>                                       
                                     </div>
                                 </div>
                             </div>

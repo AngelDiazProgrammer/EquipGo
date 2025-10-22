@@ -18,6 +18,10 @@ namespace Interface.Services.Equipos
 
         Task<ResultadoCargaMasivaDto> CargaMasivaEquiposAsync(List<CrearEquipoDto> equiposDto);
         Task<byte[]> GenerarPlantillaCargaMasivaAsync();
+
+        Task<bool> AsignarUsuarioAEquipoAsync(int equipoId, int usuarioId);
+        Task<bool> DesasignarUsuarioDeEquipoAsync(int equipoId);
+
         Task<EquipoDto?> ObtenerPorIdAsync(int id);
         Task<bool> ActualizarEquipoAdminAsync(int id, CrearEquipoDto dto);
         Task<bool> EliminarAsync(int id);

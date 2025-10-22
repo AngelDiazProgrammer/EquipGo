@@ -219,7 +219,6 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Equipos
             equipo.Serial = dto.Serial;
             equipo.CodigoBarras = dto.CodigoBarras;
             equipo.Ubicacion = dto.Ubicacion;
-            equipo.IdUsuarioInfo = dto.IdUsuarioInfo;
             equipo.IdEstado = dto.IdEstado;
             equipo.IdSubEstado = dto.IdSubEstado; // ✅ Esta línea es crucial
             equipo.IdEquipoPersonal = dto.IdEquipoPersonal;
@@ -513,6 +512,90 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Equipos
                 throw;
             }
         }
+        #endregion
+
+        #region Asigancion de usuarios
+
+        public async Task<bool> AsignarUsuarioAEquipoAsync(int equipoId, int usuarioId)
+        {
+            try
+            {
+                Console.WriteLine($"🔄 Asignando usuario {usuarioId} al equipo {equipoId}");
+
+                var equipo = await _unitOfWork.Equipos.Query()
+                    .FirstOrDefaultAsync(e => e.Id == equipoId);
+
+                if (equipo == null)
+                {
+                    Console.WriteLine("❌ Equipo no encontrado");
+                    return false;
+                }
+
+                // Verificar que el usuario existe
+                var usuario = await _unitOfWork.UsuariosInformacion.Query()
+                    .FirstOrDefaultAsync(u => u.Id == usuarioId);
+
+                if (usuario == null)
+                {
+                    Console.WriteLine("❌ Usuario no encontrado");
+                    return false;
+                }
+
+                // Asignar usuario al equipo
+                equipo.IdUsuarioInfo = usuarioId;
+                equipo.UltimaModificacion = DateTime.UtcNow;
+
+                await _unitOfWork.CompleteAsync();
+
+                Console.WriteLine($"✅ Usuario {usuarioId} asignado al equipo {equipoId}");
+                return true;
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error en AsignarUsuarioAEquipoAsync: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<bool> DesasignarUsuarioDeEquipoAsync(int equipoId)
+        {
+            try
+            {
+                Console.WriteLine($"🔄 Desasignando usuario del equipo {equipoId}");
+
+                var equipo = await _unitOfWork.Equipos.Query()
+                    .FirstOrDefaultAsync(e => e.Id == equipoId);
+
+                if (equipo == null)
+                {
+                    Console.WriteLine("❌ Equipo no encontrado");
+                    return false;
+                }
+
+                if (equipo.IdUsuarioInfo == null)
+                {
+                    Console.WriteLine("⚠️ El equipo no tiene usuario asignado");
+                    return true; // Consideramos éxito porque ya está desasignado
+                }
+
+                // Desasignar usuario
+                equipo.IdUsuarioInfo = null;
+                equipo.UltimaModificacion = DateTime.UtcNow;
+
+                await _unitOfWork.CompleteAsync();
+
+                Console.WriteLine($"✅ Usuario desasignado del equipo {equipoId}");
+                return true;
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error en DesasignarUsuarioDeEquipoAsync: {ex.Message}");
+                return false;
+            }
+        }
+
         #endregion
 
         #region Visitantes

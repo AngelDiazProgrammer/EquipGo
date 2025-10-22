@@ -1,15 +1,38 @@
 ﻿// Cache global para usuarios del Active Directory
 window._usuariosCache = null;
 // Variable global para almacenar información temporal
+// Variable global para almacenar información temporal
 window.equipoAsignacionActual = null;
+window.usuariosCacheAsignacion = null;
 
 // Función para abrir el modal de asignación
 window.abrirModalAsignarUsuario = async function (equipoId) {
     try {
         console.log("🔄 Abriendo modal de asignación para equipo:", equipoId);
+        console.log("🔍 Tipo de equipoId:", typeof equipoId);
+        console.log("🔍 Valor de equipoId:", equipoId);
+
+        // Validar que el equipoId sea válido
+        if (!equipoId || equipoId <= 0) {
+            console.error("❌ equipoId inválido:", equipoId);
+            alert("Error: ID de equipo inválido");
+            return;
+        }
 
         // Guardar información del equipo
         window.equipoAsignacionActual = { equipoId };
+
+        // Verificar que el hidden field existe
+        const hiddenField = document.getElementById('asignarEquipoId');
+        if (!hiddenField) {
+            console.error("❌ No se encontró el elemento 'asignarEquipoId'");
+            alert("Error interno: No se pudo inicializar el modal");
+            return;
+        }
+
+        // Asignar el ID al hidden field
+        hiddenField.value = equipoId;
+        console.log("✅ Hidden field asignado:", hiddenField.value);
 
         // Limpiar formulario
         limpiarFormularioAsignacion();
@@ -21,15 +44,222 @@ window.abrirModalAsignarUsuario = async function (equipoId) {
         await cargarEstadoActualAsignacion(equipoId);
 
         // Mostrar el modal
-        const modal = new bootstrap.Modal(document.getElementById('modalAsignarUsuario'));
+        const modalElement = document.getElementById('modalAsignarUsuario');
+        if (!modalElement) {
+            console.error("❌ No se encontró el modal 'modalAsignarUsuario'");
+            alert("Error interno: No se pudo abrir el modal");
+            return;
+        }
+
+        const modal = new bootstrap.Modal(modalElement);
         modal.show();
 
         console.log("✅ Modal de asignación abierto correctamente");
 
     } catch (error) {
         console.error("❌ Error al abrir modal de asignación:", error);
-        alert("Error al cargar el modal de asignación");
+        alert("Error al cargar el modal de asignación: " + error.message);
     }
+};
+
+// Función para cargar los selects del modal de asignación
+window.cargarSelectsAsignacion = async function () {
+    try {
+        console.log("🔄 Cargando selects para asignación...");
+
+        const response = await fetch('/api/equipos/admin/form-data');
+        if (!response.ok) throw new Error('Error al cargar datos del formulario');
+        const data = await response.json();
+
+        // Guardar usuarios en caché
+        window.usuariosCacheAsignacion = data.usuarios || [];
+
+        // Cargar select de usuarios
+        await cargarSelectUsuarios(window.usuariosCacheAsignacion);
+
+        // Cargar selects para formulario de usuario
+        await cargarSelectsFormularioUsuario(data);
+
+        console.log("✅ Selects de asignación cargados correctamente");
+
+    } catch (error) {
+        console.error("❌ Error cargando selects de asignación:", error);
+    }
+};
+
+// Función para cargar el select de usuarios
+window.cargarSelectUsuarios = async function (usuarios) {
+    const select = document.getElementById('asignarUsuarioSelect');
+    if (!select) return;
+
+    // Limpiar select
+    select.innerHTML = '<option value="">-- Buscar usuario --</option>';
+
+    if (usuarios && usuarios.length > 0) {
+        usuarios.forEach(usuario => {
+            // Incluir TODOS los usuarios, incluso la opción "nuevo"
+            const option = document.createElement('option');
+            option.value = usuario.usuario || usuario.id;
+
+            let texto = usuario.nombreCompleto || `${usuario.nombres} ${usuario.apellidos}`;
+            if (usuario.correo) {
+                texto += ` (${usuario.correo})`;
+            }
+            if (usuario.numeroDocumento) {
+                texto += ` - ${usuario.numeroDocumento}`;
+            }
+
+            option.textContent = texto;
+
+            // Guardar datos completos del usuario en el option
+            option.dataset.origen = usuario.origen || '';
+            option.dataset.tieneDatosCompletos = usuario.tieneDatosCompletos || false;
+            option.dataset.nombres = usuario.nombres || '';
+            option.dataset.apellidos = usuario.apellidos || '';
+            option.dataset.numeroDocumento = usuario.numeroDocumento || '';
+            option.dataset.idTipoDocumento = usuario.idTipoDocumento || '';
+            option.dataset.idArea = usuario.idArea || '';
+            option.dataset.idCampaña = usuario.idCampaña || '';
+
+            select.appendChild(option);
+        });
+    }
+
+    // Inicializar TomSelect si está disponible
+    if (typeof TomSelect !== 'undefined' && !select.tomselect) {
+        const tomselect = new TomSelect(select, {
+            placeholder: 'Buscar usuario por nombre, email o documento...',
+            maxOptions: 500,
+            allowEmptyOption: true,
+            sortField: { field: "text", direction: "asc" },
+            searchField: ['text'],
+            onChange: function (value) {
+                console.log("🔄 Usuario seleccionado:", value);
+                window.manejarCambioUsuarioAsignacion(value);
+            }
+        });
+    } else {
+        // Si no hay TomSelect, agregar event listener nativo
+        select.addEventListener('change', function () {
+            window.manejarCambioUsuarioAsignacion(this.value);
+        });
+    }
+};
+
+// Función para manejar el cambio de usuario seleccionado
+window.manejarCambioUsuarioAsignacion = function (usuarioSeleccionado) {
+    const seccionFormulario = document.getElementById('seccionFormularioUsuario');
+    const indicadorOrigen = document.getElementById('indicadorOrigenUsuario');
+    const textoOrigen = document.getElementById('textoOrigenUsuario');
+
+    console.log("🎯 Manejando cambio de usuario:", usuarioSeleccionado);
+
+    if (!usuarioSeleccionado) {
+        // No hay usuario seleccionado, ocultar formulario
+        seccionFormulario.style.display = 'none';
+        indicadorOrigen.style.display = 'none';
+        return;
+    }
+
+    // MOSTRAR FORMULARIO SIEMPRE cuando hay usuario seleccionado
+    seccionFormulario.style.display = 'block';
+
+    // Buscar información del usuario en el caché
+    const usuario = window.usuariosCacheAsignacion?.find(u =>
+        u.usuario === usuarioSeleccionado || u.id == usuarioSeleccionado
+    );
+
+    if (usuario) {
+        console.log("✅ Usuario encontrado en caché:", usuario);
+
+        // Llenar automáticamente los campos con la información del usuario
+        document.getElementById('asignarNombres').value = usuario.nombres || usuario.nombre || '';
+        document.getElementById('asignarApellidos').value = usuario.apellidos || '';
+        document.getElementById('asignarNumeroDocumento').value = usuario.numeroDocumento || '';
+
+        // Configurar selects con TomSelect
+        setTimeout(() => {
+            const camposSelect = [
+                { id: 'asignarTipoDocumento', value: usuario.idTipoDocumento },
+                { id: 'asignarArea', value: usuario.idArea },
+                { id: 'asignarCampana', value: usuario.idCampaña }
+            ];
+
+            camposSelect.forEach(({ id, value }) => {
+                const select = document.getElementById(id);
+                if (select && value) {
+                    if (select.tomselect) {
+                        select.tomselect.setValue(value);
+                    } else {
+                        select.value = value;
+                    }
+                }
+            });
+        }, 100);
+
+        // Mostrar indicador de origen
+        indicadorOrigen.style.display = 'block';
+        if (usuario.origen === 'ad') {
+            textoOrigen.textContent = 'Usuario cargado desde Active Directory';
+            indicadorOrigen.className = 'alert alert-info mt-3';
+        } else if (usuario.origen === 'local') {
+            textoOrigen.textContent = 'Usuario de base de datos local';
+            indicadorOrigen.className = 'alert alert-success mt-3';
+        } else if (usuario.usuario === 'nuevo') {
+            textoOrigen.textContent = 'Nuevo usuario - Complete la información';
+            indicadorOrigen.className = 'alert alert-warning mt-3';
+
+            // Limpiar campos para nuevo usuario
+            document.getElementById('asignarNombres').value = '';
+            document.getElementById('asignarApellidos').value = '';
+            document.getElementById('asignarNumeroDocumento').value = '';
+
+            const selects = ['asignarTipoDocumento', 'asignarArea', 'asignarCampana'];
+            selects.forEach(id => {
+                const select = document.getElementById(id);
+                if (select && select.tomselect) {
+                    select.tomselect.setValue('');
+                }
+            });
+        }
+
+    } else {
+        console.warn("⚠️ Usuario no encontrado en caché");
+        // Usuario no encontrado, mantener formulario visible pero vacío
+        indicadorOrigen.style.display = 'block';
+        textoOrigen.textContent = 'Usuario no encontrado - Complete la información manualmente';
+        indicadorOrigen.className = 'alert alert-warning mt-3';
+    }
+};
+
+// Función para cargar selects del formulario de usuario
+window.cargarSelectsFormularioUsuario = async function (data) {
+    const selects = [
+        { id: 'asignarTipoDocumento', list: data.tiposDocumento, value: 'id', text: 'nombreDocumento' },
+        { id: 'asignarArea', list: data.areas, value: 'id', text: 'nombreArea' },
+        { id: 'asignarCampana', list: data.campanas, value: 'id', text: 'nombreCampaña' }
+    ];
+
+    selects.forEach(({ id, list, value, text }) => {
+        const select = document.getElementById(id);
+        if (select && list) {
+            select.innerHTML = '<option value="">Seleccionar...</option>';
+            list.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item[value];
+                option.textContent = item[text];
+                select.appendChild(option);
+            });
+
+            // Inicializar TomSelect para estos también
+            if (typeof TomSelect !== 'undefined' && !select.tomselect) {
+                new TomSelect(select, {
+                    placeholder: 'Seleccionar...',
+                    allowEmptyOption: true
+                });
+            }
+        }
+    });
 };
 
 // Función para cargar el estado actual de asignación
@@ -67,7 +297,7 @@ window.cargarEstadoActualAsignacion = async function (equipoId) {
                     <i class="bi bi-person-x me-2" style="font-size: 1.2rem;"></i>
                     <div>
                         <strong>Estado:</strong> Sin usuario asignado<br>
-                        <small>Selecciona o crea un usuario para asignar a este equipo</small>
+                        <small>Selecciona un usuario y completa la información</small>
                     </div>
                 </div>
             `;
@@ -85,153 +315,27 @@ window.cargarEstadoActualAsignacion = async function (equipoId) {
     }
 };
 
-// Función para cargar los selects del modal de asignación
-window.cargarSelectsAsignacion = async function () {
-    try {
-        console.log("🔄 Cargando selects para asignación...");
-
-        const response = await fetch('/api/equipos/admin/form-data');
-        if (!response.ok) throw new Error('Error al cargar datos del formulario');
-        const data = await response.json();
-
-        // Cargar select de usuarios
-        await cargarSelectUsuarios(data.usuarios || []);
-
-        // Cargar selects para nuevo usuario
-        await cargarSelectsNuevoUsuario(data);
-
-        console.log("✅ Selects de asignación cargados correctamente");
-
-    } catch (error) {
-        console.error("❌ Error cargando selects de asignación:", error);
-    }
-};
-
-// Función para cargar el select de usuarios
-window.cargarSelectUsuarios = async function (usuarios) {
-    const select = document.getElementById('asignarUsuarioSelect');
-    if (!select) return;
-
-    // Limpiar select
-    select.innerHTML = '<option value="">-- Buscar usuario existente --</option>';
-
-    if (usuarios && usuarios.length > 0) {
-        usuarios.forEach(usuario => {
-            // Solo agregar usuarios que no sean la opción "nuevo"
-            if (usuario.usuario !== 'nuevo') {
-                const option = document.createElement('option');
-                option.value = usuario.usuario || usuario.id;
-
-                let texto = usuario.nombreCompleto || `${usuario.nombres} ${usuario.apellidos}`;
-                if (usuario.correo) {
-                    texto += ` (${usuario.correo})`;
-                }
-                if (usuario.numeroDocumento) {
-                    texto += ` - ${usuario.numeroDocumento}`;
-                }
-
-                option.textContent = texto;
-                select.appendChild(option);
-            }
-        });
-    }
-
-    // Inicializar TomSelect si está disponible
-    if (typeof TomSelect !== 'undefined' && !select.tomselect) {
-        new TomSelect(select, {
-            placeholder: 'Buscar usuario por nombre, email o documento...',
-            maxOptions: 500,
-            allowEmptyOption: true,
-            sortField: { field: "text", direction: "asc" },
-            searchField: ['text']
-        });
-    }
-};
-
-// Función para cargar selects del formulario de nuevo usuario
-window.cargarSelectsNuevoUsuario = async function (data) {
-    const selects = [
-        { id: 'asignarTipoDocumento', list: data.tiposDocumento, value: 'id', text: 'nombreDocumento' },
-        { id: 'asignarArea', list: data.areas, value: 'id', text: 'nombreArea' },
-        { id: 'asignarCampana', list: data.campanas, value: 'id', text: 'nombreCampaña' }
-    ];
-
-    selects.forEach(({ id, list, value, text }) => {
-        const select = document.getElementById(id);
-        if (select && list) {
-            select.innerHTML = '<option value="">Seleccionar...</option>';
-            list.forEach(item => {
-                const option = document.createElement('option');
-                option.value = item[value];
-                option.textContent = item[text];
-                select.appendChild(option);
-            });
-
-            // Inicializar TomSelect para estos también
-            if (typeof TomSelect !== 'undefined' && !select.tomselect) {
-                new TomSelect(select, {
-                    placeholder: 'Seleccionar...',
-                    allowEmptyOption: true
-                });
-            }
-        }
-    });
-};
-
-// Función para mostrar/ocultar formulario de nuevo usuario
-window.toggleFormularioNuevoUsuario = function () {
-    const checkbox = document.getElementById('crearNuevoUsuarioCheckbox');
-    const formulario = document.getElementById('formularioNuevoUsuario');
-    const selectUsuario = document.getElementById('asignarUsuarioSelect');
-
-    if (checkbox.checked) {
-        formulario.style.display = 'block';
-        if (selectUsuario.tomselect) {
-            selectUsuario.tomselect.disable();
-        } else {
-            selectUsuario.disabled = true;
-        }
-        // Limpiar selección de usuario existente
-        if (selectUsuario.tomselect) {
-            selectUsuario.tomselect.setValue('', true);
-        } else {
-            selectUsuario.value = '';
-        }
-    } else {
-        formulario.style.display = 'none';
-        if (selectUsuario.tomselect) {
-            selectUsuario.tomselect.enable();
-        } else {
-            selectUsuario.disabled = false;
-        }
-    }
-};
-
 // Función para limpiar el formulario de asignación
 window.limpiarFormularioAsignacion = function () {
-    // Limpiar checkbox
-    document.getElementById('crearNuevoUsuarioCheckbox').checked = false;
-
-    // Ocultar formulario nuevo usuario
-    document.getElementById('formularioNuevoUsuario').style.display = 'none';
-
     // Limpiar select de usuarios
     const selectUsuario = document.getElementById('asignarUsuarioSelect');
     if (selectUsuario.tomselect) {
         selectUsuario.tomselect.setValue('', true);
-        selectUsuario.tomselect.enable();
     } else {
         selectUsuario.value = '';
-        selectUsuario.disabled = false;
     }
 
-    // Limpiar formulario nuevo usuario
+    // Ocultar formulario de usuario
+    document.getElementById('seccionFormularioUsuario').style.display = 'none';
+    document.getElementById('indicadorOrigenUsuario').style.display = 'none';
+
+    // Limpiar campos del formulario
     document.getElementById('asignarNumeroDocumento').value = '';
     document.getElementById('asignarNombres').value = '';
     document.getElementById('asignarApellidos').value = '';
 
-    const selectsNuevo = ['asignarTipoDocumento', 'asignarArea', 'asignarCampana'];
-    selectsNuevo.forEach(id => {
+    const selects = ['asignarTipoDocumento', 'asignarArea', 'asignarCampana'];
+    selects.forEach(id => {
         const select = document.getElementById(id);
         if (select && select.tomselect) {
             select.tomselect.setValue('', true);
@@ -239,17 +343,184 @@ window.limpiarFormularioAsignacion = function () {
     });
 };
 
-// Funciones placeholder (las implementaremos después)
+// Función para guardar la asignación de usuario
 window.guardarAsignacionUsuario = async function () {
-    alert("🔄 Función de guardar asignación - En desarrollo");
-    // Aquí implementaremos la lógica completa después
+    try {
+        const equipoId = document.getElementById('asignarEquipoId').value;
+        const usuarioSeleccionado = document.getElementById('asignarUsuarioSelect').value;
+
+        if (!equipoId) {
+            alert('❌ Error: No se encontró el ID del equipo');
+            return;
+        }
+
+        if (!usuarioSeleccionado) {
+            alert('❌ Por favor selecciona un usuario');
+            return;
+        }
+
+        // Validar campos requeridos del formulario
+        const camposRequeridos = [
+            { id: 'asignarTipoDocumento', nombre: 'Tipo de Documento' },
+            { id: 'asignarNumeroDocumento', nombre: 'Número de Documento' },
+            { id: 'asignarNombres', nombre: 'Nombres' },
+            { id: 'asignarApellidos', nombre: 'Apellidos' },
+            { id: 'asignarArea', nombre: 'Área' },
+            { id: 'asignarCampana', nombre: 'Campaña' }
+        ];
+
+        for (const campo of camposRequeridos) {
+            const elemento = document.getElementById(campo.id);
+            const valor = elemento.tomselect ? elemento.tomselect.getValue() : elemento.value;
+
+            if (!valor || valor.toString().trim() === '') {
+                alert(`❌ El campo "${campo.nombre}" es obligatorio`);
+                if (elemento.focus) elemento.focus();
+                return;
+            }
+        }
+
+        // Preparar datos para enviar
+        const requestData = {
+            equipoId: parseInt(equipoId),
+            idTipoDocumento: parseInt(document.getElementById('asignarTipoDocumento').value),
+            numeroDocumento: document.getElementById('asignarNumeroDocumento').value.trim(),
+            nombres: document.getElementById('asignarNombres').value.trim(),
+            apellidos: document.getElementById('asignarApellidos').value.trim(),
+            idArea: parseInt(document.getElementById('asignarArea').value),
+            idCampaña: parseInt(document.getElementById('asignarCampana').value)
+        };
+
+        console.log("📦 Enviando datos de asignación:", requestData);
+
+        // Mostrar loading en el botón
+        const btnGuardar = document.getElementById('btnGuardarAsignacion');
+        const textoOriginal = btnGuardar.innerHTML;
+        btnGuardar.innerHTML = '<i class="bi bi-arrow-repeat spinner"></i> Guardando...';
+        btnGuardar.disabled = true;
+
+        // Enviar request al backend
+        const response = await fetch('/api/equipos/admin/asignar-usuario', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestData)
+        });
+
+        if (response.ok) {
+            const resultado = await response.json();
+            console.log("✅ Asignación exitosa:", resultado);
+
+            // Mostrar mensaje de éxito
+            alert('✅ Usuario asignado correctamente al equipo');
+
+            // Cerrar el modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('modalAsignarUsuario'));
+            modal.hide();
+
+            // Actualizar la lista de equipos
+            await actualizarListaEquipos();
+
+        } else {
+            const error = await response.json();
+            console.error("❌ Error en asignación:", error);
+            alert(`❌ Error: ${error.error || 'No se pudo asignar el usuario'}`);
+        }
+
+    } catch (error) {
+        console.error("❌ Error en guardarAsignacionUsuario:", error);
+        alert('❌ Error de red o servidor al guardar la asignación');
+    } finally {
+        // Restaurar botón
+        const btnGuardar = document.getElementById('btnGuardarAsignacion');
+        if (btnGuardar) {
+            btnGuardar.innerHTML = '💾 Guardar Asignación';
+            btnGuardar.disabled = false;
+        }
+    }
 };
 
+// Función para desasignar usuario del equipo
 window.desasignarUsuario = async function () {
-    alert("🔄 Función de desasignar usuario - En desarrollo");
-    // Aquí implementaremos la lógica completa después
+    try {
+        const equipoId = document.getElementById('asignarEquipoId').value;
+
+        if (!equipoId) {
+            alert('❌ Error: No se encontró el ID del equipo');
+            return;
+        }
+
+        // Confirmar desasignación
+        const confirmacion = confirm('¿Estás seguro de que deseas desasignar el usuario de este equipo?');
+        if (!confirmacion) return;
+
+        console.log(`🔄 Desasignando usuario del equipo ${equipoId}`);
+
+        // Mostrar loading en el botón
+        const btnDesasignar = document.getElementById('btnDesasignar');
+        const textoOriginal = btnDesasignar.innerHTML;
+        btnDesasignar.innerHTML = '<i class="bi bi-arrow-repeat spinner"></i> Desasignando...';
+        btnDesasignar.disabled = true;
+
+        // Enviar request al backend
+        const response = await fetch(`/api/equipos/admin/desasignar-usuario/${equipoId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+
+        if (response.ok) {
+            const resultado = await response.json();
+            console.log("✅ Desasignación exitosa:", resultado);
+
+            // Mostrar mensaje de éxito
+            alert('✅ Usuario desasignado correctamente del equipo');
+
+            // Cerrar el modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('modalAsignarUsuario'));
+            modal.hide();
+
+            // Actualizar la lista de equipos
+            await actualizarListaEquipos();
+
+        } else {
+            const error = await response.json();
+            console.error("❌ Error en desasignación:", error);
+            alert(`❌ Error: ${error.error || 'No se pudo desasignar el usuario'}`);
+        }
+
+    } catch (error) {
+        console.error("❌ Error en desasignarUsuario:", error);
+        alert('❌ Error de red o servidor al desasignar el usuario');
+    } finally {
+        // Restaurar botón
+        const btnDesasignar = document.getElementById('btnDesasignar');
+        if (btnDesasignar) {
+            btnDesasignar.innerHTML = '🗑️ Desasignar';
+            btnDesasignar.disabled = false;
+        }
+    }
 };
 
+// Función para actualizar la lista de equipos después de cambios
+window.actualizarListaEquipos = async function () {
+    try {
+        console.log("🔄 Actualizando lista de equipos...");
+
+        // Llamar al método .NET para refrescar la lista
+        await DotNet.invokeMethodAsync('OUT_APP_EQUIPGO', 'RefrescarListaEquipos');
+
+        console.log("✅ Lista de equipos actualizada");
+    } catch (error) {
+        console.error("❌ Error actualizando lista de equipos:", error);
+        // Fallback: recargar la página
+        setTimeout(() => {
+            window.location.reload();
+        }, 1000);
+    }
+};
 
 // Función para limpiar el formulario
 window.limpiarFormularioCrear = function () {
@@ -471,7 +742,6 @@ window.guardarEquipo = async function () {
     }
 };
 
-// Guardar cambios del equipo editado (modal de edición)
 window.guardarCambiosEquipo = async function () {
     const equipoId = document.getElementById('editarId').value;
 
@@ -499,77 +769,29 @@ window.guardarCambiosEquipo = async function () {
     const idSubEstado = subEstadoSelect ? parseInt(subEstadoSelect.value) || null : null;
     console.log("   - idSubEstado final:", idSubEstado);
 
-    // Verificar si se está creando un nuevo usuario
-    const formUsuarioInfoEditar = document.getElementById('formUsuarioInfoEditar');
-    const formUsuarioVisible = formUsuarioInfoEditar && formUsuarioInfoEditar.style.display !== 'none';
+    // 🚫 SOLO DATOS DEL EQUIPO - SIN USUARIOS
+    console.log("📦 Actualizando equipo con datos técnicos (sin usuarios)");
 
-    // También verificamos si se seleccionó "Crear nuevo usuario"
-    const usuarioSeleccionado = document.getElementById('editarUsuarioInfo').value;
-    const esNuevoUsuario = usuarioSeleccionado === 'nuevo';
+    const equipoDto = {
+        marca: document.getElementById('editarMarca').value,
+        modelo: document.getElementById('editarModelo').value,
+        serial: document.getElementById('editarSerial').value,
+        codigoBarras: document.getElementById('editarCodigoBarras').value,
+        idEstado: parseInt(document.getElementById('editarEstado').value) || null,
+        idSubEstado: idSubEstado, // ✅ Usar la variable ya verificada
+        idSede: parseInt(document.getElementById('editarSede').value) || null,
+        idTipoDispositivo: parseInt(document.getElementById('editarTipoDispositivo').value) || null,
+        idProveedor: parseInt(document.getElementById('editarProveedor').value) || null,
+        latitud: parseFloat(document.getElementById('editarLatitud').value) || null,
+        longitud: parseFloat(document.getElementById('editarLongitud').value) || null,
+        sistemaOperativo: document.getElementById('editarSistemaOperativo').value,
+        macEquipo: document.getElementById('editarMacEquipo').value,
+    };
 
-    let url, method, requestBody;
+    console.log("📦 Enviando datos (sin usuarios):", equipoDto);
 
-    if (formUsuarioVisible || esNuevoUsuario) {
-        // Si el formulario de usuario está visible o se seleccionó "Crear nuevo usuario", usamos el nuevo endpoint
-        console.log("🆕 Actualizando equipo con nuevo usuario");
-
-        const equipoUsuarioDto = {
-            // Datos del equipo
-            marca: document.getElementById('editarMarca').value,
-            modelo: document.getElementById('editarModelo').value,
-            serial: document.getElementById('editarSerial').value,
-            codigoBarras: document.getElementById('editarCodigoBarras').value,
-            idEstado: parseInt(document.getElementById('editarEstado').value) || null,
-            idSubEstado: idSubEstado, // ✅ Usar la variable ya verificada
-            idSede: parseInt(document.getElementById('editarSede').value) || null,
-            idTipoDispositivo: parseInt(document.getElementById('editarTipoDispositivo').value) || null,
-            idProveedor: parseInt(document.getElementById('editarProveedor').value) || null,
-            latitud: parseFloat(document.getElementById('editarLatitud').value) || null,
-            longitud: parseFloat(document.getElementById('editarLongitud').value) || null,
-            sistemaOperativo: document.getElementById('editarSistemaOperativo').value,
-            macEquipo: document.getElementById('editarMacEquipo').value,
-
-            // Datos del usuario
-            idTipoDocumento: parseInt(document.getElementById('editarTipoDocumento').value),
-            numeroDocumento: document.getElementById('editarNumeroDocumento').value,
-            nombres: document.getElementById('editarNombres').value,
-            apellidos: document.getElementById('editarApellidos').value,
-            idArea: parseInt(document.getElementById('editarArea').value),
-            idCampaña: parseInt(document.getElementById('editarCampana').value)
-        };
-
-        console.log("📦 Enviando datos (con usuario):", equipoUsuarioDto);
-
-        url = '/api/equipos/admin/conusuario';
-        method = 'POST';
-        requestBody = JSON.stringify(equipoUsuarioDto);
-    } else {
-        // Si el formulario de usuario no está visible, usamos el método original
-        console.log("📦 Actualizando equipo con usuario existente");
-
-        const equipoDto = {
-            marca: document.getElementById('editarMarca').value,
-            modelo: document.getElementById('editarModelo').value,
-            serial: document.getElementById('editarSerial').value,
-            codigoBarras: document.getElementById('editarCodigoBarras').value,
-            idUsuarioInfo: parseInt(document.getElementById('editarUsuarioInfo').value) || null,
-            idEstado: parseInt(document.getElementById('editarEstado').value) || null,
-            idSubEstado: idSubEstado, // ✅ Usar la variable ya verificada
-            idSede: parseInt(document.getElementById('editarSede').value) || null,
-            idTipoDispositivo: parseInt(document.getElementById('editarTipoDispositivo').value) || null,
-            idProveedor: parseInt(document.getElementById('editarProveedor').value) || null,
-            latitud: parseFloat(document.getElementById('editarLatitud').value) || null,
-            longitud: parseFloat(document.getElementById('editarLongitud').value) || null,
-            sistemaOperativo: document.getElementById('editarSistemaOperativo').value,
-            macEquipo: document.getElementById('editarMacEquipo').value,
-        };
-
-        console.log("📦 Enviando datos (sin usuario):", equipoDto);
-
-        url = `/api/equipos/admin/${equipoId}`;
-        method = 'PUT';
-        requestBody = JSON.stringify(equipoDto);
-    }
+    const url = `/api/equipos/admin/${equipoId}`;
+    const method = 'PUT';
 
     try {
         console.log(`🚀 Enviando solicitud a ${url} con método ${method}`);
@@ -577,7 +799,7 @@ window.guardarCambiosEquipo = async function () {
         const response = await fetch(url, {
             method,
             headers: { 'Content-Type': 'application/json' },
-            body: requestBody
+            body: JSON.stringify(equipoDto)
         });
 
         if (response.ok) {
@@ -662,7 +884,6 @@ window.abrirModalEditar = async function (idEquipo) {
     }
 };
 
-// Editar equipo (reutiliza el modal de crear)
 window.editarEquipo = async function (id) {
     try {
         console.log("🔄 Iniciando edición del equipo:", id);
@@ -692,9 +913,8 @@ window.editarEquipo = async function (id) {
         setTimeout(() => {
             // Establecer valores en los selects con TomSelect
             const selectIds = [
-                { id: 'editarUsuarioInfo', value: equipo.idUsuarioInfo },
                 { id: 'editarEstado', value: equipo.idEstado },
-                { id: 'editarSubEstado', value: equipo.idSubEstado }, // ✅ Agregado subestado
+                { id: 'editarSubEstado', value: equipo.idSubEstado },
                 { id: 'editarSede', value: equipo.idSede },
                 { id: 'editarTipoDispositivo', value: equipo.idTipoDispositivo },
                 { id: 'editarProveedor', value: equipo.idProveedor }
@@ -1022,7 +1242,6 @@ window.cargarSelects = async function () {
     }
 };
 
-// ACTUALIZACIÓN para cargarSelectsEditar - Modal EDITAR
 window.cargarSelectsEditar = async function () {
     try {
         const response = await fetch('/api/equipos/admin/form-data');
@@ -1030,37 +1249,17 @@ window.cargarSelectsEditar = async function () {
         const data = await response.json();
 
         console.log("📊 Datos para editar:", {
-            usuarios: data.usuarios?.length || 0,
             estados: data.estados?.length || 0,
             subEstados: data.subEstados?.length || 0
         });
 
-        // Guardar usuarios en caché
-        if (data.usuarios?.length) {
-            window._usuariosCache = data.usuarios;
-        }
-
+        // 🚫 SOLO selects técnicos - SIN USUARIOS
         const selects = [
-            {
-                id: 'editarUsuarioInfo',
-                list: data.usuarios || [],
-                value: 'usuario',
-                text: item => {
-                    if (item.usuario === 'nuevo') return item.nombreCompleto;
-                    let texto = item.nombreCompleto;
-                    if (item.correo) texto += ` (${item.correo})`;
-                    return texto;
-                }
-            },
             { id: 'editarEstado', list: data.estados, value: 'id', text: item => item.nombreEstado },
-            { id: 'editarSubEstado', list: data.subEstados, value: 'id', text: item => item.nombreSubEstado }, // ✅ Agregado subestado
-            { id: 'editarEquipoPersonal', list: data.equiposPersonales, value: 'id', text: item => item.nombrePersonal },
+            { id: 'editarSubEstado', list: data.subEstados, value: 'id', text: item => item.nombreSubEstado },
             { id: 'editarSede', list: data.sedes, value: 'id', text: item => item.nombreSede },
             { id: 'editarTipoDispositivo', list: data.tiposDispositivo, value: 'id', text: item => item.nombreTipo },
-            { id: 'editarProveedor', list: data.proveedores, value: 'id', text: item => item.nombreProveedor },
-            { id: 'editarTipoDocumento', list: data.tiposDocumento, value: 'id', text: item => item.nombreDocumento },
-            { id: 'editarArea', list: data.areas, value: 'id', text: item => item.nombreArea },
-            { id: 'editarCampana', list: data.campanas, value: 'id', text: item => item.nombreCampaña }
+            { id: 'editarProveedor', list: data.proveedores, value: 'id', text: item => item.nombreProveedor }
         ];
 
         // 🎯 CARGAR SUBESTADOS PRIMERO
@@ -1085,30 +1284,17 @@ window.cargarSelectsEditar = async function () {
                 list.forEach(item => {
                     const option = document.createElement('option');
                     option.value = item[value];
-                    option.text = text(item);
-                    option.dataset.origen = item.origen || '';
-                    option.dataset.tieneDatosCompletos = item.tieneDatosCompletos || false;
-                    option.dataset.nombres = item.nombres || item.nombre || '';
-                    option.dataset.apellidos = item.apellidos || '';
-                    option.dataset.numeroDocumento = item.numeroDocumento || '';
-                    option.dataset.idTipoDocumento = item.idTipoDocumento || '';
-                    option.dataset.idArea = item.idArea || '';
-                    option.dataset.idCampaña = item.idCampaña || '';
+                    option.textContent = text(item);
                     select.appendChild(option);
                 });
 
                 const tomselect = new TomSelect(select, {
-                    placeholder: 'Buscar...',
+                    placeholder: 'Seleccionar...',
                     maxOptions: 500,
                     allowEmptyOption: true,
                     sortField: { field: "text", direction: "asc" },
-                    searchField: ['text', 'value'],
                     onChange: function (value) {
                         console.log(`🔄 Cambio en ${id}: ${value}`);
-
-                        if (id === 'editarUsuarioInfo') {
-                            window.manejarCambioUsuario(select, true);
-                        }
 
                         if (id === 'editarEstado') {
                             setTimeout(() => window.manejarCambioEstado(true), 50);

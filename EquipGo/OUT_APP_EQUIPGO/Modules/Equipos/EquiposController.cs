@@ -371,6 +371,113 @@ public class EquiposController : ControllerBase
         }
     }
 
+    // Agregar estos endpoints en tu EquiposController
+
+    [HttpPost("admin/asignar-usuario")]
+    public async Task<IActionResult> AsignarUsuarioAEquipo([FromBody] AsignarUsuarioRequestDto request)
+    {
+        try
+        {
+            Console.WriteLine($"🔄 Asignando usuario al equipo {request.EquipoId}");
+
+            // Validaciones básicas
+            if (request.EquipoId <= 0)
+                return BadRequest(new { error = "ID de equipo inválido" });
+
+            if (string.IsNullOrWhiteSpace(request.NumeroDocumento))
+                return BadRequest(new { error = "El número de documento es obligatorio" });
+
+            // Buscar el equipo
+            var equipo = await _equipoService.ObtenerPorIdAsync(request.EquipoId);
+            if (equipo == null)
+                return NotFound(new { error = "Equipo no encontrado" });
+
+            // --- LÓGICA DE UPSERT PARA EL USUARIO ---
+            int usuarioId;
+
+            // Buscar usuario por documento
+            var usuarioExistente = await _usuariosInformacionService.ConsultarUsuarioPorDocumentoAsync(request.NumeroDocumento);
+
+            if (usuarioExistente != null)
+            {
+                // ✅ Usuario existe - ACTUALIZAR
+                Console.WriteLine($"✅ Usuario existente encontrado: {usuarioExistente.Nombres} {usuarioExistente.Apellidos}");
+
+                usuarioExistente.IdTipodocumento = request.IdTipoDocumento;
+                usuarioExistente.Nombres = request.Nombres;
+                usuarioExistente.Apellidos = request.Apellidos;
+                usuarioExistente.IdArea = request.IdArea;
+                usuarioExistente.IdCampaña = request.IdCampaña;
+                usuarioExistente.UltimaModificacion = DateTime.UtcNow;
+
+                await _usuariosInformacionService.ActualizarUsuarioAsync(usuarioExistente);
+                usuarioId = usuarioExistente.Id;
+            }
+            else
+            {
+                // 🆕 Usuario no existe - CREAR
+                Console.WriteLine($"🆕 Creando nuevo usuario: {request.Nombres} {request.Apellidos}");
+
+                var nuevoUsuario = new UsuariosInformacion
+                {
+                    IdTipodocumento = request.IdTipoDocumento,
+                    NumeroDocumento = request.NumeroDocumento,
+                    Nombres = request.Nombres,
+                    Apellidos = request.Apellidos,
+                    IdArea = request.IdArea,
+                    IdCampaña = request.IdCampaña,
+                    IdEstado = 1, // Estado Activo
+                    FechaCreacion = DateTime.UtcNow,
+                    UltimaModificacion = DateTime.UtcNow
+                };
+
+                usuarioId = await _usuariosInformacionService.CrearUsuarioAsync(nuevoUsuario);
+            }
+
+            // --- ASIGNAR USUARIO AL EQUIPO ---
+            var actualizado = await _equipoService.AsignarUsuarioAEquipoAsync(request.EquipoId, usuarioId);
+
+            if (!actualizado)
+                return BadRequest(new { error = "No se pudo asignar el usuario al equipo" });
+
+            Console.WriteLine($"✅ Usuario {usuarioId} asignado al equipo {request.EquipoId}");
+
+            return Ok(new
+            {
+                message = "Usuario asignado correctamente al equipo",
+                usuarioId = usuarioId
+            });
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"❌ Error en AsignarUsuarioAEquipo: {ex.Message}");
+            return BadRequest(new { error = ex.Message });
+        }
+    }
+
+    [HttpPost("admin/desasignar-usuario/{equipoId}")]
+    public async Task<IActionResult> DesasignarUsuarioDeEquipo(int equipoId)
+    {
+        try
+        {
+            Console.WriteLine($"🔄 Desasignando usuario del equipo {equipoId}");
+
+            var desasignado = await _equipoService.DesasignarUsuarioDeEquipoAsync(equipoId);
+
+            if (!desasignado)
+                return NotFound(new { error = "Equipo no encontrado o sin usuario asignado" });
+
+            return Ok(new { message = "Usuario desasignado correctamente del equipo" });
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"❌ Error en DesasignarUsuarioDeEquipo: {ex.Message}");
+            return BadRequest(new { error = ex.Message });
+        }
+    }
+
     [HttpPost("sync")]
     public async Task<IActionResult> SincronizarEquipo([FromBody] EquipoSyncRequestDto dto)
     {
