@@ -4,6 +4,7 @@ using Interface.Services.Equipos;
 using Interface.Services.Estados;
 using Interface.Services.Proveedores;
 using Interface.Services.Sedes;
+using Interface.Services.SubEstado;
 using Interface.Services.TipoDispositivos;
 using Interface.Services.Usuarios;
 using Microsoft.AspNetCore.Mvc;
@@ -18,6 +19,7 @@ public class EquiposController : ControllerBase
     private readonly IEquipoService _equipoService;
     private readonly IUsuariosInformacionService _usuariosInformacionService;
     private readonly IEstadoService _estadoService;
+    private readonly ISubEstadoService _subestadoService;
     private readonly ISedesService _sedesService;
     private readonly ITipoDispositivosService _tipoDispositivosService;
     private readonly IProveedoresService _proveedoresService;
@@ -27,6 +29,7 @@ public class EquiposController : ControllerBase
         IEquipoService equipoService,
         IUsuariosInformacionService usuariosInformacionService,
         IEstadoService estadoService,
+        ISubEstadoService subEstadoService,
         ISedesService sedesService,
         ITipoDispositivosService tipoDispositivosService,
         IProveedoresService proveedoresService,
@@ -35,6 +38,7 @@ public class EquiposController : ControllerBase
         _equipoService = equipoService;
         _usuariosInformacionService = usuariosInformacionService;
         _estadoService = estadoService;
+        _subestadoService = subEstadoService;
         _sedesService = sedesService;
         _tipoDispositivosService = tipoDispositivosService;
         _proveedoresService = proveedoresService;
@@ -280,28 +284,65 @@ public class EquiposController : ControllerBase
     [HttpGet("admin/form-data")]
     public async Task<IActionResult> ObtenerFormData()
     {
-        var usuariosCombinados = await _usuariosInformacionService.ObtenerUsuariosCombinadosAsync();
-        var estados = await _estadoService.ObtenerTodasAsync();
-        var equiposPersonales = await _equipoService.ObtenerEquiposPersonalesAsync();
-        var sedes = await _sedesService.ObtenerTodasAsync();
-        var tiposDispositivo = await _tipoDispositivosService.ObtenerTodasAsync();
-        var proveedores = await _proveedoresService.ObtenerTodasAsync();
-        var tiposDocumento = await _equipoService.ObtenerTipoDocumentoAsync();
-        var areas = await _equipoService.ObtenerAreasAsync();
-        var campanas = await _equipoService.ObtenerCampañasAsync();
-
-        return Ok(new
+        try
         {
-            usuarios = usuariosCombinados, // ✅ Cambiado a usuarios combinados
-            estados,
-            equiposPersonales,
-            sedes,
-            tiposDispositivo,
-            proveedores,
-            tiposDocumento,
-            areas,
-            campanas
-        });
+            var usuariosCombinados = await _usuariosInformacionService.ObtenerUsuariosCombinadosAsync();
+            var estados = await _estadoService.ObtenerTodasAsync();
+            var equiposPersonales = await _equipoService.ObtenerEquiposPersonalesAsync();
+            var sedes = await _sedesService.ObtenerTodasAsync();
+            var tiposDispositivo = await _tipoDispositivosService.ObtenerTodasAsync();
+            var proveedores = await _proveedoresService.ObtenerTodasAsync();
+            var tiposDocumento = await _equipoService.ObtenerTipoDocumentoAsync();
+            var areas = await _equipoService.ObtenerAreasAsync();
+            var campanas = await _equipoService.ObtenerCampañasAsync();
+
+            // 🔍 DEBUG: Logs para subestados
+            Console.WriteLine("🔍 Intentando obtener subestados...");
+            var subestados = await _subestadoService.ObtenerTodosAsync();
+            Console.WriteLine($"📊 SubEstados obtenidos: {subestados?.Count ?? 0}");
+
+            if (subestados != null && subestados.Any())
+            {
+                Console.WriteLine("✅ SubEstados encontrados:");
+                foreach (var sub in subestados)
+                {
+                    Console.WriteLine($"   - ID: {sub.Id}, Nombre: {sub.NombreSubEstado}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("⚠️ No se encontraron subestados o la lista es null");
+            }
+
+            // ✅ SOLUCIÓN: Crear lista con camelCase para JavaScript
+            var subEstadosResponse = subestados?.Select(s => new
+            {
+                id = s.Id,
+                nombreSubEstado = s.NombreSubEstado
+            }).ToList();
+
+            Console.WriteLine($"📦 Response preparado con {subEstadosResponse?.Count ?? 0} subestados");
+
+            return Ok(new
+            {
+                usuarios = usuariosCombinados,
+                estados,
+                equiposPersonales,
+                sedes,
+                tiposDispositivo,
+                proveedores,
+                tiposDocumento,
+                areas,
+                campanas,
+                subEstados = subEstadosResponse // ✅ Puede ser null sin problema
+            });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"❌ Error en ObtenerFormData: {ex.Message}");
+            Console.WriteLine($"   StackTrace: {ex.StackTrace}");
+            return BadRequest(new { error = ex.Message });
+        }
     }
 
     [HttpPost("sync")]

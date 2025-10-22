@@ -211,7 +211,6 @@ window.guardarEquipo = async function () {
     }
 };
 
-
 // 🧩 Guardar cambios del equipo editado (modal de edición)
 window.guardarCambiosEquipo = async function () {
     const equipoId = document.getElementById('editarId').value;
@@ -446,14 +445,160 @@ window.editarEquipo = async function (id) {
     }
 };
 
-// ⚙️ Cargar selects para el modal de CREAR/EDITAR (reutilizable)
+// 🎯 Función CORREGIDA para detectar cuando se selecciona "Inactivo" en el estado
+window.manejarCambioEstado = function (esEditar = false) {
+    const estadoSelectId = esEditar ? 'editarEstado' : 'estado';
+    const motivoContainerId = esEditar ? 'motivoContainerEditar' : 'motivoContainer';
+
+    const estadoSelect = document.getElementById(estadoSelectId);
+    const motivoContainer = document.getElementById(motivoContainerId);
+
+    if (!estadoSelect || !motivoContainer) {
+        console.error(`❌ No se encontraron elementos: estadoSelect: ${!!estadoSelect}, motivoContainer: ${!!motivoContainer}`);
+        return;
+    }
+
+    // Obtener el valor seleccionado
+    const valorSeleccionado = estadoSelect.value;
+
+    if (!valorSeleccionado) {
+        motivoContainer.style.display = 'none';
+        console.log("✅ No hay estado seleccionado, ocultando motivo");
+        return;
+    }
+
+    // Obtener el texto de la opción seleccionada - MÚLTIPLES MÉTODOS
+    let textoEstado = '';
+
+    // Método 1: Si tiene TomSelect, buscar en sus opciones
+    if (estadoSelect.tomselect) {
+        const options = estadoSelect.tomselect.options;
+        if (options[valorSeleccionado]) {
+            textoEstado = options[valorSeleccionado].text || '';
+            console.log(`🔍 Texto obtenido de TomSelect.options: "${textoEstado}"`);
+        }
+    }
+
+    // Método 2: Fallback al select nativo
+    if (!textoEstado) {
+        const option = estadoSelect.querySelector(`option[value="${valorSeleccionado}"]`);
+        if (option) {
+            textoEstado = option.text || option.textContent || '';
+            console.log(`🔍 Texto obtenido del select nativo: "${textoEstado}"`);
+        }
+    }
+
+    console.log(`🔍 Estado seleccionado: "${textoEstado}" (valor: ${valorSeleccionado})`);
+
+    // Mostrar motivo si el estado contiene "inactivo" (case insensitive)
+    const esInactivo = textoEstado.toLowerCase().includes('inactivo');
+
+    if (esInactivo) {
+        motivoContainer.style.display = 'block';
+        console.log("🎯 Estado Inactivo detectado, mostrando select de Motivo");
+    } else {
+        motivoContainer.style.display = 'none';
+        console.log("✅ Estado diferente a Inactivo, ocultando select de Motivo");
+    }
+};
+
+// 🎯 Función MEJORADA para cargar los subestados en el select
+window.cargarSubEstados = function (subEstados, esEditar = false) {
+    const selectId = esEditar ? 'editarSubEstado' : 'subEstado';
+    const select = document.getElementById(selectId);
+
+    console.log(`🎬 INICIANDO cargarSubEstados para ${selectId}`);
+    console.log(`📦 SubEstados recibidos:`, subEstados);
+
+    if (!select) {
+        console.error(`❌ No se encontró el select: ${selectId}`);
+        console.error(`❌ ¿Existe en el DOM? ${document.querySelector(`#${selectId}`) !== null}`);
+        return;
+    }
+
+    if (!subEstados || subEstados.length === 0) {
+        console.warn(`⚠️ No hay subestados para cargar en: ${selectId}`);
+        return;
+    }
+
+    console.log(`🔄 Cargando ${subEstados.length} subestados en ${selectId}`);
+
+    // Destruir TomSelect existente si hay uno
+    if (select.tomselect) {
+        console.log(`🗑️ Destruyendo TomSelect existente en ${selectId}`);
+        select.tomselect.destroy();
+        select.tomselect = null;
+    }
+
+    // Limpiar opciones existentes
+    select.innerHTML = '<option value="">Seleccionar motivo...</option>';
+    console.log(`🧹 Select limpiado, agregando ${subEstados.length} opciones...`);
+
+    // Agregar opciones de subestados
+    subEstados.forEach((subEstado, index) => {
+        const option = document.createElement('option');
+        option.value = subEstado.id;
+        option.textContent = subEstado.nombreSubEstado;
+        select.appendChild(option);
+        console.log(`  ${index + 1}. Opción agregada: [${subEstado.id}] ${subEstado.nombreSubEstado}`);
+    });
+
+    // Verificar que las opciones se agregaron
+    console.log(`📊 Total opciones en el select: ${select.options.length} (incluyendo opción vacía)`);
+
+    // IMPORTANTE: Usar requestAnimationFrame para asegurar que el DOM se actualice
+    requestAnimationFrame(() => {
+        try {
+            console.log(`🚀 Inicializando TomSelect para ${selectId}...`);
+
+            // Inicializar TomSelect para el select de subestados
+            const tomselect = new TomSelect(select, {
+                placeholder: 'Seleccionar motivo...',
+                allowEmptyOption: true,
+                sortField: { field: "text", direction: "asc" },
+                onInitialize: function () {
+                    const optCount = this.options ? Object.keys(this.options).length : 0;
+                    console.log(`✅ TomSelect inicializado para ${selectId}`);
+                    console.log(`   - Opciones disponibles en TomSelect: ${optCount}`);
+                    console.log(`   - Opciones en TomSelect:`, this.options);
+                },
+                onLoad: function (data) {
+                    console.log(`📥 TomSelect onLoad ejecutado para ${selectId}:`, data);
+                }
+            });
+
+            console.log(`✅ SubEstados cargados exitosamente en ${selectId}`);
+            console.log(`   - ${subEstados.length} subestados disponibles`);
+
+            // Verificar instancia de TomSelect
+            if (select.tomselect) {
+                console.log(`✅ Instancia TomSelect creada correctamente`);
+                console.log(`   - Opciones en TomSelect.options:`, Object.keys(select.tomselect.options).length);
+            } else {
+                console.error(`❌ No se pudo crear la instancia de TomSelect`);
+            }
+
+        } catch (error) {
+            console.error(`❌ Error al inicializar TomSelect para ${selectId}:`, error);
+        }
+    });
+
+    console.log(`🏁 cargarSubEstados finalizado para ${selectId}`);
+};
+
+// ⚙️ ACTUALIZACIÓN para cargarSelects - Modal CREAR
+// Reemplaza tu función cargarSelects con esta versión mejorada
 window.cargarSelects = async function () {
     try {
         const response = await fetch('/api/equipos/admin/form-data');
         if (!response.ok) throw new Error('Error al cargar datos del formulario');
         const data = await response.json();
 
-        console.log("📊 Datos de usuarios combinados recibidos:", data.usuarios);
+        console.log("📊 Datos recibidos:", {
+            usuarios: data.usuarios?.length || 0,
+            estados: data.estados?.length || 0,
+            subEstados: data.subEstados?.length || 0
+        });
 
         // Guardar usuarios en caché
         if (data.usuarios?.length) {
@@ -467,18 +612,8 @@ window.cargarSelects = async function () {
                 value: 'usuario',
                 text: item => {
                     if (item.usuario === 'nuevo') return item.nombreCompleto;
-
                     let texto = item.nombreCompleto;
-                    if (item.origen === 'ad') {
-                        texto += ``; // Indicador de AD
-                    } else if (item.origen === 'local') {
-                        texto += ``; // Indicador de BD local
-                    }
-
-                    if (item.correo) {
-                        texto += ` (${item.correo})`;
-                    }
-
+                    if (item.correo) texto += ` (${item.correo})`;
                     return texto;
                 }
             },
@@ -492,11 +627,16 @@ window.cargarSelects = async function () {
             { id: 'campana', list: data.campanas, value: 'id', text: item => item.nombreCampaña }
         ];
 
+        // 🎯 CARGAR SUBESTADOS PRIMERO
+        if (data.subEstados) {
+            window.cargarSubEstados(data.subEstados, false);
+        }
+
         for (const { id, list, value, text } of selects) {
             const select = document.getElementById(id);
             if (!select) continue;
 
-            // Destruir TomSelect existente si hay uno
+            // Destruir TomSelect existente
             if (select.tomselect) {
                 select.tomselect.destroy();
             }
@@ -508,57 +648,59 @@ window.cargarSelects = async function () {
                     const option = document.createElement('option');
                     option.value = item[value];
                     option.text = text(item);
-
-                    // Agregar data attributes para información adicional
-                    option.dataset.origen = item.origen;
-                    option.dataset.tieneDatosCompletos = item.tieneDatosCompletos;
-
+                    option.dataset.origen = item.origen || '';
+                    option.dataset.tieneDatosCompletos = item.tieneDatosCompletos || false;
                     select.appendChild(option);
                 });
 
-                new TomSelect(select, {
-                    placeholder: 'Buscar usuario...',
+                const tomselect = new TomSelect(select, {
+                    placeholder: id === 'usuarioInfo' ? 'Buscar usuario...' : 'Seleccionar...',
                     maxOptions: 500,
                     allowEmptyOption: true,
                     sortField: { field: "text", direction: "asc" },
                     searchField: ['text', 'value'],
-                    render: {
-                        option: function (data, escape) {
-                            // Personalizar la visualización de opciones
-                            let clase = '';
-                            if (data.origen === 'ad') {
-                                clase = 'opcion-ad';
-                            } else if (data.origen === 'local') {
-                                clase = 'opcion-local';
-                            } else if (data.usuario === 'nuevo') {
-                                clase = 'opcion-nuevo';
-                            }
-
-                            return `<div class="${clase}">${escape(data.text)}</div>`;
-                        }
-                    },
                     onChange: function (value) {
-                        // Detectar cambio en el select de usuario
+                        console.log(`🔄 Cambio en ${id}: ${value}`);
+
                         if (id === 'usuarioInfo') {
                             window.manejarCambioUsuario(select, false);
                         }
+
+                        if (id === 'estado') {
+                            // Usar setTimeout para asegurar que el cambio se procese
+                            setTimeout(() => window.manejarCambioEstado(false), 50);
+                        }
+                    },
+                    onInitialize: function () {
+                        console.log(`✅ TomSelect inicializado: ${id}`);
                     }
                 });
             });
         }
+
+        // Verificar estado inicial después de cargar todo
+        setTimeout(() => {
+            console.log("🔍 Verificando estado inicial...");
+            window.manejarCambioEstado(false);
+        }, 300);
+
     } catch (error) {
         console.error('❌ Error en cargarSelects:', error);
     }
 };
 
-// ⚙️ Cargar selects para el modal de EDITAR
+// ⚙️ ACTUALIZACIÓN para cargarSelectsEditar - Modal EDITAR
 window.cargarSelectsEditar = async function () {
     try {
         const response = await fetch('/api/equipos/admin/form-data');
         if (!response.ok) throw new Error('Error al cargar datos del formulario');
         const data = await response.json();
 
-        console.log("📊 Datos de usuarios combinados para editar:", data.usuarios);
+        console.log("📊 Datos para editar:", {
+            usuarios: data.usuarios?.length || 0,
+            estados: data.estados?.length || 0,
+            subEstados: data.subEstados?.length || 0
+        });
 
         // Guardar usuarios en caché
         if (data.usuarios?.length) {
@@ -572,18 +714,8 @@ window.cargarSelectsEditar = async function () {
                 value: 'usuario',
                 text: item => {
                     if (item.usuario === 'nuevo') return item.nombreCompleto;
-
                     let texto = item.nombreCompleto;
-                    if (item.origen === 'ad') {
-                        texto += ``; // Indicador de AD
-                    } else if (item.origen === 'local') {
-                        texto += ``; // Indicador de BD local
-                    }
-
-                    if (item.correo) {
-                        texto += ` (${item.correo})`;
-                    }
-
+                    if (item.correo) texto += ` (${item.correo})`;
                     return texto;
                 }
             },
@@ -597,6 +729,11 @@ window.cargarSelectsEditar = async function () {
             { id: 'editarCampana', list: data.campanas, value: 'id', text: item => item.nombreCampaña }
         ];
 
+        // 🎯 CARGAR SUBESTADOS PRIMERO
+        if (data.subEstados) {
+            window.cargarSubEstados(data.subEstados, true);
+        }
+
         for (const { id, list, value, text } of selects) {
             const select = document.getElementById(id);
             if (!select) {
@@ -604,22 +741,17 @@ window.cargarSelectsEditar = async function () {
                 continue;
             }
 
-            // Destruir TomSelect existente si hay uno
             if (select.tomselect) {
                 select.tomselect.destroy();
             }
 
-            // Limpiar opciones existentes
             select.innerHTML = '<option value="">Seleccionar...</option>';
 
             requestAnimationFrame(() => {
-                // Agregar opciones a los selects
                 list.forEach(item => {
                     const option = document.createElement('option');
                     option.value = item[value];
                     option.text = text(item);
-
-                    // Agregar data attributes para información adicional
                     option.dataset.origen = item.origen || '';
                     option.dataset.tieneDatosCompletos = item.tieneDatosCompletos || false;
                     option.dataset.nombres = item.nombres || item.nombre || '';
@@ -628,79 +760,46 @@ window.cargarSelectsEditar = async function () {
                     option.dataset.idTipoDocumento = item.idTipoDocumento || '';
                     option.dataset.idArea = item.idArea || '';
                     option.dataset.idCampaña = item.idCampaña || '';
-
                     select.appendChild(option);
                 });
 
-                // Configurar TomSelect
                 const tomselect = new TomSelect(select, {
                     placeholder: 'Buscar...',
                     maxOptions: 500,
                     allowEmptyOption: true,
                     sortField: { field: "text", direction: "asc" },
                     searchField: ['text', 'value'],
-                    render: {
-                        option: function (data, escape) {
-                            // Personalizar la visualización de opciones
-                            let clase = '';
-                            let icono = '';
-
-                            if (data.origen === 'ad') {
-                                clase = 'opcion-ad';
-                                icono = '';
-                            } else if (data.origen === 'local') {
-                                clase = 'opcion-local';
-                                icono = '';
-                            } else if (data.usuario === 'nuevo') {
-                                clase = 'opcion-nuevo';
-                                icono = '';
-                            }
-
-                            return `<div class="${clase}">${icono} ${escape(data.text)}</div>`;
-                        },
-                        item: function (data, escape) {
-                            // Personalizar el item seleccionado
-                            let icono = '';
-
-                            if (data.origen === 'ad') {
-                                icono = '';
-                            } else if (data.origen === 'local') {
-                                icono = '';
-                            } else if (data.usuario === 'nuevo') {
-                                icono = '';
-                            }
-
-                            return `<div>${icono}${escape(data.text)}</div>`;
-                        }
-                    },
                     onChange: function (value) {
-                        console.log(`🔄 Cambio en select ${id}:`, value);
+                        console.log(`🔄 Cambio en ${id}: ${value}`);
 
-                        // Detectar cambio en el select de usuario
                         if (id === 'editarUsuarioInfo') {
                             window.manejarCambioUsuario(select, true);
                         }
+
+                        if (id === 'editarEstado') {
+                            setTimeout(() => window.manejarCambioEstado(true), 50);
+                        }
                     },
                     onInitialize: function () {
-                        console.log(`✅ TomSelect inicializado para: ${id}`);
+                        console.log(`✅ TomSelect inicializado: ${id}`);
                     }
-                });
-
-                // Manejar errores de TomSelect
-                tomselect.on('error', function () {
-                    console.warn(`⚠️ Error en TomSelect para: ${id}`);
                 });
             });
         }
 
-        console.log("✅ Todos los selects de edición cargados correctamente");
+        // Verificar estado inicial después de cargar todo
+        setTimeout(() => {
+            console.log("🔍 Verificando estado inicial en edición...");
+            window.manejarCambioEstado(true);
+        }, 300);
+
+        console.log("✅ Todos los selects de edición cargados");
 
     } catch (error) {
         console.error('❌ Error en cargarSelectsEditar:', error);
         alert('Error al cargar los datos del formulario. Por favor, recarga la página.');
     }
 };
-
 
 window.manejarCambioUsuario = async function (selectElement, esEditar = false) {
     const formId = esEditar ? 'formUsuarioInfoEditar' : 'formUsuarioInfo';
