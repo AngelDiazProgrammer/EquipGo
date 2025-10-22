@@ -122,6 +122,7 @@ public class EquiposController : ControllerBase
                     : dto.CodigoBarras;
                 equipoExistente.IdUsuarioInfo = usuarioId;
                 equipoExistente.IdEstado = dto.IdEstado ?? equipoExistente.IdEstado;
+                equipoExistente.IdSubEstado = dto.IdSubEstado ?? equipoExistente.IdSubEstado; // ✅ Agregado subestado
                 equipoExistente.IdSede = dto.IdSede ?? equipoExistente.IdSede;
                 equipoExistente.IdTipoDispositivo = dto.IdTipoDispositivo ?? equipoExistente.IdTipoDispositivo;
                 equipoExistente.IdProveedor = dto.IdProveedor ?? equipoExistente.IdProveedor;
@@ -148,6 +149,7 @@ public class EquiposController : ControllerBase
                         : dto.CodigoBarras,
                     IdUsuarioInfo = usuarioId,
                     IdEstado = dto.IdEstado,
+                    IdSubEstado = dto.IdSubEstado, // ✅ Agregado subestado
                     IdSede = dto.IdSede,
                     IdTipoDispositivo = dto.IdTipoDispositivo,
                     IdProveedor = dto.IdProveedor,
@@ -235,35 +237,6 @@ public class EquiposController : ControllerBase
         var resultado = await _equipoService.EliminarAsync(id);
         return resultado ? Ok() : NotFound();
     }
-
-    //[HttpGet("admin/form-data")]
-    //public async Task<IActionResult> ObtenerFormData()
-    //{
-    //    var usuariosAD = await _activeDirectoryService.ObtenerUsuariosAsync();
-    //    var estados = await _estadoService.ObtenerTodasAsync();
-    //    var equiposPersonales = await _equipoService.ObtenerEquiposPersonalesAsync();
-    //    var sedes = await _sedesService.ObtenerTodasAsync();
-    //    var tiposDispositivo = await _tipoDispositivosService.ObtenerTodasAsync();
-    //    var proveedores = await _proveedoresService.ObtenerTodasAsync();
-    //    var tiposDocumento = await _equipoService.ObtenerTipoDocumentoAsync();
-    //    var areas = await _equipoService.ObtenerAreasAsync();
-    //    var campanas = await _equipoService.ObtenerCampañasAsync();
-
-    //    return Ok(new
-    //    {
-    //        usuarios = usuariosAD,
-    //        estados,
-    //        equiposPersonales,
-    //        sedes,
-    //        tiposDispositivo,
-    //        proveedores,
-    //        tiposDocumento,
-    //        areas,
-    //        campanas
-    //    });
-    //}
-
-    // En Controllers/EquiposController.cs
 
     [HttpGet("admin/usuarios-combinados")]
     public async Task<IActionResult> ObtenerUsuariosCombinados()

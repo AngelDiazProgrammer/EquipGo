@@ -25,6 +25,9 @@ namespace OUT_DOMAIN_EQUIPGO.Entities.Configuracion
         [Column("id_estado")]
         public int? IdEstado { get; set; }
 
+        [Column("id_subEstado")]
+        public int? IdSubEstado { get; set; }
+
         [Column("id_equipoPersonal")]
         public int? IdEquipoPersonal { get; set; }
 

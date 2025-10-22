@@ -16,6 +16,7 @@ namespace OUT_OS_APP.EQUIPGO.DTO.DTOs.Equipo
         public string? Ubicacion { get; set; }
         public string? UsuarioNombreCompleto { get; set; }
         public string? EstadoNombre { get; set; }
+        public string? SubEstadoNombre { get; set; }
         public string EquipoPersonalNombre { get; set; }
         public string? SedeNombre { get; set; }
         public string TipoDispositivoNombre { get; set; }
@@ -31,6 +32,7 @@ namespace OUT_OS_APP.EQUIPGO.DTO.DTOs.Equipo
         // Campos necesarios para editar
         public int? IdUsuarioInfo { get; set; }
         public int? IdEstado { get; set; }
+        public int? IdSubEstado { get; set; }
         public int? IdEquipoPersonal { get; set; }
         public int? IdSede { get; set; }
         public int? IdTipoDispositivo { get; set; }

@@ -9,7 +9,7 @@ namespace EquipGo.Agent
     public class HttpAgentSender
     {
         private readonly FileLogger _logger;
-        private readonly string _url = "http://steady-optimal-eagle.ngrok-free.app/api/equipos/sync"; // cambia por tu API real
+        private readonly string _url = "http://steady-optimal-eagle.ngrok-free.app/api/equipos/sync"; 
 
         public HttpAgentSender(FileLogger logger)
         {

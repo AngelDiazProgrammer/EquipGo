@@ -30,7 +30,7 @@ window.limpiarFormularioCrear = function () {
         });
 
         // 3. Limpiar selects con TomSelect
-        const selectsIds = ['usuarioInfo', 'estado', 'sede', 'tipoDispositivo', 'proveedor', 'tipoDocumento', 'area', 'campana'];
+        const selectsIds = ['usuarioInfo', 'estado', 'subEstado', 'sede', 'tipoDispositivo', 'proveedor', 'tipoDocumento', 'area', 'campana'];
         selectsIds.forEach(id => {
             const select = document.getElementById(id);
             if (select) {
@@ -43,7 +43,14 @@ window.limpiarFormularioCrear = function () {
             }
         });
 
-        // 4. Ocultar y limpiar formulario de usuario
+        // 4. Ocultar contenedor de motivo/subestado
+        const motivoContainer = document.getElementById('motivoContainer');
+        if (motivoContainer) {
+            motivoContainer.style.display = 'none';
+            console.log("✅ Contenedor de motivo ocultado");
+        }
+
+        // 5. Ocultar y limpiar formulario de usuario
         const formUsuarioInfo = document.getElementById('formUsuarioInfo');
         if (formUsuarioInfo) {
             formUsuarioInfo.style.display = 'none';
@@ -105,6 +112,7 @@ window.guardarEquipo = async function () {
             codigoBarras: document.getElementById('codigoBarras').value,
             idUsuarioInfo: getInt('usuarioInfo'),
             idEstado: getInt('estado'),
+            idSubEstado: getInt('subEstado'), // ✅ Agregado subestado
             idSede: getInt('sede'),
             idTipoDispositivo: getInt('tipoDispositivo'),
             idProveedor: getInt('proveedor'),
@@ -129,6 +137,7 @@ window.guardarEquipo = async function () {
                 serial: document.getElementById('serial').value,
                 codigoBarras: document.getElementById('codigoBarras').value,
                 idEstado: getInt('estado'),
+                idSubEstado: getInt('subEstado'), // ✅ Agregado subestado
                 idSede: getInt('sede'),
                 idTipoDispositivo: getInt('tipoDispositivo'),
                 idProveedor: getInt('proveedor'),
@@ -159,6 +168,7 @@ window.guardarEquipo = async function () {
                 codigoBarras: document.getElementById('codigoBarras').value,
                 idUsuarioInfo: getInt('usuarioInfo'),
                 idEstado: getInt('estado'),
+                idSubEstado: getInt('subEstado'), // ✅ Agregado subestado
                 idSede: getInt('sede'),
                 idTipoDispositivo: getInt('tipoDispositivo'),
                 idProveedor: getInt('proveedor'),
@@ -220,6 +230,25 @@ window.guardarCambiosEquipo = async function () {
         return;
     }
 
+    // 🔍 DEPURACIÓN: Verificar elementos del subestado
+    console.log("🔍 DEPURACIÓN SubEstado en guardarCambiosEquipo:");
+
+    const subEstadoSelect = document.getElementById('editarSubEstado');
+    console.log("   - Elemento editarSubEstado:", !!subEstadoSelect);
+    console.log("   - Valor de editarSubEstado:", subEstadoSelect?.value);
+    console.log("   - Valor parseado:", parseInt(subEstadoSelect?.value));
+
+    const motivoContainer = document.getElementById('motivoContainerEditar');
+    console.log("   - Contenedor motivoContainerEditar:", !!motivoContainer);
+    console.log("   - Display del contenedor:", motivoContainer?.style.display);
+
+    const estadoSelect = document.getElementById('editarEstado');
+    console.log("   - Estado seleccionado:", estadoSelect?.value);
+
+    // Obtener el valor del subestado
+    const idSubEstado = subEstadoSelect ? parseInt(subEstadoSelect.value) || null : null;
+    console.log("   - idSubEstado final:", idSubEstado);
+
     // Verificar si se está creando un nuevo usuario
     const formUsuarioInfoEditar = document.getElementById('formUsuarioInfoEditar');
     const formUsuarioVisible = formUsuarioInfoEditar && formUsuarioInfoEditar.style.display !== 'none';
@@ -241,6 +270,7 @@ window.guardarCambiosEquipo = async function () {
             serial: document.getElementById('editarSerial').value,
             codigoBarras: document.getElementById('editarCodigoBarras').value,
             idEstado: parseInt(document.getElementById('editarEstado').value) || null,
+            idSubEstado: idSubEstado, // ✅ Usar la variable ya verificada
             idSede: parseInt(document.getElementById('editarSede').value) || null,
             idTipoDispositivo: parseInt(document.getElementById('editarTipoDispositivo').value) || null,
             idProveedor: parseInt(document.getElementById('editarProveedor').value) || null,
@@ -258,7 +288,7 @@ window.guardarCambiosEquipo = async function () {
             idCampaña: parseInt(document.getElementById('editarCampana').value)
         };
 
-        console.log("📦 Enviando datos:", equipoUsuarioDto);
+        console.log("📦 Enviando datos (con usuario):", equipoUsuarioDto);
 
         url = '/api/equipos/admin/conusuario';
         method = 'POST';
@@ -274,6 +304,7 @@ window.guardarCambiosEquipo = async function () {
             codigoBarras: document.getElementById('editarCodigoBarras').value,
             idUsuarioInfo: parseInt(document.getElementById('editarUsuarioInfo').value) || null,
             idEstado: parseInt(document.getElementById('editarEstado').value) || null,
+            idSubEstado: idSubEstado, // ✅ Usar la variable ya verificada
             idSede: parseInt(document.getElementById('editarSede').value) || null,
             idTipoDispositivo: parseInt(document.getElementById('editarTipoDispositivo').value) || null,
             idProveedor: parseInt(document.getElementById('editarProveedor').value) || null,
@@ -282,6 +313,8 @@ window.guardarCambiosEquipo = async function () {
             sistemaOperativo: document.getElementById('editarSistemaOperativo').value,
             macEquipo: document.getElementById('editarMacEquipo').value,
         };
+
+        console.log("📦 Enviando datos (sin usuario):", equipoDto);
 
         url = `/api/equipos/admin/${equipoId}`;
         method = 'PUT';
@@ -353,6 +386,7 @@ window.abrirModalEditar = async function (idEquipo) {
             const selectIds = [
                 { id: 'editarUsuarioInfo', value: equipo.idUsuarioInfo },
                 { id: 'editarEstado', value: equipo.idEstado },
+                { id: 'editarSubEstado', value: equipo.idSubEstado }, // ✅ Agregado subestado
                 { id: 'editarEquipoPersonal', value: equipo.idEquipoPersonal },
                 { id: 'editarSede', value: equipo.idSede },
                 { id: 'editarTipoDispositivo', value: equipo.idTipoDispositivo },
@@ -365,6 +399,9 @@ window.abrirModalEditar = async function (idEquipo) {
                     element.tomselect.setValue(value);
                 }
             });
+
+            // Verificar y mostrar/ocultar el contenedor de motivo según el estado
+            window.manejarCambioEstado(true);
         }, 200);
 
         const modal = new bootstrap.Modal(document.getElementById('modalEditarEquipo'));
@@ -407,6 +444,7 @@ window.editarEquipo = async function (id) {
             const selectIds = [
                 { id: 'editarUsuarioInfo', value: equipo.idUsuarioInfo },
                 { id: 'editarEstado', value: equipo.idEstado },
+                { id: 'editarSubEstado', value: equipo.idSubEstado }, // ✅ Agregado subestado
                 { id: 'editarSede', value: equipo.idSede },
                 { id: 'editarTipoDispositivo', value: equipo.idTipoDispositivo },
                 { id: 'editarProveedor', value: equipo.idProveedor }
@@ -427,6 +465,9 @@ window.editarEquipo = async function (id) {
                     console.warn(`⚠️ TomSelect no inicializado en: ${id}`);
                 }
             });
+
+            // Verificar y mostrar/ocultar el contenedor de motivo según el estado
+            window.manejarCambioEstado(true);
         }, 500);
 
         // Mostrar el modal de edición
@@ -445,13 +486,21 @@ window.editarEquipo = async function (id) {
     }
 };
 
-// 🎯 Función CORREGIDA para detectar cuando se selecciona "Inactivo" en el estado
+// 🎯 Función MEJORADA para detectar cuando se selecciona "Inactivo" en el estado
 window.manejarCambioEstado = function (esEditar = false) {
     const estadoSelectId = esEditar ? 'editarEstado' : 'estado';
     const motivoContainerId = esEditar ? 'motivoContainerEditar' : 'motivoContainer';
+    const subEstadoSelectId = esEditar ? 'editarSubEstado' : 'subEstado';
 
     const estadoSelect = document.getElementById(estadoSelectId);
     const motivoContainer = document.getElementById(motivoContainerId);
+    const subEstadoSelect = document.getElementById(subEstadoSelectId);
+
+    console.log(`🔍 manejarCambioEstado (editar: ${esEditar}):`);
+    console.log("   - estadoSelect:", estadoSelect?.value);
+    console.log("   - motivoContainer existe:", !!motivoContainer);
+    console.log("   - subEstadoSelect existe:", !!subEstadoSelect);
+    console.log("   - subEstadoSelect valor actual:", subEstadoSelect?.value);
 
     if (!estadoSelect || !motivoContainer) {
         console.error(`❌ No se encontraron elementos: estadoSelect: ${!!estadoSelect}, motivoContainer: ${!!motivoContainer}`);
@@ -499,6 +548,16 @@ window.manejarCambioEstado = function (esEditar = false) {
     } else {
         motivoContainer.style.display = 'none';
         console.log("✅ Estado diferente a Inactivo, ocultando select de Motivo");
+
+        // 🔄 NUEVO: Limpiar el subestado cuando el estado NO es inactivo
+        if (subEstadoSelect) {
+            if (subEstadoSelect.tomselect) {
+                subEstadoSelect.tomselect.setValue('', true); // true para silenciar eventos
+            } else {
+                subEstadoSelect.value = '';
+            }
+            console.log("🧹 SubEstado limpiado porque el estado ya no es Inactivo");
+        }
     }
 };
 
@@ -546,8 +605,11 @@ window.cargarSubEstados = function (subEstados, esEditar = false) {
     // Verificar que las opciones se agregaron
     console.log(`📊 Total opciones en el select: ${select.options.length} (incluyendo opción vacía)`);
 
-    // IMPORTANTE: Usar requestAnimationFrame para asegurar que el DOM se actualice
-    requestAnimationFrame(() => {
+    // 🔍 VERIFICAR VISUALMENTE EL SELECT ANTES DE TOMSELECT
+    console.log("🔍 HTML del select antes de TomSelect:", select.innerHTML);
+
+    // IMPORTANTE: Usar setTimeout para asegurar que el DOM se actualice
+    setTimeout(() => {
         try {
             console.log(`🚀 Inicializando TomSelect para ${selectId}...`);
 
@@ -561,9 +623,16 @@ window.cargarSubEstados = function (subEstados, esEditar = false) {
                     console.log(`✅ TomSelect inicializado para ${selectId}`);
                     console.log(`   - Opciones disponibles en TomSelect: ${optCount}`);
                     console.log(`   - Opciones en TomSelect:`, this.options);
+
+                    // 🔍 VERIFICAR QUE LAS OPCIONES SE VEN EN EL DOM
+                    const optionsVisible = document.querySelectorAll(`#${selectId} option`);
+                    console.log(`   - Opciones visibles en DOM: ${optionsVisible.length}`);
                 },
                 onLoad: function (data) {
                     console.log(`📥 TomSelect onLoad ejecutado para ${selectId}:`, data);
+                },
+                onFocus: function () {
+                    console.log(`🎯 TomSelect ${selectId} enfocado`);
                 }
             });
 
@@ -574,20 +643,33 @@ window.cargarSubEstados = function (subEstados, esEditar = false) {
             if (select.tomselect) {
                 console.log(`✅ Instancia TomSelect creada correctamente`);
                 console.log(`   - Opciones en TomSelect.options:`, Object.keys(select.tomselect.options).length);
+
+                // 🔍 PROBAR SI SE PUEDE SELECCIONAR UN VALOR
+                setTimeout(() => {
+                    if (select.tomselect.options && Object.keys(select.tomselect.options).length > 1) {
+                        // Seleccionar el primer subestado disponible para prueba
+                        const firstOptionId = Object.keys(select.tomselect.options).find(key => key !== '');
+                        if (firstOptionId) {
+                            select.tomselect.setValue(firstOptionId);
+                            console.log(`🔧 Valor forzado en ${selectId}: ${firstOptionId}`);
+                        }
+                    }
+                }, 500);
             } else {
                 console.error(`❌ No se pudo crear la instancia de TomSelect`);
             }
 
         } catch (error) {
             console.error(`❌ Error al inicializar TomSelect para ${selectId}:`, error);
+            console.error(`   - Error details:`, error.message);
+            console.error(`   - Stack:`, error.stack);
         }
-    });
+    }, 100);
 
     console.log(`🏁 cargarSubEstados finalizado para ${selectId}`);
 };
 
 // ⚙️ ACTUALIZACIÓN para cargarSelects - Modal CREAR
-// Reemplaza tu función cargarSelects con esta versión mejorada
 window.cargarSelects = async function () {
     try {
         const response = await fetch('/api/equipos/admin/form-data');
@@ -618,6 +700,7 @@ window.cargarSelects = async function () {
                 }
             },
             { id: 'estado', list: data.estados, value: 'id', text: item => item.nombreEstado },
+            { id: 'subEstado', list: data.subEstados, value: 'id', text: item => item.nombreSubEstado }, // ✅ Agregado subestado
             { id: 'equipoPersonal', list: data.equiposPersonales, value: 'id', text: item => item.nombrePersonal },
             { id: 'sede', list: data.sedes, value: 'id', text: item => item.nombreSede },
             { id: 'tipoDispositivo', list: data.tiposDispositivo, value: 'id', text: item => item.nombreTipo },
@@ -720,6 +803,7 @@ window.cargarSelectsEditar = async function () {
                 }
             },
             { id: 'editarEstado', list: data.estados, value: 'id', text: item => item.nombreEstado },
+            { id: 'editarSubEstado', list: data.subEstados, value: 'id', text: item => item.nombreSubEstado }, // ✅ Agregado subestado
             { id: 'editarEquipoPersonal', list: data.equiposPersonales, value: 'id', text: item => item.nombrePersonal },
             { id: 'editarSede', list: data.sedes, value: 'id', text: item => item.nombreSede },
             { id: 'editarTipoDispositivo', list: data.tiposDispositivo, value: 'id', text: item => item.nombreTipo },
@@ -801,6 +885,7 @@ window.cargarSelectsEditar = async function () {
     }
 };
 
+// ... (el resto del código permanece igual)
 window.manejarCambioUsuario = async function (selectElement, esEditar = false) {
     const formId = esEditar ? 'formUsuarioInfoEditar' : 'formUsuarioInfo';
     const formUsuario = document.getElementById(formId);
@@ -872,8 +957,8 @@ window.manejarCambioUsuario = async function (selectElement, esEditar = false) {
         limpiarCamposUsuarioFormulario(esEditar);
     }
 };
+
 // Función auxiliar para rellenar el formulario de usuario
-// Función auxiliar para rellenar el formulario
 function rellenarFormularioUsuario(datos, esEditar) {
     const prefijo = esEditar ? 'editar' : '';
 
@@ -979,7 +1064,7 @@ window.confirmarEliminarEquipo = async function () {
             equipoIdAEliminar = null;
             bootstrap.Modal.getInstance(document.getElementById('modalEliminarEquipo')).hide();
             setTimeout(() => {
-                DotNet.invokeMethodAsync('OUT_OS_APP.EQUIPGO', 'RefrescarListaEquipos');
+                DotNet.invokeMethodAsync('OUT_APP_EQUIPGO', 'RefrescarListaEquipos');
             }, 300);
         } else {
             alert("❌ Error al eliminar el equipo.");

@@ -26,13 +26,13 @@ namespace EquipGo.Agent
             {
                 try
                 {
-                    // 📍 Obtener ubicación
+                    //Obtener ubicación
                     var (lat, lon) = _geoHelper.GetLocation();
 
-                    // 🖥 Serial del equipo
+                    //Serial del equipo
                     string serial = Environment.MachineName;
 
-                    // 🖥 Marca y Modelo usando WMI
+                    //Marca y Modelo usando WMI
                     string marca = "Desconocida";
                     string modelo = "Desconocido";
                     try
@@ -51,7 +51,7 @@ namespace EquipGo.Agent
                         _logger.Log("⚠️ Error obteniendo Marca/Modelo: " + ex.Message);
                     }
 
-                    // 🖥 MAC principal
+                    //MAC principal
                     string mac = "00-00-00-00-00-00";
                     foreach (var nic in NetworkInterface.GetAllNetworkInterfaces())
                     {
@@ -63,13 +63,13 @@ namespace EquipGo.Agent
                         }
                     }
 
-                    // 🖥 Sistema operativo
+                    //Sistema operativo
                     string sistemaOperativo = Environment.OSVersion.ToString();
 
-                    // 🖥 Versión del agente
+                    //Versión del agente
                     string versionSoftware = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "1.0.0";
 
-                    // 📦 Construir DTO
+                    //Construir DTO
                     var dto = new EquipoSyncRequestDto
                     {
                         Serial = serial,
@@ -83,6 +83,7 @@ namespace EquipGo.Agent
                         CodigoBarras = null,
                         IdUsuarioInfo = null,
                         IdEstado = null,
+                        IdSubEstado = null,
                         IdSede = null,
                         IdEquipoPersonal = null,
                         IdTipoDispositivo = null,

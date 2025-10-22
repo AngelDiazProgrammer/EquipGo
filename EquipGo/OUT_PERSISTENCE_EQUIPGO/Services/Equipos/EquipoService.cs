@@ -111,9 +111,9 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Equipos
                 MacEquipo = e.MacEquipo,
                 VersionSoftware = e.VersionSoftware,
                 FechaCreacion = e.FechaCreacion,
-                UltimaModificacion = e.UltimaModificacion
+                UltimaModificacion = e.UltimaModificacion,
+                IdSubEstado = e.IdSubEstado // ✅ Agregado subestado
             }).ToList();
-
 
             return lista;
         }
@@ -132,6 +132,7 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Equipos
                 Ubicacion = equipoDto.Ubicacion,
                 IdUsuarioInfo = equipoDto.IdUsuarioInfo,
                 IdEstado = equipoDto.IdEstado,
+                IdSubEstado = equipoDto.IdSubEstado, // ✅ Agregado subestado
                 IdEquipoPersonal = equipoDto.IdEquipoPersonal,
                 IdSede = equipoDto.IdSede,
                 IdTipoDispositivo = equipoDto.IdTipoDispositivo,
@@ -179,6 +180,7 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Equipos
                 VersionSoftware = equipo.VersionSoftware,
                 IdUsuarioInfo = equipo.IdUsuarioInfo,
                 IdEstado = equipo.IdEstado,
+                IdSubEstado = equipo.IdSubEstado, // ✅ Agregado subestado
                 IdEquipoPersonal = equipo.IdEquipoPersonal,
                 IdSede = equipo.IdSede,
                 IdTipoDispositivo = equipo.IdTipoDispositivo,
@@ -197,9 +199,18 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Equipos
 
         public async Task<bool> ActualizarEquipoAdminAsync(int id, CrearEquipoDto dto)
         {
+            Console.WriteLine($"🔄 Iniciando actualización del equipo ID: {id}");
+            Console.WriteLine($"📦 DTO recibido - IdSubEstado: {dto.IdSubEstado}");
+            Console.WriteLine($"📦 DTO completo: {System.Text.Json.JsonSerializer.Serialize(dto)}");
+
             var equipo = await _unitOfWork.Equipos.Query().FirstOrDefaultAsync(e => e.Id == id);
             if (equipo == null)
+            {
+                Console.WriteLine("❌ Equipo no encontrado");
                 return false;
+            }
+
+            Console.WriteLine($"🔍 Equipo encontrado - IdSubEstado actual: {equipo.IdSubEstado}");
 
             equipo.Marca = dto.Marca;
             equipo.Modelo = dto.Modelo;
@@ -208,6 +219,7 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Equipos
             equipo.Ubicacion = dto.Ubicacion;
             equipo.IdUsuarioInfo = dto.IdUsuarioInfo;
             equipo.IdEstado = dto.IdEstado;
+            equipo.IdSubEstado = dto.IdSubEstado; // ✅ Esta línea es crucial
             equipo.IdEquipoPersonal = dto.IdEquipoPersonal;
             equipo.IdSede = dto.IdSede;
             equipo.IdTipoDispositivo = dto.IdTipoDispositivo;
@@ -219,20 +231,31 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Equipos
             equipo.VersionSoftware = dto.VersionSoftware;
             equipo.UltimaModificacion = DateTime.UtcNow;
 
-            await _unitOfWork.CompleteAsync();
-            return true;
+            Console.WriteLine($"✅ Equipo actualizado - Nuevo IdSubEstado: {equipo.IdSubEstado}");
+
+            try
+            {
+                await _unitOfWork.CompleteAsync();
+                Console.WriteLine("💾 Cambios guardados en la base de datos");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error al guardar cambios: {ex.Message}");
+                throw;
+            }
         }
 
         // ✅ AÑADE ESTA NUEVA IMPLEMENTACIÓN
-public async Task<bool> ActualizarEquipoAsync(OUT_DOMAIN_EQUIPGO.Entities.Configuracion.Equipos equipo)
-{
-    if (equipo == null) return false;
-    
-    // La entidad ya está siendo rastreada por el DbContext,
-    // así que solo necesitamos llamar a CompleteAsync para guardar los cambios.
-    await _unitOfWork.CompleteAsync();
-    return true;
-}
+        public async Task<bool> ActualizarEquipoAsync(OUT_DOMAIN_EQUIPGO.Entities.Configuracion.Equipos equipo)
+        {
+            if (equipo == null) return false;
+
+            // La entidad ya está siendo rastreada por el DbContext,
+            // así que solo necesitamos llamar a CompleteAsync para guardar los cambios.
+            await _unitOfWork.CompleteAsync();
+            return true;
+        }
 
         public async Task<bool> EliminarAsync(int id)
         {
@@ -255,7 +278,6 @@ public async Task<bool> ActualizarEquipoAsync(OUT_DOMAIN_EQUIPGO.Entities.Config
         #endregion
 
         #region Visitantes
-
 
         public async Task<RegistroVisitanteDto?> ConsultarVisitantePorDocumentoAsync(string numeroDocumento)
         {
@@ -304,14 +326,9 @@ public async Task<bool> ActualizarEquipoAsync(OUT_DOMAIN_EQUIPGO.Entities.Config
             };
         }
 
-
-
         #endregion
 
-
-
         #region Sincronizar equipos - agente de escritorio
-
 
         public async Task<string> SincronizarEquipoAsync(EquipoSyncRequestDto dto)
         {
@@ -369,6 +386,7 @@ public async Task<bool> ActualizarEquipoAsync(OUT_DOMAIN_EQUIPGO.Entities.Config
                 CodigoBarras = nuevoCodigo,
                 IdUsuarioInfo = dto.IdUsuarioInfo, // Por ahora 0 como "sin asignar"
                 IdEstado = dto.IdEstado,
+                IdSubEstado = dto.IdSubEstado, // ✅ Agregado subestado
                 IdSede = dto.IdSede,
                 IdEquipoPersonal = dto.IdEquipoPersonal,
                 IdTipoDispositivo = dto.IdTipoDispositivo,
@@ -383,8 +401,6 @@ public async Task<bool> ActualizarEquipoAsync(OUT_DOMAIN_EQUIPGO.Entities.Config
             return "Equipo registrado automáticamente.";
         }
         #endregion
-
-
 
         #region Resgitros de equipos no corporativos
         public async Task<UsuariosInformacion?> ConsultarUsuarioPorDocumentoAsync(string documento)
