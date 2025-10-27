@@ -18,5 +18,11 @@ namespace OUT_OS_APP.EQUIPGO.DTO.DTOs.Usuarios
         public DateTime? FechaCreacion { get; set; } 
         public DateTime? UltimaModificacion { get; set; }
 
+        //necesarios para edicion
+        public int? IdTipoDocumento { get; set; }
+        public int? IdArea { get; set; }
+        public int? IdCampaña { get; set; }
+        public int? IdEstado { get; set; }
+
     }
 }

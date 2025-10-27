@@ -43,10 +43,9 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Transacciones
                 {
                     CodigoBarras = request.CodigoBarras,
                     IdTipoTransaccion = request.TipoTransaccion,
-                    IdEquipoPersonal = request.IdEquipoPersonal,
                     IdUsuarioInfo = request.IdUsuarioInfo,
                     IdUsuarioSession = request.IdUsuarioSession,      // el usuario que dispara
-                    SedeOs = request.SedeOs,
+                    //SedeOs = request.SedeOs, // caundo se implemente el geofecing
                     FechaHora = DateTime.Now
                 };
 

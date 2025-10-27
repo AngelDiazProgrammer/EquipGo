@@ -38,9 +38,6 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
         private string filtroSerial = "";
         private string filtroEstado = "";
 
-        // Paginación
-        private int paginaActual = 1;
-        private int tamanoPagina = 5;
 
         //Llamado Directorio Activo
         private List<UsuarioADDto> UsuariosAD = new();
@@ -116,8 +113,6 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
                     )
                     .OrderByDescending(e => e.FechaCreacion)
                     .ToList();
-
-                paginaActual = 1;
                 StateHasChanged();
             }
         }
@@ -131,33 +126,8 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
             equiposFiltrados = equipos
                 .OrderByDescending(e => e.FechaCreacion)
                 .ToList();
-            paginaActual = 1;
             StateHasChanged();
         }
-
-        private void SiguientePagina()
-        {
-            if (paginaActual < TotalPaginas)
-            {
-                paginaActual++;
-            }
-        }
-
-        private void AnteriorPagina()
-        {
-            if (paginaActual > 1)
-            {
-                paginaActual--;
-            }
-        }
-
-        private IEnumerable<EquipoDto> EquiposPaginados =>
-            equiposFiltrados
-                .Skip((paginaActual - 1) * tamanoPagina)
-                .Take(tamanoPagina);
-
-        private int TotalPaginas =>
-            (int)Math.Ceiling((double)(equiposFiltrados.Count) / tamanoPagina);
 
         [JSInvokable]
         public async Task<string> RefrescarListaEquipos()
@@ -168,7 +138,6 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
                             .OrderByDescending(e => e.FechaCreacion)
                             .ToList();
                 equiposFiltrados = equipos.ToList();
-                paginaActual = 1;
                 StateHasChanged();
                 return "ok";
             }
@@ -209,7 +178,6 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
         {
             await JSRuntime.InvokeVoidAsync("mostrarMapaGoogle", latitud, longitud, apiKey);
         }
-
         private async Task MostrarDetallesEquipo(int id)
         {
             equipoSeleccionado = await EquipoService.ObtenerPorIdAsync(id);

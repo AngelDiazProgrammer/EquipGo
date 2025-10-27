@@ -76,6 +76,94 @@
         </button>
     </div>
 
+    <!-- Tabla con animación de carga -->
+    <div style="position: relative; width: 100%; height: 100%;">
+        @if (isCargandoEquipos)
+        {
+            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 50; pointer-events: none;">
+                <div style="position: relative; width: 56px; height: 56px;">
+                    <div style="width: 56px; height: 56px; border: 4px solid #ef4444; border-top-color: transparent; border-radius: 50%; animation: spin-slow 1.4s linear infinite;"></div>
+                </div>
+                <p style="margin-top: 12px; color: #ef4444; font-size: 18px; font-weight: 600; letter-spacing: 0.025em; animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;">
+                    Cargando equipos...
+                </p>
+            </div>
+
+            <style>
+                @@keyframes spin-slow {
+                    0% {
+                        transform: rotate(0deg);
+                    }
+
+                    100% {
+                        transform: rotate(360deg);
+                    }
+                }
+
+                @@keyframes pulse {
+                    0%, 100% {
+                        opacity: 1;
+                    }
+
+                    50% {
+                        opacity: 0.5;
+                    }
+                }
+            </style>
+        }
+
+        @if (equiposFiltrados == null)
+        {
+            <p>Cargando equipos...</p>
+        }
+        else if (equiposFiltrados.Any())
+        {
+            <!-- CONTENEDOR PRINCIPAL EXPANDIBLE -->
+            <div class="contenido" style="flex: 1; display: flex; flex-direction: column; width: 100%; min-height: 0; gap: 16px;">
+
+                <!-- TABLA CON PAGINACIÓN AUTOMÁTICA -->
+                <div class="table-wrapper" style="width: 100%; flex: 1; min-height: 0;">
+                    <table class="table-equipgo" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>Marca</th>
+                                <th>Modelo</th>
+                                <th>Serial</th>
+                                <th>Asset</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var equipo in equiposFiltrados)
+                            {
+                                <tr>
+                                    <td>@equipo.Marca</td>
+                                    <td>@equipo.Modelo</td>
+                                    <td>@equipo.Serial</td>
+                                    <td>@equipo.CodigoBarras</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-info"
+                                                onclick="abrirDetallesEquipo(@equipo.Id, '@equipo.Marca', '@equipo.Modelo')">
+                                            🔍
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-success" onclick="abrirModalAsignarUsuario(@equipo.Id)">👤</button>
+                                        <button class="btn btn-sm btn-outline-primary" onclick="editarEquipo(@equipo.Id)">✏️</button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- La paginación ahora se maneja automáticamente con JavaScript -->
+        }
+        else
+        {
+            <p>No hay equipos que coincidan con los filtros.</p>
+        }
+    </div>
+
     <!-- Modal Carga Masiva -->
     <div class="modal fade modal-equipgo" id="modalCargaMasiva" tabindex="-1" aria-labelledby="modalCargaMasivaLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl">
@@ -251,7 +339,6 @@
         </div>
     </div>
 
-
     <!-- Modal Crear Equipo -->
     <div class="modal fade modal-equipgo" id="modalCrearEquipo" tabindex="-1" aria-labelledby="modalCrearEquipoLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -318,88 +405,6 @@
                 </div>
             </div>
         </div>
-    </div>
-
-
-    <!-- Tabla con animación de carga -->
-    <div style="position: relative; width: 100%;">
-        @if (isCargandoEquipos)
-        {
-            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 50; pointer-events: none;">
-                <div style="position: relative; width: 56px; height: 56px;">
-                    <div style="width: 56px; height: 56px; border: 4px solid #ef4444; border-top-color: transparent; border-radius: 50%; animation: spin-slow 1.4s linear infinite;"></div>
-                </div>
-                <p style="margin-top: 12px; color: #ef4444; font-size: 18px; font-weight: 600; letter-spacing: 0.025em; animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;">
-                    Cargando equipos...
-                </p>
-            </div>
-
-            <style>
-                @@keyframes spin-slow {
-                    0% {
-                        transform: rotate(0deg);
-                    }
-
-                    100% {
-                        transform: rotate(360deg);
-                    }
-                }
-
-                @@keyframes pulse {
-                    0%, 100% {
-                        opacity: 1;
-                    }
-
-                    50% {
-                        opacity: 0.5;
-                    }
-                }
-            </style>
-        }
-
-        @if (equiposFiltrados == null)
-        {
-            <p>Cargando equipos...</p>
-        }
-        else if (equiposFiltrados.Any())
-        {
-            <div class="table-wrapper" style="width: 100%;">
-                <table id="tablaDashboard" style="width: 100%;">
-                    <thead>
-                        <tr>
-                            <th>Marca</th>
-                            <th>Modelo</th>
-                            <th>Serial</th>
-                            <th>Asset</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var equipo in EquiposPaginados)
-                        {
-                            <tr>
-                                <td>@equipo.Marca</td>
-                                <td>@equipo.Modelo</td>
-                                <td>@equipo.Serial</td>
-                                <td>@equipo.CodigoBarras</td>
-                                <td>
-                                    <button class="btn btn-sm btn-outline-info" @onclick="@(() => MostrarDetallesEquipo(equipo.Id))">🔍</button>
-                                    <button class="btn btn-sm btn-outline-success" onclick="abrirModalAsignarUsuario(@equipo.Id)">👤</button>
-                                    <button class="btn btn-sm btn-outline-primary" onclick="editarEquipo(@equipo.Id)">✏️</button>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Paginación -->
-            <div class="botonera">
-                <button class="botn3" style="background-color:#E0E0E0; color:#292929;" @onclick="AnteriorPagina" disabled="@(paginaActual == 1)">Anterior</button>
-                <span>Página @paginaActual de @TotalPaginas</span>
-                <button class="botn3" style="background-color:#E0E0E0; color:#292929;" @onclick="SiguientePagina" disabled="@(paginaActual == TotalPaginas)">Siguiente</button>
-            </div>
-        }
     </div>
 
     <!-- Modal Asignar Usuario-->
@@ -651,85 +656,93 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body-equipgo">
-                    @if (equipoSeleccionado != null)
-                    {
-                        <div class="row">
-                            <div class="col-md-6">
-                                <!-- Datos del Equipo -->
-                                <div class="seccion-modal">
-                                    <div class="seccion-header">
-                                        <span class="seccion-titulo">💻 Datos del Equipo</span>
-                                    </div>
-                                    <div class="seccion-datos">
-                                        <div class="dato-fila">
-                                            <span class="dato-label">Marca:</span>
-                                            <span class="dato-valor">@equipoSeleccionado.Marca</span>
-                                        </div>
-                                        <div class="dato-fila">
-                                            <span class="dato-label">Modelo:</span>
-                                            <span class="dato-valor">@equipoSeleccionado.Modelo</span>
-                                        </div>
-                                        <div class="dato-fila">
-                                            <span class="dato-label">Serial:</span>
-                                            <span class="dato-valor">@equipoSeleccionado.Serial</span>
-                                        </div>
-                                        <div class="dato-fila">
-                                            <span class="dato-label">Código de Barras:</span>
-                                            <span class="dato-valor">@equipoSeleccionado.CodigoBarras</span>
-                                        </div>
-                                        <div class="dato-fila">
-                                            <span class="dato-label">Sistema Operativo:</span>
-                                            <span class="dato-valor">@equipoSeleccionado.SistemaOperativo</span>
-                                        </div>
-                                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <!-- Datos del Equipo -->
+                            <div class="seccion-modal">
+                                <div class="seccion-header">
+                                    <span class="seccion-titulo">💻 Datos del Equipo</span>
                                 </div>
-
-                                <!-- Características -->
-                                <div class="seccion-modal">
-                                    <div class="seccion-header">
-                                        <span class="seccion-titulo">⚙️ Características</span>
+                                <div class="seccion-datos">
+                                    <div class="dato-fila">
+                                        <span class="dato-label">Marca:</span>
+                                        <span class="dato-valor" id="detallesMarca">-</span>
                                     </div>
-                                    <div class="seccion-datos">                                        
-                                        <div class="dato-fila">
-                                            <span class="dato-label">Tipo de dispositivo:</span>
-                                            <span class="dato-valor">@equipoSeleccionado.TipoDispositivoNombre</span>
-                                        </div>
-                                        <div class="dato-fila">
-                                            <span class="dato-label">Estado:</span>
-                                            <span class="dato-valor">@equipoSeleccionado.EstadoNombre</span>
-                                        </div>
+                                    <div class="dato-fila">
+                                        <span class="dato-label">Modelo:</span>
+                                        <span class="dato-valor" id="detallesModelo">-</span>
                                     </div>
-                                </div>
-
-                                <!-- Asignación -->
-                                <div class="seccion-modal">
-                                    <div class="seccion-header">
-                                        <span class="seccion-titulo">📍 Asignación</span>
+                                    <div class="dato-fila">
+                                        <span class="dato-label">Serial:</span>
+                                        <span class="dato-valor" id="detallesSerial">-</span>
                                     </div>
-                                    <div class="seccion-datos">
-                                        <div class="dato-fila">
-                                            <span class="dato-label">Proveedor:</span>
-                                            <span class="dato-valor">@equipoSeleccionado.ProveedorNombre</span>
-                                        </div>
-                                        <div class="dato-fila">
-                                            <span class="dato-label">Usuario:</span>
-                                            <span class="dato-valor">@equipoSeleccionado.UsuarioNombreCompleto</span>
-                                        </div>                                       
+                                    <div class="dato-fila">
+                                        <span class="dato-label">Código de Barras:</span>
+                                        <span class="dato-valor" id="detallesCodigoBarras">-</span>
                                     </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="mapa-container">
-                                    <div id="google-map" style="height: 500px; width: 100%; background-color: lightgray;"></div>
+                                    <div class="dato-fila">
+                                        <span class="dato-label">Sistema Operativo:</span>
+                                        <span class="dato-valor" id="detallesSistemaOperativo">-</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    }
-                    else
-                    {
-                        <p class="text-danger">No se pudo cargar la información del equipo.</p>
-                    }
+
+                        <div class="col-md-6">
+                            <!-- Características -->
+                            <div class="seccion-modal">
+                                <div class="seccion-header">
+                                    <span class="seccion-titulo">⚙️ Características</span>
+                                </div>
+                                <div class="seccion-datos">
+                                    <div class="dato-fila">
+                                        <span class="dato-label">Estado:</span>
+                                        <span class="dato-valor" id="detallesEstado">-</span>
+                                    </div>
+                                    <div class="dato-fila">
+                                        <span class="dato-label">Tipo de dispositivo:</span>
+                                        <span class="dato-valor" id="detallesTipoDispositivo">-</span>
+                                    </div>
+                                    <div class="dato-fila">
+                                        <span class="dato-label">Proveedor:</span>
+                                        <span class="dato-valor" id="detallesProveedor">-</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Asignación -->
+                            <div class="seccion-modal">
+                                <div class="seccion-header">
+                                    <span class="seccion-titulo">👤 Asignación</span>
+                                </div>
+                                <div class="seccion-datos">
+                                    <div class="dato-fila">
+                                        <span class="dato-label">Usuario:</span>
+                                        <span class="dato-valor" id="detallesUsuario">-</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mapa -->
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <div class="seccion-modal">
+                                <div class="seccion-header">
+                                    <span class="seccion-titulo">🗺️ Ubicación</span>
+                                </div>
+                                <div class="seccion-datos p-0">
+                                    <div id="google-map" style="height: 300px; width: 100%; background: #f8f9fa;">
+                                        <div class="text-center py-4 text-muted">
+                                            <i class="bi bi-map" style="font-size: 2rem;"></i>
+                                            <p>Selecciona un equipo para ver su ubicación</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer-equipgo">
                     <button class="boton-modal-equipgo" data-bs-dismiss="modal">Cerrar</button>

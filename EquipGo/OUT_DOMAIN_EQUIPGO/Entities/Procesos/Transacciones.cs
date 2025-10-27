@@ -23,7 +23,7 @@ namespace OUT_DOMAIN_EQUIPGO.Entities.Procesos
         public int IdTipoTransaccion { get; set; }
 
         [Column("id_equipoPersonal")]
-        public int IdEquipoPersonal { get; set; }
+        public int? IdEquipoPersonal { get; set; }
 
         [Column("id_usuarioInfo")]
         public int IdUsuarioInfo { get; set; }
@@ -32,7 +32,7 @@ namespace OUT_DOMAIN_EQUIPGO.Entities.Procesos
         public int IdUsuarioSession { get; set; }
 
         [Column("sedeOs")]
-        public int SedeOs { get; set; }
+        public int? SedeOs { get; set; } //quitar null al implementar geofecing
 
         [Column("fechaHora")]
         public DateTime FechaHora { get; set; }

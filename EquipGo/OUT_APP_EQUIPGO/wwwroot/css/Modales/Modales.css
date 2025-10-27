@@ -1,0 +1,378 @@
+﻿/* ==================== */
+/* ESTILOS MODIFICADOS PARA MODALES MÁS COMPACTOS */
+/* ==================== */
+
+.modal-equipgo .modal-content {
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 16px;
+    background-color: #fff;
+    border: 3px solid #ededed;
+}
+
+.modal-equipgo .modal-header-equipgo {
+    border-bottom: 2px solid #ea0029;
+    padding: 8px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.modal-equipgo .modal-title-equipgo {
+    font-size: 18px;
+    font-weight: bold;
+    color: #292929;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.modal-equipgo .modal-body-equipgo {
+    padding: 12px 16px;
+    max-height: 75vh;
+    overflow-y: auto;
+    font-size: 0.875rem;
+}
+
+/* Secciones más compactas */
+.seccion-modal {
+    border-bottom: 1px solid #e0e0e0;
+    padding: 10px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+    .seccion-modal:last-child {
+        border-bottom: none;
+    }
+
+.seccion-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.seccion-icon {
+    width: 18px;
+    height: 18px;
+}
+
+.seccion-titulo {
+    font-size: 16px;
+    font-weight: bold;
+    color: #292929;
+    flex: 1;
+}
+
+.seccion-datos {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-left: 26px;
+}
+
+/* Formularios más compactos */
+.form-section {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 10px;
+}
+
+    .form-section label {
+        font-weight: 600;
+        color: #393e42;
+        font-size: 13px;
+        margin-bottom: 2px;
+    }
+
+    .form-section input,
+    .form-section select {
+        padding: 6px 10px;
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        font-size: 13px;
+        color: #495057;
+        transition: border-color 0.3s;
+        height: 34px;
+    }
+
+        .form-section input:focus,
+        .form-section select:focus {
+            outline: none;
+            border-color: #ea0029;
+        }
+
+/* Footer del modal más compacto */
+.modal-footer-equipgo {
+    padding: 12px 16px;
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    border-top: 1px solid #e0e0e0;
+}
+
+.boton-modal-equipgo {
+    box-shadow: 0px 2px 4px rgba(255, 255, 255, 0.25);
+    border-radius: 25px;
+    background-color: #ea0029;
+    color: #fff;
+    font-size: 14px;
+    line-height: 18px;
+    padding: 6px 20px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s;
+    height: 34px;
+}
+
+    .boton-modal-equipgo:hover {
+        background-color: #c40023;
+        transform: translateY(-1px);
+        box-shadow: 0px 3px 6px rgba(234, 0, 41, 0.3);
+    }
+
+.boton-modal-secundario {
+    background-color: #e0e0e0;
+    color: #292929;
+}
+
+    .boton-modal-secundario:hover {
+        background-color: #c0c0c0;
+    }
+
+/* Datos de visualización más compactos */
+.dato-fila {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    padding: 2px 0;
+}
+
+.dato-label {
+    font-weight: 600;
+    color: #393e42;
+    min-width: 120px;
+}
+
+.dato-valor {
+    color: #495057;
+    line-height: 1.3;
+}
+
+/* Mapa más compacto */
+.mapa-container {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #e0e0e0;
+    margin-top: 8px;
+}
+
+/* Formulario desplegable más compacto */
+#formUsuarioInfo {
+    margin-top: 10px;
+}
+
+    #formUsuarioInfo .seccion-modal {
+        border-radius: 10px;
+        border: 1px solid #e0e0e0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    #formUsuarioInfo .seccion-header {
+        border-radius: 10px 10px 0 0;
+        padding: 8px 16px;
+    }
+
+    #formUsuarioInfo .seccion-titulo {
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    #formUsuarioInfo .seccion-datos {
+        padding: 10px 16px;
+    }
+
+    #formUsuarioInfo .form-section {
+        margin-bottom: 8px;
+    }
+
+        #formUsuarioInfo .form-section label {
+            font-size: 12px;
+            margin-bottom: 3px;
+        }
+
+        #formUsuarioInfo .form-section input,
+        #formUsuarioInfo .form-section select {
+            padding: 5px 8px;
+            font-size: 12px;
+            height: 32px;
+        }
+
+/* ==================== */
+/* ESTILOS ESPECÍFICOS PARA EL FORMULARIO DESPLEGABLE CON MÁRGENES */
+/* ==================== */
+
+#formUsuarioInfo {
+    display: none;
+    margin: 8px 12px 0px 12px;
+    animation: slideDown 0.3s ease-out;
+    width: calc(100% - 24px);
+}
+
+    #formUsuarioInfo .seccion-modal {
+        border-radius: 8px;
+        border: 1px solid #e0e0e0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+        margin-bottom: 0;
+        background-color: #fff;
+    }
+
+    #formUsuarioInfo .seccion-header {
+        background: linear-gradient(135deg, #E9002B 0%, #a70120 100%);
+        border-radius: 8px 8px 0 0;
+        padding: 6px 12px;
+        border-bottom: 1px solid #a70120;
+    }
+
+    #formUsuarioInfo .seccion-titulo {
+        color: white;
+        font-size: 13px !important;
+        font-weight: 600;
+        line-height: 1.2;
+    }
+
+    #formUsuarioInfo .seccion-datos {
+        padding: 8px 12px;
+        gap: 4px;
+        background-color: #fafafa;
+    }
+
+    /* Grid más compacto para los campos del formulario desplegable */
+    #formUsuarioInfo .row {
+        margin-bottom: 6px !important;
+        margin-left: -4px;
+        margin-right: -4px;
+    }
+
+    #formUsuarioInfo .col-md-3,
+    #formUsuarioInfo .col-md-6 {
+        padding: 0 4px !important;
+    }
+
+    #formUsuarioInfo .form-section {
+        margin-bottom: 6px !important;
+        gap: 2px;
+    }
+
+        #formUsuarioInfo .form-section label {
+            font-size: 11px !important;
+            font-weight: 600;
+            color: #393e42;
+            margin-bottom: 1px;
+            line-height: 1.1;
+        }
+
+        #formUsuarioInfo .form-section input,
+        #formUsuarioInfo .form-section select {
+            padding: 4px 8px !important;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 11px !important;
+            height: 28px !important;
+            min-height: 28px;
+            background-color: #fff;
+        }
+
+            #formUsuarioInfo .form-section input:focus,
+            #formUsuarioInfo .form-section select:focus {
+                border-color: #E9002B;
+                box-shadow: 0 0 0 0.1rem rgba(233, 0, 43, 0.15);
+                outline: none;
+            }
+
+            #formUsuarioInfo .form-section input:read-only {
+                background-color: #f8f9fa;
+                color: #6c757d;
+                cursor: not-allowed;
+            }
+
+        /* Estilos para los asteriscos de campos requeridos */
+        #formUsuarioInfo .form-section label span {
+            font-size: 10px;
+        }
+
+        /* Asegurar que los placeholders también sean pequeños */
+        #formUsuarioInfo .form-section input::placeholder {
+            font-size: 10px;
+            color: #6c757d;
+        }
+
+/* Animación para el formulario desplegable */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Mejoras responsive para modales */
+@media (max-width: 768px) {
+    .modal-equipgo .modal-title-equipgo {
+        font-size: 16px;
+    }
+
+    .modal-equipgo .modal-body-equipgo {
+        padding: 10px 12px;
+        font-size: 0.8rem;
+    }
+
+    .seccion-titulo {
+        font-size: 14px;
+    }
+
+    .form-section label {
+        font-size: 12px;
+    }
+
+    .form-section input,
+    .form-section select {
+        font-size: 12px;
+        height: 32px;
+    }
+
+    .boton-modal-equipgo {
+        font-size: 13px;
+        padding: 5px 16px;
+        height: 32px;
+    }
+
+    #formUsuarioInfo {
+        margin: 8px 8px 0px 8px;
+        width: calc(100% - 16px);
+    }
+
+        #formUsuarioInfo .col-md-3,
+        #formUsuarioInfo .col-md-6 {
+            flex: 0 0 100%;
+            max-width: 100%;
+            margin-bottom: 4px;
+        }
+
+        #formUsuarioInfo .row {
+            margin-bottom: 4px !important;
+        }
+
+        #formUsuarioInfo .form-section {
+            margin-bottom: 4px !important;
+        }
+
+        #formUsuarioInfo .seccion-datos {
+            padding: 8px 10px;
+        }
+}

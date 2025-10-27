@@ -34,3 +34,19 @@
         window.currentMap = map;
     }
 };
+
+// Función de respaldo si el mapa no carga
+window.mostrarMapaFallback = function (lat, lng) {
+    const mapDiv = document.getElementById("google-map");
+    if (!mapDiv) return;
+
+    mapDiv.innerHTML = `
+        <div style="display: flex; align-items: center; justify-content: center; height: 100%; background: #f8f9fa; color: #6c757d;">
+            <div class="text-center">
+                <i class="bi bi-geo-alt" style="font-size: 3rem;"></i>
+                <p class="mt-2">Ubicación: ${lat}, ${lng}</p>
+                <small>Mapa no disponible - Coordenadas guardadas</small>
+            </div>
+        </div>
+    `;
+};

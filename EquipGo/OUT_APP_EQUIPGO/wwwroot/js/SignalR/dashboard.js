@@ -96,7 +96,7 @@ function agregarFilaNueva() {
             }, 3000);
 
             // Mantener máximo 13 filas
-            while (tbody.rows.length > 6) {
+            while (tbody.rows.length > 20) {
                 tbody.deleteRow(tbody.rows.length - 1);
             }
         })

@@ -8,6 +8,7 @@ using Interface.Services;
 using Interface.Services.Active_Directory;
 using Interface.Services.Areas;
 using Interface.Services.Autenticacion;
+using Interface.Services.Campañas;
 using Interface.Services.Equipos;
 using Interface.Services.Estados;
 using Interface.Services.Proveedores;
@@ -20,11 +21,13 @@ using Interface.Services.Visitantes;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 using OUT_APP_EQUIPGO.Components;
 using OUT_APP_EQUIPGO.Middlewares;
 using OUT_PERSISTENCE_EQUIPGO.Context;
 using OUT_PERSISTENCE_EQUIPGO.Hubs;
 using OUT_PERSISTENCE_EQUIPGO.Services.Areas;
+using OUT_PERSISTENCE_EQUIPGO.Services.Campañas;
 using OUT_PERSISTENCE_EQUIPGO.Services.Equipos;
 using OUT_PERSISTENCE_EQUIPGO.Services.Estados;
 using OUT_PERSISTENCE_EQUIPGO.Services.Proveedores;
@@ -35,7 +38,6 @@ using OUT_PERSISTENCE_EQUIPGO.Services.TipoDispositivos;
 using OUT_PERSISTENCE_EQUIPGO.Services.Transacciones;
 using OUT_PERSISTENCE_EQUIPGO.Services.Usuarios;
 using OUT_PERSISTENCE_EQUIPGO.UnitOfWork;
-using OfficeOpenXml;
 // ====================
 // 📌 Builder
 // ====================
@@ -62,6 +64,7 @@ builder.Services.AddScoped<EquipGoDbContext>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IActiveDirectoryService, ActiveDirectoryService>();
 builder.Services.AddScoped<IAreasService, AreasService>();
+builder.Services.AddScoped<ICampañaService, CampañaService>();
 builder.Services.AddScoped<IEquipoService, EquipoService>();
 builder.Services.AddScoped<IUsuariosInformacionService, UsuariosInformacionService>();
 builder.Services.AddScoped<IEstadoService, EstadoService>();

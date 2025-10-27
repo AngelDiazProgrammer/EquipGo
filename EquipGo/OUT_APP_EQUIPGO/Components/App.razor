@@ -9,7 +9,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <base href="/" />
     <link rel="stylesheet" href="bootstrap/bootstrap.min.css" />
-    <link href="css/Dashboard/dashboard.css" rel="stylesheet" />
+    @* <link href="css/Dashboard/dashboard.css" rel="stylesheet" /> *@
+    <link href="css/Main/Main.css" rel="stylesheet" />
+    <link href="css/Modales/Modales.css" rel="stylesheet" />
+    <link href="css/Tablas/Tablas.css" rel="stylesheet" />
     <!-- <link href="css/Auth/login.css" rel="stylesheet" />-->
     <link rel="stylesheet" href="OUT_APP_EQUIPGO.styles.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
@@ -46,12 +49,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+    <script>
+        window.googleMapsApiKey = "@Configuration["GoogleMaps:ApiKey"]";
+        console.log('🔑 API Key cargada:', window.googleMapsApiKey ? 'SÍ' : 'NO');
+    </script>
     <script src="js/Maps/mapa.js"></script>
+    <script src="js/Tablas/tablas.js"></script>
     <script src="js/Maps/leaflet-map.js"></script>
     <script src="js/auth/Auth.js"></script>
     <script src="js/SignalR/dashboard.js"></script>
     <script src="js/scanner.js"></script>
     <script src="js/Equipos/Equipos.js"></script>
+    <script src="js/Usuarios/UsuariosInformacion.js"></script>
     <script src="js/Areas/Areas.js""></script>
     <script src="js/SubEstados/SubEstados.js"></script>
     <script src="js/Visitantes/visitante.js"></script>

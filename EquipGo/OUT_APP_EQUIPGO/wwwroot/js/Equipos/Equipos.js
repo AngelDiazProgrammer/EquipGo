@@ -5,6 +5,103 @@ window._usuariosCache = null;
 window.equipoAsignacionActual = null;
 window.usuariosCacheAsignacion = null;
 
+//Abrir detales equipos
+window.abrirDetallesEquipo = async function (equipoId, marca, modelo) {
+    console.log('🎯 Abriendo detalles:', { equipoId, marca, modelo });
+
+    try {
+        // 1. Obtener datos completos del equipo
+        const response = await fetch(`/api/equipos/${equipoId}`);
+        if (!response.ok) throw new Error(`Error ${response.status}`);
+        const equipo = await response.json();
+
+        console.log('📍 Datos del equipo:', equipo);
+
+        // 2. Llenar los elementos del modal
+        document.getElementById('detallesMarca').textContent = equipo.marca || 'N/A';
+        document.getElementById('detallesModelo').textContent = equipo.modelo || 'N/A';
+        document.getElementById('detallesSerial').textContent = equipo.serial || 'N/A';
+        document.getElementById('detallesCodigoBarras').textContent = equipo.codigoBarras || 'N/A';
+        document.getElementById('detallesSistemaOperativo').textContent = equipo.sistemaOperativo || 'N/A';
+        document.getElementById('detallesEstado').textContent = equipo.estadoNombre || 'N/A';
+        document.getElementById('detallesTipoDispositivo').textContent = equipo.tipoDispositivoNombre || 'N/A';
+        document.getElementById('detallesProveedor').textContent = equipo.proveedorNombre || 'N/A';
+        document.getElementById('detallesUsuario').textContent = equipo.usuarioNombreCompleto || 'Sin asignar';
+
+        // 3. Configurar el mapa si hay coordenadas
+        const mapDiv = document.getElementById('google-map');
+
+        if (equipo.latitud && equipo.longitud) {
+            console.log('📍 Coordenadas encontradas:', equipo.latitud, equipo.longitud);
+
+            if (!window.googleMapsApiKey) {
+                console.error('❌ API Key no disponible');
+                mostrarErrorMapa('API Key de Google Maps no configurada');
+                // Abrir modal aunque falle el mapa
+                const modal = new bootstrap.Modal(document.getElementById('modalDetallesEquipo'));
+                modal.show();
+            } else {
+                // Mostrar estado de carga
+                mapDiv.innerHTML = '<div class="text-center py-4 text-muted"><i class="bi bi-hourglass"></i><p>Cargando mapa...</p></div>';
+
+                // Abrir modal primero
+                const modal = new bootstrap.Modal(document.getElementById('modalDetallesEquipo'));
+                modal.show();
+
+                // Esperar a que el modal se renderice completamente
+                setTimeout(async () => {
+                    try {
+                        await window.mostrarMapaGoogle(
+                            parseFloat(equipo.latitud),
+                            parseFloat(equipo.longitud),
+                            window.googleMapsApiKey
+                        );
+                        console.log('✅ Mapa cargado exitosamente');
+                    } catch (error) {
+                        console.error('❌ Error mostrando mapa:', error);
+                        mostrarErrorMapa('Error cargando el mapa: ' + error.message);
+                    }
+                }, 300); // Tiempo reducido para mejor experiencia
+            }
+        } else {
+            console.log('📍 No hay coordenadas disponibles');
+            mostrarSinCoordenadas();
+            const modal = new bootstrap.Modal(document.getElementById('modalDetallesEquipo'));
+            modal.show();
+        }
+
+    } catch (error) {
+        console.error('❌ Error:', error);
+        alert('Error al cargar los detalles del equipo: ' + error.message);
+    }
+};
+
+// Funciones auxiliares
+function mostrarErrorMapa(mensaje) {
+    const mapDiv = document.getElementById('google-map');
+    if (mapDiv) {
+        mapDiv.innerHTML = `
+            <div class="text-center py-4 text-danger">
+                <i class="bi bi-exclamation-triangle" style="font-size: 2rem;"></i>
+                <p>${mensaje}</p>
+                <small>Las coordenadas están guardadas pero no se puede mostrar el mapa</small>
+            </div>
+        `;
+    }
+}
+
+function mostrarSinCoordenadas() {
+    const mapDiv = document.getElementById('google-map');
+    if (mapDiv) {
+        mapDiv.innerHTML = `
+            <div class="text-center py-4 text-muted">
+                <i class="bi bi-map" style="font-size: 2rem;"></i>
+                <p>No hay coordenadas de ubicación disponibles</p>
+            </div>
+        `;
+    }
+}
+
 // Función para abrir el modal de asignación
 window.abrirModalAsignarUsuario = async function (equipoId) {
     try {

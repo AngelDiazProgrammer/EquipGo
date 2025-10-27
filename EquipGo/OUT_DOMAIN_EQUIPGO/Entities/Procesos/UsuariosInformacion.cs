@@ -10,7 +10,7 @@ namespace OUT_DOMAIN_EQUIPGO.Entities.Procesos
         public int Id { get; set; }
 
         [Column("id_Tipodocumento")]
-        public int IdTipodocumento { get; set; }
+        public int? IdTipodocumento { get; set; }
 
         [Column("numeroDocumento")]
         public string NumeroDocumento { get; set; }
@@ -19,13 +19,13 @@ namespace OUT_DOMAIN_EQUIPGO.Entities.Procesos
         public string Apellidos { get; set; }
 
         [Column("id_area")]
-        public int IdArea { get; set; }
+        public int? IdArea { get; set; }
 
         [Column("id_campaña")]
-        public int IdCampaña { get; set; }
+        public int? IdCampaña { get; set; }
 
         [Column("id_estado")]
-        public int IdEstado { get; set; }
+        public int? IdEstado { get; set; }
 
         [Column("fecha_creacion")]
         public DateTime FechaCreacion { get; set; }
