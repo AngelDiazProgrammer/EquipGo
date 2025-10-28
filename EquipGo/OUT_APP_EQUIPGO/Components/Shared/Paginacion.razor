@@ -1,0 +1,184 @@
+﻿@namespace OUT_APP_EQUIPGO.Components.Shared
+
+<div class="pagination-container">
+    <div class="pagination-controls-left">
+        <!-- Selector de modo Auto/Manual -->
+        <div class="modo-selector">
+            <label>
+                <input type="checkbox" @bind="modoAutoInternal" />
+                <span>Auto</span>
+            </label>
+        </div>
+
+        <!-- Selector de registros por página (solo en modo manual) -->
+        <div class="registros-selector" style="@(ModoAuto ? "opacity:0.5; cursor:not-allowed;" : "")">
+            <label>Registros:</label>
+            <select @bind="registrosPorPaginaInternal" disabled="@ModoAuto">
+                @foreach (var option in opcionesRegistros)
+                {
+                    <option value="@option">@option</option>
+                }
+            </select>
+        </div>
+
+        <!-- Información de paginación -->
+        <div class="pagination-info">
+            @(ModoAuto ? "🔄" : "✋") Pág @PaginaActual/@TotalPaginas •
+            @MostrandoInicio-@MostrandoFin de @TotalRegistros
+        </div>
+    </div>
+
+    <div class="pagination-controls">
+        <!-- Botón anterior -->
+        <button class="pagination-btn" @onclick="IrAPaginaAnterior" disabled="@(PaginaActual == 1)">
+            ← Anterior
+        </button>
+
+        <!-- Números de página -->
+        <div class="pagination-pages">
+            @foreach (var pagina in PaginasVisibles)
+            {
+                if (pagina == -1)
+                {
+                    <span class="pagination-ellipsis">...</span>
+                }
+                else
+                {
+                    <button class="page-number @(pagina == PaginaActual ? "active" : "")"
+                            @onclick="() => IrAPagina(pagina)">
+                        @pagina
+                    </button>
+                }
+            }
+        </div>
+
+        <!-- Botón siguiente -->
+        <button class="pagination-btn" @onclick="IrAPaginaSiguiente"
+                disabled="@(PaginaActual == TotalPaginas)">
+            Siguiente →
+        </button>
+    </div>
+</div>
+
+
+@code {
+    [Parameter] public int TotalRegistros { get; set; }
+    [Parameter] public int PaginaActual { get; set; } = 1;
+    [Parameter] public int RegistrosPorPagina { get; set; } = 5;
+    [Parameter] public bool ModoAuto { get; set; } = true;
+    [Parameter] public EventCallback<int> PaginaActualChanged { get; set; }
+    [Parameter] public EventCallback<int> RegistrosPorPaginaChanged { get; set; }
+    [Parameter] public EventCallback<bool> ModoAutoChanged { get; set; }
+
+    private readonly int[] opcionesRegistros = { 3, 4, 5, 6, 7, 8, 9, 10 };
+
+    // Variables internas para manejar los bindings
+    private bool modoAutoInternal;
+    private int registrosPorPaginaInternal;
+
+    protected override void OnParametersSet()
+    {
+        // Sincronizar las variables internas con los parámetros
+        modoAutoInternal = ModoAuto;
+        registrosPorPaginaInternal = RegistrosPorPagina;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // Verificar cambios después del renderizado
+        await VerificarCambios();
+    }
+
+    private async Task VerificarCambios()
+    {
+        bool cambioDetectado = false;
+
+        // Verificar cambios en el modo auto
+        if (modoAutoInternal != ModoAuto)
+        {
+            await ModoAutoChanged.InvokeAsync(modoAutoInternal);
+            cambioDetectado = true;
+        }
+
+        // Verificar cambios en registros por página
+        if (registrosPorPaginaInternal != RegistrosPorPagina)
+        {
+            await RegistrosPorPaginaChanged.InvokeAsync(registrosPorPaginaInternal);
+            cambioDetectado = true;
+        }
+
+        if (cambioDetectado)
+        {
+            Console.WriteLine($"🔄 Cambios detectados - ModoAuto: {modoAutoInternal}, Registros: {registrosPorPaginaInternal}");
+        }
+    }
+
+    private int TotalPaginas => Math.Max(1, (int)Math.Ceiling((double)TotalRegistros / RegistrosPorPagina));
+    private int MostrandoInicio => TotalRegistros > 0 ? ((PaginaActual - 1) * RegistrosPorPagina) + 1 : 0;
+    private int MostrandoFin => Math.Min(PaginaActual * RegistrosPorPagina, TotalRegistros);
+
+    private int[] PaginasVisibles
+    {
+        get
+        {
+            var paginas = new List<int>();
+            const int maxPaginasVisibles = 5;
+
+            if (TotalPaginas <= maxPaginasVisibles)
+            {
+                for (int i = 1; i <= TotalPaginas; i++)
+                    paginas.Add(i);
+            }
+            else
+            {
+                if (PaginaActual <= 3)
+                {
+                    for (int i = 1; i <= 4; i++) paginas.Add(i);
+                    paginas.Add(-1); // Ellipsis
+                    paginas.Add(TotalPaginas);
+                }
+                else if (PaginaActual >= TotalPaginas - 2)
+                {
+                    paginas.Add(1);
+                    paginas.Add(-1); // Ellipsis
+                    for (int i = TotalPaginas - 3; i <= TotalPaginas; i++) paginas.Add(i);
+                }
+                else
+                {
+                    paginas.Add(1);
+                    paginas.Add(-1); // Ellipsis
+                    for (int i = PaginaActual - 1; i <= PaginaActual + 1; i++) paginas.Add(i);
+                    paginas.Add(-1); // Ellipsis
+                    paginas.Add(TotalPaginas);
+                }
+            }
+
+            return paginas.ToArray();
+        }
+    }
+
+    private async Task IrAPagina(int pagina)
+    {
+        if (pagina >= 1 && pagina <= TotalPaginas && pagina != PaginaActual)
+        {
+            Console.WriteLine($"📄 Cambiando a página: {pagina}");
+            await PaginaActualChanged.InvokeAsync(pagina);
+        }
+    }
+
+    private async Task IrAPaginaAnterior()
+    {
+        if (PaginaActual > 1)
+        {
+            await IrAPagina(PaginaActual - 1);
+        }
+    }
+
+    private async Task IrAPaginaSiguiente()
+    {
+        if (PaginaActual < TotalPaginas)
+        {
+            await IrAPagina(PaginaActual + 1);
+        }
+    }
+}

@@ -13,19 +13,28 @@
         </div>
     </div>
 
-    <!-- Contadores superiores dinámicos -->
+    <!-- Contadores superiores dinámicos CON IDs -->
     <div class="info">
         <div class="card-registros">
             <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" /></svg>
-            <div class="datos"><b class="b">@TotalHoy</b><b class="transacciones-de-hoy">Transacciones de Hoy</b></div>
+            <div class="datos">
+                <b class="b" id="totalHoy">@TotalHoy</b>
+                <b class="transacciones-de-hoy">Transacciones de Hoy</b>
+            </div>
         </div>
         <div class="dashboard-card-registros">
             <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" /></svg>
-            <div class="dashboard-datos"><b class="b">@TotalNormales</b><b class="transacciones-de-hoy">Transacciones Internas</b></div>
+            <div class="dashboard-datos">
+                <b class="b" id="totalNormales">@TotalNormales</b>
+                <b class="transacciones-de-hoy">Transacciones Internas</b>
+            </div>
         </div>
         <div class="card-alerta">
             <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" /></svg>
-            <div class="dashboard-datos"><b class="b">@TotalVisitantes</b><b class="transacciones-de-hoy">Transacciones de Visitantes</b></div>
+            <div class="dashboard-datos">
+                <b class="b" id="totalVisitantes">@TotalVisitantes</b>
+                <b class="transacciones-de-hoy">Transacciones de Visitantes</b>
+            </div>
         </div>
     </div>
 
@@ -36,48 +45,9 @@
                 <div class="visitante" id="tabVisitante"><b class="dashboard-equipgo">Visitante</b></div>
             </div>
         </div>
-
-        <!-- SECCIÓN CORPORATIVO -->
-        <div class="corporativo2" id="corporativoSection">
-            <div class="subtitulo"><b class="corporativo3">Corporativo</b></div>
-            <div class="dashboard-filtros">
-                <div class="dashboard-filtro">
-                    <div class="buscar-nombre">
-                        <label>Usuario</label>
-                        <div class="frame-div">
-                            <input type="text" class="placeholder filter-input" placeholder="Buscar" name="usuario" />
-                        </div>
-                    </div>
-                    <div class="buscar-nombre">
-                        <label>Código de barras</label>
-                        <div class="frame-div">
-                            <input type="text" class="placeholder filter-input" placeholder="Buscar" name="codigoBarras" />
-                        </div>
-                    </div>
-                    <div class="transaccin">
-                        <label>Tipo Transacción</label>
-                        <div class="dashboard-contenido">
-                            <select class="placeholder filter-input" name="tipoTransaccion">
-                                <option value="">Todos</option>
-                                <option value="entrada">Entrada</option>
-                                <option value="salida">Salida</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="buscar-nombre">
-                        <label>Guarda Aprobador</label>
-                        <div class="frame-div">
-                            <input type="text" class="placeholder filter-input" placeholder="Buscar" name="guardaAprobador" />
-                        </div>
-                    </div>
-                </div>
-                <div class="botonera">
-                    <button class="botn3">Limpiar Filtros</button>
-                </div>
-            </div>
-
             <div class="table-wrapper">
-                <table class="table-equipgo" style="width: 100%;">
+                <!-- TABLA CON ID -->
+                <table class="table-equipgo" style="width: 100%;" id="tablaDashboard">
                     <thead>
                         <tr>
                             <th>Usuario</th>
@@ -87,15 +57,26 @@
                             <th>Sede OS</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="tbodyDashboard">
                         @foreach (var item in PaginatedCorporativoItems)
                         {
                             <tr>
-                                <td>@item.Usuario</td>
-                                <td>@item.CodigoBarras</td>
-                                <td>@item.TipoTransaccion</td>
-                                <td>@item.GuardaAprobador</td>
-                                <td>@item.SedeOS</td>
+                                @if (item.Usuario != null)
+                                {
+                                    <td>@item.Usuario</td>
+                                    <td>@item.CodigoBarras</td>
+                                    <td>@item.TipoTransaccion</td>
+                                    <td>@item.GuardaAprobador</td>
+                                    <td>@item.SedeOS</td>
+                                }
+                                else
+                                {
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                }
                             </tr>
                         }
                     </tbody>
@@ -107,7 +88,6 @@
                 <span>Página @CurrentCorporativoPage de @TotalCorporativoPages</span>
                 <button class="btn btn-sm btn-outline-primary" @onclick="GoToNextCorporativoPage" disabled="@(CurrentCorporativoPage == TotalCorporativoPages)">Siguiente</button>
             </div>
-        </div>
 
         <!-- SECCIÓN VISITANTES -->
         <div class="visitante2" id="visitanteSection" style="display: none;">
@@ -149,7 +129,8 @@
             </div>
 
             <div class="table-wrapper">
-                <table class="table-equipgo" style="width: 100%;">
+                <!-- TABLA CON ID -->
+                <table class="table-equipgo" style="width: 100%;" id="tablaVisitantes">
                     <thead>
                         <tr>
                             <th>Nombre Visitante</th>
@@ -159,15 +140,26 @@
                             <th>Sede</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="tbodyVisitantes">
                         @foreach (var item in PaginatedVisitanteItems)
                         {
                             <tr>
-                                <td>@item.NombreVisitante</td>
-                                <td>@item.Marca</td>
-                                <td>@item.TipoTransaccion</td>
-                                <td>@item.AprobadoPor</td>
-                                <td>@item.Sede</td>
+                                @if (item.NombreVisitante != null)
+                                {
+                                    <td>@item.NombreVisitante</td>
+                                    <td>@item.Marca</td>
+                                    <td>@item.TipoTransaccion</td>
+                                    <td>@item.AprobadoPor</td>
+                                    <td>@item.Sede</td>
+                                }
+                                else
+                                {
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                }
                             </tr>
                         }
                     </tbody>
@@ -182,116 +174,6 @@
         </div>
     </div>
 </div>
-
-
-@code {
-    // --- MODELOS DE DATOS ---
-    public class TransaccionCorporativo { public string Usuario { get; set; } public string CodigoBarras { get; set; } public string TipoTransaccion { get; set; } public string GuardaAprobador { get; set; } public string SedeOS { get; set; } }
-    public class TransaccionVisitante { public string NombreVisitante { get; set; } public string Marca { get; set; } public string TipoTransaccion { get; set; } public string AprobadoPor { get; set; } public string Sede { get; set; } }
-
-    // --- ESTADO Y DATOS ---
-    private const int PageSize = 6; // Tamaño de página fijo a 6
-
-    // Datos completos (simulados, aquí vendría SignalR)
-    private List<TransaccionCorporativo> AllCorporativoItems { get; set; } = new();
-    private List<TransaccionVisitante> AllVisitanteItems { get; set; } = new();
-
-    // Datos filtrados
-    private List<TransaccionCorporativo> FilteredCorporativoItems { get; set; } = new();
-    private List<TransaccionVisitante> FilteredVisitanteItems { get; set; } = new();
-
-    // Estado de paginación
-    private int CurrentCorporativoPage { get; set; } = 1;
-    private int CurrentVisitantePage { get; set; } = 1;
-
-    // --- PROPIEDADES CALCULADAS PARA LA PAGINACIÓN ---
-    private List<TransaccionCorporativo> PaginatedCorporativoItems => FilteredCorporativoItems.Skip((CurrentCorporativoPage - 1) * PageSize).Take(PageSize).ToList();
-    private int TotalCorporativoPages => (int)Math.Ceiling((double)FilteredCorporativoItems.Count / PageSize);
-
-    private List<TransaccionVisitante> PaginatedVisitanteItems => FilteredVisitanteItems.Skip((CurrentVisitantePage - 1) * PageSize).Take(PageSize).ToList();
-    private int TotalVisitantePages => (int)Math.Ceiling((double)FilteredVisitanteItems.Count / PageSize);
-
-    // --- CONTADORES ---
-    private int TotalHoy => AllCorporativoItems.Count + AllVisitanteItems.Count;
-    private int TotalNormales => AllCorporativoItems.Count;
-    private int TotalVisitantes => AllVisitanteItems.Count;
-
-    // --- MÉTODOS DE CICLO DE VIDA ---
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            //LoadSampleData(); // Carga datos de ejemplo
-            FilteredCorporativoItems = AllCorporativoItems;
-            FilteredVisitanteItems = AllVisitanteItems;
-
-            // Inicializa el JS y le pasa una referencia a este componente para que pueda llamar a métodos C#
-            await JS.InvokeVoidAsync("initDashboardUI", DotNetObjectReference.Create(this));
-        }
-    }
-
-    // --- MÉTODOS DE PAGINACIÓN ---
-    private void GoToPreviousCorporativoPage() { if (CurrentCorporativoPage > 1) CurrentCorporativoPage--; StateHasChanged(); }
-    private void GoToNextCorporativoPage() { if (CurrentCorporativoPage < TotalCorporativoPages) CurrentCorporativoPage++; StateHasChanged(); }
-    private void GoToPreviousVisitantePage() { if (CurrentVisitantePage > 1) CurrentVisitantePage--; StateHasChanged(); }
-    private void GoToNextVisitantePage() { if (CurrentVisitantePage < TotalVisitantePages) CurrentVisitantePage++; StateHasChanged(); }
-
-    // --- MÉTODO QUE SERÁ LLAMADO DESDE JAVASCRIPT PARA APLICAR FILTROS ---
-    [JSInvokable]
-    public void ApplyFiltersFromJS(string filterType, Dictionary<string, string> filters)
-    {
-        if (filterType == "corporativo")
-        {
-            FilteredCorporativoItems = AllCorporativoItems.Where(item =>
-                (string.IsNullOrEmpty(filters["usuario"]) || item.Usuario.Contains(filters["usuario"], StringComparison.OrdinalIgnoreCase)) &&
-                (string.IsNullOrEmpty(filters["codigoBarras"]) || item.CodigoBarras.Contains(filters["codigoBarras"], StringComparison.OrdinalIgnoreCase)) &&
-                (string.IsNullOrEmpty(filters["tipoTransaccion"]) || item.TipoTransaccion.Equals(filters["tipoTransaccion"], StringComparison.OrdinalIgnoreCase)) &&
-                (string.IsNullOrEmpty(filters["guardaAprobador"]) || item.GuardaAprobador.Contains(filters["guardaAprobador"], StringComparison.OrdinalIgnoreCase))
-            ).ToList();
-            CurrentCorporativoPage = 1; // Resetear a la primera página al filtrar
-        }
-        else if (filterType == "visitante")
-        {
-            FilteredVisitanteItems = AllVisitanteItems.Where(item =>
-                (string.IsNullOrEmpty(filters["nombreVisitante"]) || item.NombreVisitante.Contains(filters["nombreVisitante"], StringComparison.OrdinalIgnoreCase)) &&
-                (string.IsNullOrEmpty(filters["marca"]) || item.Marca.Contains(filters["marca"], StringComparison.OrdinalIgnoreCase)) &&
-                (string.IsNullOrEmpty(filters["tipoTransaccion"]) || item.TipoTransaccion.Equals(filters["tipoTransaccion"], StringComparison.OrdinalIgnoreCase)) &&
-                (string.IsNullOrEmpty(filters["aprobadoPor"]) || item.AprobadoPor.Contains(filters["aprobadoPor"], StringComparison.OrdinalIgnoreCase))
-            ).ToList();
-            CurrentVisitantePage = 1; // Resetear a la primera página al filtrar
-        }
-        StateHasChanged(); // Vuelve a renderizar el componente con los datos filtrados
-    }
-
-    #region Datos Hardcoreados Tablas dinamicas Dashboard (DEBUG)
-    //      --- MÉTODO DE CARGA DE DATOS DE EJEMPLO ---
-    //     private void LoadSampleData()
-    //     {
-    //         var rand = new Random();
-    //         AllCorporativoItems = Enumerable.Range(1, 50).Select(i => new TransaccionCorporativo
-    //         {
-    //             Usuario = $"Usuario {i}",
-    //             CodigoBarras = $"CB-{rand.Next(1000, 9999)}",
-    //             TipoTransaccion = rand.Next(0, 2) == 0 ? "entrada" : "salida",
-    //             GuardaAprobador = $"Guarda {rand.Next(1, 5)}",
-    //             SedeOS = $"Sede {rand.Next(1, 4)}"
-    //         }).ToList();
-
-    //         AllVisitanteItems = Enumerable.Range(1, 30).Select(i => new TransaccionVisitante
-    //         {
-    //             NombreVisitante = $"Visitante {i}",
-    //             Marca = $"Marca {rand.Next(1, 10)}",
-    //             TipoTransaccion = rand.Next(0, 2) == 0 ? "entrada" : "salida",
-    //             AprobadoPor = $"Guarda {rand.Next(1, 5)}",
-    //             Sede = $"Sede {rand.Next(1, 4)}"
-    //         }).ToList();
-    //     }
-    #endregion
-
-}
-
-
-<!--JAVASCRIPT (TUS FILTROS, PERO CONECTADOS A C#)-->
 
 <script>
     function initDashboardUI(dotNetHelper) {
@@ -325,7 +207,6 @@
 
         let debounceTimer;
 
-        // CAMBIO CLAVE: Esta función ahora llama a C# en lugar de solo disparar un evento
         function triggerFilterUpdate() {
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(() => {
@@ -341,7 +222,7 @@
                 });
                 console.log(`Llamando a C# para aplicar filtros para ${filterType}:`, filters);
 
-                // Aquí está la magia: Llamamos al método [JSInvokable] de C#
+                // Llamamos al método [JSInvokable] de C#
                 dotNetHelper.invokeMethodAsync('ApplyFiltersFromJS', filterType, filters);
             }, 300);
         }
@@ -373,3 +254,172 @@
         });
     }
 </script>
+
+@code {
+    // --- MODELOS DE DATOS ---
+    public class TransaccionCorporativo
+    {
+        public string Usuario { get; set; }
+        public string CodigoBarras { get; set; }
+        public string TipoTransaccion { get; set; }
+        public string GuardaAprobador { get; set; }
+        public string SedeOS { get; set; }
+    }
+
+    public class TransaccionVisitante
+    {
+        public string NombreVisitante { get; set; }
+        public string Marca { get; set; }
+        public string TipoTransaccion { get; set; }
+        public string AprobadoPor { get; set; }
+        public string Sede { get; set; }
+    }
+
+    // --- ESTADO Y DATOS ---
+    private const int PageSize = 6; // Tamaño de página fijo a 6
+
+    // Datos completos
+    private List<TransaccionCorporativo> AllCorporativoItems { get; set; } = new();
+    private List<TransaccionVisitante> AllVisitanteItems { get; set; } = new();
+
+    // Datos filtrados
+    private List<TransaccionCorporativo> FilteredCorporativoItems { get; set; } = new();
+    private List<TransaccionVisitante> FilteredVisitanteItems { get; set; } = new();
+
+    // Estado de paginación
+    private int CurrentCorporativoPage { get; set; } = 1;
+    private int CurrentVisitantePage { get; set; } = 1;
+
+    // --- PROPIEDADES CALCULADAS PARA LA PAGINACIÓN MEJORADAS ---
+    private List<TransaccionCorporativo> PaginatedCorporativoItems
+    {
+        get
+        {
+            var items = FilteredCorporativoItems.Skip((CurrentCorporativoPage - 1) * PageSize).Take(PageSize).ToList();
+
+            // Asegurar que siempre tengamos 6 filas visualmente
+            while (items.Count < PageSize && items.Count > 0)
+            {
+                items.Add(new TransaccionCorporativo()); // Fila vacía
+            }
+
+            return items;
+        }
+    }
+
+    private int TotalCorporativoPages =>
+        Math.Max(1, (int)Math.Ceiling((double)FilteredCorporativoItems.Count / PageSize));
+
+    private List<TransaccionVisitante> PaginatedVisitanteItems
+    {
+        get
+        {
+            var items = FilteredVisitanteItems.Skip((CurrentVisitantePage - 1) * PageSize).Take(PageSize).ToList();
+
+            // Asegurar que siempre tengamos 6 filas visualmente
+            while (items.Count < PageSize && items.Count > 0)
+            {
+                items.Add(new TransaccionVisitante()); // Fila vacía
+            }
+
+            return items;
+        }
+    }
+
+    private int TotalVisitantePages =>
+        Math.Max(1, (int)Math.Ceiling((double)FilteredVisitanteItems.Count / PageSize));
+
+    // --- CONTADORES ---
+    private int TotalHoy => AllCorporativoItems.Count + AllVisitanteItems.Count;
+    private int TotalNormales => AllCorporativoItems.Count;
+    private int TotalVisitantes => AllVisitanteItems.Count;
+
+    // --- MÉTODOS DE CICLO DE VIDA ---
+    protected override async Task OnInitializedAsync()
+    {
+
+        FilteredCorporativoItems = AllCorporativoItems;
+        FilteredVisitanteItems = AllVisitanteItems;
+
+        await base.OnInitializedAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("initDashboardUI", DotNetObjectReference.Create(this));
+            StateHasChanged(); // Forzar actualización después de cargar datos
+        }
+    }
+
+    // --- MÉTODOS DE PAGINACIÓN MEJORADOS ---
+    private void GoToPreviousCorporativoPage()
+    {
+        if (CurrentCorporativoPage > 1)
+        {
+            CurrentCorporativoPage--;
+            StateHasChanged();
+        }
+    }
+
+    private void GoToNextCorporativoPage()
+    {
+        if (CurrentCorporativoPage < TotalCorporativoPages)
+        {
+            CurrentCorporativoPage++;
+            StateHasChanged();
+        }
+    }
+
+    private void GoToPreviousVisitantePage()
+    {
+        if (CurrentVisitantePage > 1)
+        {
+            CurrentVisitantePage--;
+            StateHasChanged();
+        }
+    }
+
+    private void GoToNextVisitantePage()
+    {
+        if (CurrentVisitantePage < TotalVisitantePages)
+        {
+            CurrentVisitantePage++;
+            StateHasChanged();
+        }
+    }
+
+    // --- MÉTODO QUE SERÁ LLAMADO DESDE JAVASCRIPT PARA APLICAR FILTROS ---
+    [JSInvokable]
+    public void ApplyFiltersFromJS(string filterType, Dictionary<string, string> filters)
+    {
+        if (filterType == "corporativo")
+        {
+            FilteredCorporativoItems = AllCorporativoItems.Where(item =>
+                (string.IsNullOrEmpty(filters["usuario"]) || (item.Usuario?.Contains(filters["usuario"], StringComparison.OrdinalIgnoreCase) ?? false)) &&
+                (string.IsNullOrEmpty(filters["codigoBarras"]) || (item.CodigoBarras?.Contains(filters["codigoBarras"], StringComparison.OrdinalIgnoreCase) ?? false)) &&
+                (string.IsNullOrEmpty(filters["tipoTransaccion"]) || (item.TipoTransaccion?.Equals(filters["tipoTransaccion"], StringComparison.OrdinalIgnoreCase) ?? false)) &&
+                (string.IsNullOrEmpty(filters["guardaAprobador"]) || (item.GuardaAprobador?.Contains(filters["guardaAprobador"], StringComparison.OrdinalIgnoreCase) ?? false))
+            ).ToList();
+
+            // Asegurar que la página actual sea válida después de filtrar
+            CurrentCorporativoPage = Math.Min(CurrentCorporativoPage, TotalCorporativoPages);
+            if (CurrentCorporativoPage < 1) CurrentCorporativoPage = 1;
+        }
+        else if (filterType == "visitante")
+        {
+            FilteredVisitanteItems = AllVisitanteItems.Where(item =>
+                (string.IsNullOrEmpty(filters["nombreVisitante"]) || (item.NombreVisitante?.Contains(filters["nombreVisitante"], StringComparison.OrdinalIgnoreCase) ?? false)) &&
+                (string.IsNullOrEmpty(filters["marca"]) || (item.Marca?.Contains(filters["marca"], StringComparison.OrdinalIgnoreCase) ?? false)) &&
+                (string.IsNullOrEmpty(filters["tipoTransaccion"]) || (item.TipoTransaccion?.Equals(filters["tipoTransaccion"], StringComparison.OrdinalIgnoreCase) ?? false)) &&
+                (string.IsNullOrEmpty(filters["aprobadoPor"]) || (item.AprobadoPor?.Contains(filters["aprobadoPor"], StringComparison.OrdinalIgnoreCase) ?? false))
+            ).ToList();
+
+            // Asegurar que la página actual sea válida después de filtrar
+            CurrentVisitantePage = Math.Min(CurrentVisitantePage, TotalVisitantePages);
+            if (CurrentVisitantePage < 1) CurrentVisitantePage = 1;
+        }
+        StateHasChanged();
+    }
+}

@@ -16,7 +16,7 @@
     font-family: 'Open Sans', sans-serif;
     background-color: #ffffff;
     border-radius: 15px;
-    box-shadow: 2px 0 15px rgba(0,0,0,0.1);
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     padding: 12px 0;
     overflow-y: auto;
     transition: all 0.3s ease;
@@ -307,6 +307,18 @@
     }
 }
 
+@media (max-width: 768px) {
+    .cerrar {
+        transform: translateX(-110%);
+        visibility: hidden;
+    }
+
+        .cerrar.mobile-open {
+            transform: translateX(0);
+            visibility: visible;
+        }
+}
+
 /* Scrollbar personalizado */
 .cerrar::-webkit-scrollbar {
     width: 3px;
@@ -325,3 +337,45 @@
     .cerrar::-webkit-scrollbar-thumb:hover {
         background: #c40022;
     }
+
+/* Asegura transición sobre transform (si ya lo tienes está ok, pero reforzamos) */
+.cerrar {
+    transition: transform 0.3s ease, visibility 0.3s;
+}
+
+/* Botón hamburguesa */
+.hamburger-btn {
+    display: none;
+    position: fixed;
+    top: 18px;
+    left: 18px;
+    z-index: 1100;
+    background: #ea0029;
+    border: none;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 20px;
+    padding: 8px 10px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+/* comportamiento móvil: ocultar lateral por defecto y mostrar botón */
+@media (max-width: 768px) {
+    .hamburger-btn {
+        display: block;
+    }
+
+    /* aseguramos que por defecto esté fuera de pantalla */
+    .cerrar {
+        transform: translateX(-110%);
+        visibility: hidden;
+    }
+
+        /* al abrir */
+        .cerrar.mobile-open {
+            transform: translateX(0);
+            visibility: visible;
+        }
+}
+

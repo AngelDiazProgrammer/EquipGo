@@ -1,29 +1,21 @@
 ﻿@page "/usuarios"
 @using Microsoft.AspNetCore.Authorization
 @using OUT_OS_APP.EQUIPGO.DTO.DTOs.Equipo
+@using OUT_APP_EQUIPGO.Components.Shared
 
-<!-- ================================ -->
-<!-- REFERENCIA CSS -->
-<!-- ================================ -->
 <link href="css/Dashboard/dashboard.css" rel="stylesheet" />
 
 <div class="frame-container">
-
-    <!-- ================================ -->
     <!-- ENCABEZADO -->
-    <!-- ================================ -->
     <div class="dashboard-parent">
         <b class="dashboard-equipgo">Gestión de Usuarios</b>
         <div class="logo-os">
             <img class="dashboard-vector-icon" alt="Logo" src="img/logoOutsourcing.png" />
         </div>
-    </div> <!-- ✅ ESTE ES EL DIV QUE FALTABA CERRAR -->
+    </div>
 
-    <!-- ================================ -->
     <!-- CONTADORES -->
-    <!-- ================================ -->
     <div class="info">
-
         <div class="card-registros">
             <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
@@ -53,423 +45,80 @@
                 <b class="transacciones-de-hoy">Usuarios Inactivos</b>
             </div>
         </div>
-
     </div>
 
-    <!-- ================================ -->
     <!-- CONTENIDO PRINCIPAL -->
-    <!-- ================================ -->
     <div class="contenido">
-
-        <!-- FILTROS -->
+        <!-- FILTROS ACTUALIZADOS -->
         <div class="dashboard-filtros">
-
             <div class="dashboard-filtro">
-
+                <!-- Filtro por Número de Documento -->
                 <div class="buscar-nombre">
-                    <b class="dashboard-equipgo">Área</b>
+                    <b class="dashboard-equipgo">N° Documento</b>
                     <div class="frame-div">
                         <div class="placeholder-wrapper">
-                            <input type="text" class="placeholder" @bind="filtroArea" placeholder="Filtrar por área..." />
+                            <input type="text"
+                                   class="placeholder"
+                                   @bind="filtroNumeroDocumento"
+                                   @oninput="OnFiltroNumeroDocumentoChanged"
+                                   placeholder="Buscar por documento..." />
                         </div>
                     </div>
                 </div>
 
+                <!-- Filtro por Nombre Completo -->
+                <div class="buscar-nombre">
+                    <b class="dashboard-equipgo">Nombre Completo</b>
+                    <div class="frame-div">
+                        <div class="placeholder-wrapper">
+                            <input type="text"
+                                   class="placeholder"
+                                   @bind="filtroNombreCompleto"
+                                   @oninput="OnFiltroNombreCompletoChanged"
+                                   placeholder="Buscar por nombre..." />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtro por Campaña -->
                 <div class="buscar-nombre">
                     <b class="dashboard-equipgo">Campaña</b>
                     <div class="frame-div">
                         <div class="placeholder-wrapper">
-                            <input type="text" class="placeholder" @bind="filtroCampaña" placeholder="Filtrar por campaña..." />
+                            <input type="text"
+                                   class="placeholder"
+                                   @bind="filtroCampaña"
+                                   @oninput="OnFiltroCampañaChanged"
+                                   placeholder="Filtrar por campaña..." />
                         </div>
                     </div>
                 </div>
-
-                <div class="buscar-nombre">
-                    <b class="dashboard-equipgo">Estado</b>
-                    <div class="frame-div">
-                        <div class="placeholder-wrapper">
-                            <input type="text" class="placeholder" @bind="filtroEstado" placeholder="Filtrar por estado..." />
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- BOTONERA -->
-            <div class="botonera">
-                <button class="botn3" @onclick="Filtrar">Aplicar Filtros
-                </button>
-                <button class="botn3" style="background-color:#E0E0E0; color:#292929;" @onclick="LimpiarFiltros">Limpiar
-                </button>
             </div>
         </div>
-        <!-- Botón para añadir usuario -->
+
+        <!-- Botones -->
         <div class="botonera">
-            <!-- Botón Añadir Usuario -->
             <button class="botn3" onclick="abrirModalCrearUsuario()">
                 <i class="bi bi-plus-lg"></i> Añadir Usuario
             </button>
-
-            <!-- Botón Carga Masiva -->
             <button class="botn3" onclick="abrirModalCargaMasiva()">
                 <i class="bi bi-upload"></i> Carga Masiva
             </button>
         </div>
 
-        <!-- Modal Crear usuario-->
-        <div class="modal fade modal-equipgo" id="modalCrearUsuario" tabindex="-1" aria-labelledby="modalCrearUsuarioLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header-equipgo">
-                        <h5 class="modal-title-equipgo" id="tituloModalUsuario">Crear Usuario</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body-equipgo">
-                        <form id="formCrearUsuario">
-                            <div class="seccion-modal">
-                                <div class="seccion-header">
-                                    <span class="seccion-titulo">👤 Información del Usuario</span>
-                                </div>
-                                <div class="seccion-datos">
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <div class="form-section">
-                                                <label>Tipo de Documento <span class="text-danger">*</span></label>
-                                                <select id="crearTipoDocumento" required>
-                                                    <option value="">Seleccionar...</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-section">
-                                                <label>Número de Documento <span class="text-danger">*</span></label>
-                                                <input type="text" id="crearNumeroDocumento" required placeholder="Ej: 1234567890" />
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-section">
-                                                <label>Nombres <span class="text-danger">*</span></label>
-                                                <input type="text" id="crearNombres" required placeholder="Ej: Juan" />
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-section">
-                                                <label>Apellidos <span class="text-danger">*</span></label>
-                                                <input type="text" id="crearApellidos" required placeholder="Ej: Pérez" />
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="form-section">
-                                                <label>Área <span class="text-danger">*</span></label>
-                                                <select id="crearArea" required>
-                                                    <option value="">Seleccionar...</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-section">
-                                                <label>Campaña <span class="text-danger">*</span></label>
-                                                <select id="crearCampana" required>
-                                                    <option value="">Seleccionar...</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-section">
-                                                <label>Estado <span class="text-danger">*</span></label>
-                                                <select id="crearEstado" required>
-                                                    <option value="">Seleccionar...</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer-equipgo">
-                        <button class="boton-modal-equipgo boton-modal-secundario" data-bs-dismiss="modal">Cancelar</button>
-                        <button class="boton-modal-equipgo" onclick="guardarUsuario()">Guardar</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Modal Carga Masiva Usuarios -->
-        <div class="modal fade modal-equipgo" id="modalCargaMasivaUsuarios" tabindex="-1" aria-labelledby="modalCargaMasivaUsuariosLabel" aria-hidden="true">
-            <div class="modal-dialog modal-xl">
-                <div class="modal-content">
-                    <div class="modal-header-equipgo">
-                        <h5 class="modal-title-equipgo">Carga Masiva de Usuarios</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body-equipgo">
-                        <!-- Instrucciones -->
-                        <div class="seccion-modal">
-                            <div class="seccion-header">
-                                <span class="seccion-titulo">📋 Instrucciones</span>
-                            </div>
-                            <div class="seccion-datos">
-                                <div class="alert alert-info">
-                                    <strong>Pasos para la carga masiva:</strong>
-                                    <ol class="mb-0 mt-2">
-                                        <li>Descarga la plantilla Excel</li>
-                                        <li>Llena los datos de los usuarios</li>
-                                        <li>Sube el archivo completado</li>
-                                        <li>Revisa los resultados</li>
-                                    </ol>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Plantilla -->
-                        <div class="seccion-modal">
-                            <div class="seccion-header">
-                                <span class="seccion-titulo">📄 Plantilla</span>
-                            </div>
-                            <div class="seccion-datos">
-                                <div class="row">
-                                    <div class="col-md-8">
-                                        <p>Descarga la plantilla Excel para cargar los usuarios de forma masiva:</p>
-                                        <button class="botn3" onclick="descargarPlantillaCargaMasivaUsuarios()">
-                                            <i class="bi bi-download"></i> Descargar Plantilla Excel
-                                        </button>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="card border-primary">
-                                            <div class="card-body">
-                                                <h6 class="card-title">Columnas requeridas:</h6>
-                                                <ul class="small mb-0">
-                                                    <li><strong>IdTipoDocumento</strong> (Obligatorio)</li>
-                                                    <li><strong>NumeroDocumento</strong> (Obligatorio)</li>
-                                                    <li><strong>Nombres</strong> (Obligatorio)</li>
-                                                    <li><strong>Apellidos</strong> (Obligatorio)</li>
-                                                    <li><strong>IdArea</strong> (Obligatorio)</li>
-                                                    <li><strong>IdCampaña</strong> (Obligatorio)</li>
-                                                    <li><strong>IdEstado</strong> (Obligatorio)</li>
-                                                </ul>
-                                                <hr>
-                                                <small class="text-muted">
-                                                    <strong>Nota:</strong> Los IDs deben corresponder a los valores existentes en la base de datos.
-                                                </small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Subir archivo -->
-                        <div class="seccion-modal">
-                            <div class="seccion-header">
-                                <span class="seccion-titulo">📤 Subir Archivo</span>
-                            </div>
-                            <div class="seccion-datos">
-                                <div class="mb-3">
-                                    <label for="fileCargaMasivaUsuarios" class="form-label fw-bold">Seleccionar archivo Excel:</label>
-                                    <input type="file" id="fileCargaMasivaUsuarios" class="form-control" accept=".xlsx, .xls" />
-                                </div>
-
-                                <!-- Información del archivo -->
-                                <div id="infoArchivoUsuarios" class="alert alert-light" style="display: none;">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <i class="bi bi-file-earmark-excel text-success"></i>
-                                            <span id="nombreArchivoUsuarios" class="fw-bold"></span>
-                                            <span id="cantidadUsuarios" class="badge bg-primary ms-2"></span>
-                                        </div>
-                                        <button type="button" class="btn-close" onclick="limpiarArchivoUsuarios()"></button>
-                                    </div>
-                                </div>
-
-                                <small class="text-muted">
-                                    <i class="bi bi-info-circle"></i> Formatos soportados: Excel (.xlsx, .xls). Tamaño máximo: 10MB
-                                </small>
-                            </div>
-                        </div>
-
-                        <!-- Resultados -->
-                        <div class="seccion-modal" id="resultadosCargaUsuarios" style="display: none;">
-                            <div class="seccion-header">
-                                <span class="seccion-titulo">📊 Resultados del Procesamiento</span>
-                            </div>
-                            <div class="seccion-datos">
-                                <!-- Resumen -->
-                                <div id="resumenCargaUsuarios" class="mb-4">
-                                    <div class="row text-center">
-                                        <div class="col-md-4">
-                                            <div class="card bg-light">
-                                                <div class="card-body py-3">
-                                                    <h4 id="totalRegistrosUsuarios" class="text-primary mb-0">0</h4>
-                                                    <small class="text-muted">Total Registros</small>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="card bg-light">
-                                                <div class="card-body py-3">
-                                                    <h4 id="registrosExitososUsuarios" class="text-success mb-0">0</h4>
-                                                    <small class="text-muted">Éxitos</small>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="card bg-light">
-                                                <div class="card-body py-3">
-                                                    <h4 id="registrosFallidosUsuarios" class="text-danger mb-0">0</h4>
-                                                    <small class="text-muted">Fallidos</small>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Mensaje principal -->
-                                <div id="mensajeResultadoUsuarios" class="alert mb-3"></div>
-
-                                <!-- Errores detallados -->
-                                <div id="panelErroresUsuarios" style="display: none;">
-                                    <h6 class="text-danger mb-3">
-                                        <i class="bi bi-exclamation-triangle"></i> Errores encontrados:
-                                    </h6>
-                                    <div class="table-wrapper" style="max-height: 300px; overflow-y: auto;">
-                                        <table class="table table-sm table-striped">
-                                            <thead class="sticky-top bg-light">
-                                                <tr>
-                                                    <th width="80">Fila</th>
-                                                    <th>Nombres</th>
-                                                    <th>Apellidos</th>
-                                                    <th>Documento</th>
-                                                    <th>Error</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="tbodyErroresUsuarios"></tbody>
-                                        </table>
-                                    </div>
-                                    <div class="mt-2 text-end">
-                                        <button class="btn btn-sm btn-outline-secondary" onclick="exportarErroresUsuarios()">
-                                            <i class="bi bi-download"></i> Exportar Errores
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <!-- Éxitos -->
-                                <div id="panelExitososUsuarios" style="display: none;" class="mt-4">
-                                    <h6 class="text-success mb-3">
-                                        <i class="bi bi-check-circle"></i> Registros procesados exitosamente
-                                    </h6>
-                                    <div class="alert alert-success">
-                                        <i class="bi bi-info-circle"></i> Los usuarios han sido registrados correctamente en el sistema.
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer-equipgo">
-                        <button class="boton-modal-equipgo boton-modal-secundario" data-bs-dismiss="modal" onclick="limpiarModalCargaUsuarios()">
-                            <i class="bi bi-x-circle"></i> Cancelar
-                        </button>
-                        <button class="boton-modal-equipgo" id="procesarCargaBtnUsuarios" disabled>
-                            <i class="bi bi-upload"></i> Procesar Carga Masiva
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Modal Editar Usuario -->
-        <div class="modal fade modal-equipgo" id="modalEditarUsuario" tabindex="-1" aria-labelledby="modalEditarUsuarioLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header-equipgo">
-                        <h5 class="modal-title-equipgo">Editar Usuario</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="limpiarFormularioEditarUsuario()"></button>
-                    </div>
-                    <div class="modal-body-equipgo">
-                        <form id="formEditarUsuario">
-                            <input type="hidden" id="editarId" />
-
-                            <div class="seccion-modal">
-                                <div class="seccion-header">
-                                    <span class="seccion-titulo">👤 Información del Usuario</span>
-                                </div>
-                                <div class="seccion-datos">
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <div class="form-section">
-                                                <label>Tipo de Documento <span class="text-danger">*</span></label>
-                                                <select id="editarTipoDocumento" required>
-                                                    <option value="">Seleccionar...</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-section">
-                                                <label>Número de Documento <span class="text-danger">*</span></label>
-                                                <input type="text" id="editarNumeroDocumento" required placeholder="Ej: 1234567890" />
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-section">
-                                                <label>Nombres <span class="text-danger">*</span></label>
-                                                <input type="text" id="editarNombres" required placeholder="Ej: Juan" />
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-section">
-                                                <label>Apellidos <span class="text-danger">*</span></label>
-                                                <input type="text" id="editarApellidos" required placeholder="Ej: Pérez" />
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="form-section">
-                                                <label>Área <span class="text-danger">*</span></label>
-                                                <select id="editarArea" required>
-                                                    <option value="">Seleccionar...</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-section">
-                                                <label>Campaña <span class="text-danger">*</span></label>
-                                                <select id="editarCampana" required>
-                                                    <option value="">Seleccionar...</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-section">
-                                                <label>Estado <span class="text-danger">*</span></label>
-                                                <select id="editarEstado" required>
-                                                    <option value="">Seleccionar...</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer-equipgo">
-                        <button class="boton-modal-equipgo boton-modal-secundario" data-bs-dismiss="modal" onclick="limpiarFormularioEditarUsuario()">Cancelar</button>
-                        <button class="boton-modal-equipgo" id="btnGuardarEditarUsuario" onclick="guardarCambiosUsuario()">💾 Guardar Cambios</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- TABLA DE USUARIOS -->
-        @if (usuariosFiltrados == null)
+        <!-- TABLA CON PAGINACIÓN BLAZOR -->
+        @if (isCargandoUsuarios)
         {
-            <p>Cargando usuarios...</p>
+            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 50; pointer-events: none;">
+                <div style="position: relative; width: 56px; height: 56px;">
+                    <div style="width: 56px; height: 56px; border: 4px solid #ef4444; border-top-color: transparent; border-radius: 50%; animation: spin-slow 1.4s linear infinite;"></div>
+                </div>
+                <p style="margin-top: 12px; color: #ef4444; font-size: 18px; font-weight: 600; letter-spacing: 0.025em; animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;">
+                    Cargando usuarios...
+                </p>
+            </div>
         }
-        else if (!usuariosFiltrados.Any())
+        else if (!usuariosPaginados.Any())
         {
             <p>No hay usuarios que coincidan con los filtros.</p>
         }
@@ -489,7 +138,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var usuario in usuariosFiltrados)
+                        @foreach (var usuario in usuariosPaginados)
                         {
                             <tr>
                                 <td>@usuario.TipoDocumento</td>
@@ -506,41 +155,383 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- COMPONENTE DE PAGINACIÓN -->
+            <Paginacion TotalRegistros="@usuariosFiltrados.Count"
+                        PaginaActual="@paginaActual"
+                        PaginaActualChanged="@OnPaginaCambiada"
+                        RegistrosPorPagina="@registrosPorPagina"
+                        RegistrosPorPaginaChanged="@OnRegistrosPorPaginaCambiados"
+                        ModoAuto="@modoAuto"
+                        ModoAutoChanged="@OnModoAutoCambiado" />
         }
     </div>
 </div>
+<!-- Modal Crear usuario-->
+<div class="modal fade modal-equipgo" id="modalCrearUsuario" tabindex="-1" aria-labelledby="modalCrearUsuarioLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header-equipgo">
+                <h5 class="modal-title-equipgo" id="tituloModalUsuario">Crear Usuario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body-equipgo">
+                <form id="formCrearUsuario">
+                    <div class="seccion-modal">
+                        <div class="seccion-header">
+                            <span class="seccion-titulo">👤 Información del Usuario</span>
+                        </div>
+                        <div class="seccion-datos">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-section">
+                                        <label>Tipo de Documento <span class="text-danger">*</span></label>
+                                        <select id="crearTipoDocumento" required>
+                                            <option value="">Seleccionar...</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-section">
+                                        <label>Número de Documento <span class="text-danger">*</span></label>
+                                        <input type="text" id="crearNumeroDocumento" required placeholder="Ej: 1234567890" />
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-section">
+                                        <label>Nombres <span class="text-danger">*</span></label>
+                                        <input type="text" id="crearNombres" required placeholder="Ej: Juan" />
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-section">
+                                        <label>Apellidos <span class="text-danger">*</span></label>
+                                        <input type="text" id="crearApellidos" required placeholder="Ej: Pérez" />
+                                    </div>
+                                </div>
+                            </div>
 
-<!-- ================================ -->
-<!-- ESTILOS -->
-<!-- ================================ -->
-@* <style>
-    #tablaUsuarios {
-        width: 100% !important;
-        border-collapse: collapse !important;
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-section">
+                                        <label>Área <span class="text-danger">*</span></label>
+                                        <select id="crearArea" required>
+                                            <option value="">Seleccionar...</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-section">
+                                        <label>Campaña <span class="text-danger">*</span></label>
+                                        <select id="crearCampana" required>
+                                            <option value="">Seleccionar...</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-section">
+                                        <label>Estado <span class="text-danger">*</span></label>
+                                        <select id="crearEstado" required>
+                                            <option value="">Seleccionar...</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer-equipgo">
+                <button class="boton-modal-equipgo boton-modal-secundario" data-bs-dismiss="modal">Cancelar</button>
+                <button class="boton-modal-equipgo" onclick="guardarUsuario()">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Carga Masiva Usuarios -->
+<div class="modal fade modal-equipgo" id="modalCargaMasivaUsuarios" tabindex="-1" aria-labelledby="modalCargaMasivaUsuariosLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header-equipgo">
+                <h5 class="modal-title-equipgo">Carga Masiva de Usuarios</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body-equipgo">
+                <!-- Instrucciones -->
+                <div class="seccion-modal">
+                    <div class="seccion-header">
+                        <span class="seccion-titulo">📋 Instrucciones</span>
+                    </div>
+                    <div class="seccion-datos">
+                        <div class="alert alert-info">
+                            <strong>Pasos para la carga masiva:</strong>
+                            <ol class="mb-0 mt-2">
+                                <li>Descarga la plantilla Excel</li>
+                                <li>Llena los datos de los usuarios</li>
+                                <li>Sube el archivo completado</li>
+                                <li>Revisa los resultados</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Plantilla -->
+                <div class="seccion-modal">
+                    <div class="seccion-header">
+                        <span class="seccion-titulo">📄 Plantilla</span>
+                    </div>
+                    <div class="seccion-datos">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <p>Descarga la plantilla Excel para cargar los usuarios de forma masiva:</p>
+                                <button class="botn3" onclick="descargarPlantillaCargaMasivaUsuarios()">
+                                    <i class="bi bi-download"></i> Descargar Plantilla Excel
+                                </button>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card border-primary">
+                                    <div class="card-body">
+                                        <h6 class="card-title">Columnas requeridas:</h6>
+                                        <ul class="small mb-0">
+                                            <li><strong>IdTipoDocumento</strong> (Obligatorio)</li>
+                                            <li><strong>NumeroDocumento</strong> (Obligatorio)</li>
+                                            <li><strong>Nombres</strong> (Obligatorio)</li>
+                                            <li><strong>Apellidos</strong> (Obligatorio)</li>
+                                            <li><strong>IdArea</strong> (Obligatorio)</li>
+                                            <li><strong>IdCampaña</strong> (Obligatorio)</li>
+                                            <li><strong>IdEstado</strong> (Obligatorio)</li>
+                                        </ul>
+                                        <hr>
+                                        <small class="text-muted">
+                                            <strong>Nota:</strong> Los IDs deben corresponder a los valores existentes en la base de datos.
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Subir archivo -->
+                <div class="seccion-modal">
+                    <div class="seccion-header">
+                        <span class="seccion-titulo">📤 Subir Archivo</span>
+                    </div>
+                    <div class="seccion-datos">
+                        <div class="mb-3">
+                            <label for="fileCargaMasivaUsuarios" class="form-label fw-bold">Seleccionar archivo Excel:</label>
+                            <input type="file" id="fileCargaMasivaUsuarios" class="form-control" accept=".xlsx, .xls" />
+                        </div>
+
+                        <!-- Información del archivo -->
+                        <div id="infoArchivoUsuarios" class="alert alert-light" style="display: none;">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="bi bi-file-earmark-excel text-success"></i>
+                                    <span id="nombreArchivoUsuarios" class="fw-bold"></span>
+                                    <span id="cantidadUsuarios" class="badge bg-primary ms-2"></span>
+                                </div>
+                                <button type="button" class="btn-close" onclick="limpiarArchivoUsuarios()"></button>
+                            </div>
+                        </div>
+
+                        <small class="text-muted">
+                            <i class="bi bi-info-circle"></i> Formatos soportados: Excel (.xlsx, .xls). Tamaño máximo: 10MB
+                        </small>
+                    </div>
+                </div>
+
+                <!-- Resultados -->
+                <div class="seccion-modal" id="resultadosCargaUsuarios" style="display: none;">
+                    <div class="seccion-header">
+                        <span class="seccion-titulo">📊 Resultados del Procesamiento</span>
+                    </div>
+                    <div class="seccion-datos">
+                        <!-- Resumen -->
+                        <div id="resumenCargaUsuarios" class="mb-4">
+                            <div class="row text-center">
+                                <div class="col-md-4">
+                                    <div class="card bg-light">
+                                        <div class="card-body py-3">
+                                            <h4 id="totalRegistrosUsuarios" class="text-primary mb-0">0</h4>
+                                            <small class="text-muted">Total Registros</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card bg-light">
+                                        <div class="card-body py-3">
+                                            <h4 id="registrosExitososUsuarios" class="text-success mb-0">0</h4>
+                                            <small class="text-muted">Éxitos</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card bg-light">
+                                        <div class="card-body py-3">
+                                            <h4 id="registrosFallidosUsuarios" class="text-danger mb-0">0</h4>
+                                            <small class="text-muted">Fallidos</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mensaje principal -->
+                        <div id="mensajeResultadoUsuarios" class="alert mb-3"></div>
+
+                        <!-- Errores detallados -->
+                        <div id="panelErroresUsuarios" style="display: none;">
+                            <h6 class="text-danger mb-3">
+                                <i class="bi bi-exclamation-triangle"></i> Errores encontrados:
+                            </h6>
+                            <div class="table-wrapper" style="max-height: 300px; overflow-y: auto;">
+                                <table class="table table-sm table-striped">
+                                    <thead class="sticky-top bg-light">
+                                        <tr>
+                                            <th width="80">Fila</th>
+                                            <th>Nombres</th>
+                                            <th>Apellidos</th>
+                                            <th>Documento</th>
+                                            <th>Error</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbodyErroresUsuarios"></tbody>
+                                </table>
+                            </div>
+                            <div class="mt-2 text-end">
+                                <button class="btn btn-sm btn-outline-secondary" onclick="exportarErroresUsuarios()">
+                                    <i class="bi bi-download"></i> Exportar Errores
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Éxitos -->
+                        <div id="panelExitososUsuarios" style="display: none;" class="mt-4">
+                            <h6 class="text-success mb-3">
+                                <i class="bi bi-check-circle"></i> Registros procesados exitosamente
+                            </h6>
+                            <div class="alert alert-success">
+                                <i class="bi bi-info-circle"></i> Los usuarios han sido registrados correctamente en el sistema.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer-equipgo">
+                <button class="boton-modal-equipgo boton-modal-secundario" data-bs-dismiss="modal" onclick="limpiarModalCargaUsuarios()">
+                    <i class="bi bi-x-circle"></i> Cancelar
+                </button>
+                <button class="boton-modal-equipgo" id="procesarCargaBtnUsuarios" disabled>
+                    <i class="bi bi-upload"></i> Procesar Carga Masiva
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Editar Usuario -->
+<div class="modal fade modal-equipgo" id="modalEditarUsuario" tabindex="-1" aria-labelledby="modalEditarUsuarioLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header-equipgo">
+                <h5 class="modal-title-equipgo">Editar Usuario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="limpiarFormularioEditarUsuario()"></button>
+            </div>
+            <div class="modal-body-equipgo">
+                <form id="formEditarUsuario">
+                    <input type="hidden" id="editarId" />
+
+                    <div class="seccion-modal">
+                        <div class="seccion-header">
+                            <span class="seccion-titulo">👤 Información del Usuario</span>
+                        </div>
+                        <div class="seccion-datos">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-section">
+                                        <label>Tipo de Documento <span class="text-danger">*</span></label>
+                                        <select id="editarTipoDocumento" required>
+                                            <option value="">Seleccionar...</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-section">
+                                        <label>Número de Documento <span class="text-danger">*</span></label>
+                                        <input type="text" id="editarNumeroDocumento" required placeholder="Ej: 1234567890" />
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-section">
+                                        <label>Nombres <span class="text-danger">*</span></label>
+                                        <input type="text" id="editarNombres" required placeholder="Ej: Juan" />
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-section">
+                                        <label>Apellidos <span class="text-danger">*</span></label>
+                                        <input type="text" id="editarApellidos" required placeholder="Ej: Pérez" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-section">
+                                        <label>Área <span class="text-danger">*</span></label>
+                                        <select id="editarArea" required>
+                                            <option value="">Seleccionar...</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-section">
+                                        <label>Campaña <span class="text-danger">*</span></label>
+                                        <select id="editarCampana" required>
+                                            <option value="">Seleccionar...</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-section">
+                                        <label>Estado <span class="text-danger">*</span></label>
+                                        <select id="editarEstado" required>
+                                            <option value="">Seleccionar...</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer-equipgo">
+                <button class="boton-modal-equipgo boton-modal-secundario" data-bs-dismiss="modal" onclick="limpiarFormularioEditarUsuario()">Cancelar</button>
+                <button class="boton-modal-equipgo" id="btnGuardarEditarUsuario" onclick="guardarCambiosUsuario()">💾 Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    @@keyframes spin-slow {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
     }
 
-    #tablaUsuarios th {
-        background-color: #E9002B !important;
-        color: white !important;
-        padding: 8px 12px !important;
-        text-align: center !important;
-        font-weight: bold !important;
-        font-size: 0.85rem !important;
-        border: none !important;
-    }
+    @@keyframes pulse {
+        0%, 100% {
+            opacity: 1;
+        }
 
-    #tablaUsuarios td {
-        padding: 8px 12px !important;
-        border-bottom: 1px solid #ddd !important;
-        text-align: center !important;
-        font-size: 0.85rem !important;
+        50% {
+            opacity: 0.5;
+        }
     }
-
-    #tablaUsuarios tr:nth-child(even) {
-        background-color: #f9f9f9 !important;
-    }
-
-    #tablaUsuarios tr:hover {
-        background-color: #f1f1f1 !important;
-    }
-</style> *@
+</style>

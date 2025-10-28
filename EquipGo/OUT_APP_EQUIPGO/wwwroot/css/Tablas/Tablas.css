@@ -14,7 +14,7 @@
     min-height: 50vh;
     margin-top: 10px;
     max-height: 98vh;
-    overflow: hidden;
+    overflow: auto;
 }
 
     /* CONTENEDOR PRINCIPAL QUE DEBE EXPANDIRSE */
@@ -25,11 +25,12 @@
         width: 100% !important;
         min-height: 0 !important;
         gap: 16px !important;
+        align-items: center !important;
     }
 
 /* ESTILOS GENERALES PARA TODAS LAS TABLAS - CORREGIDOS */
 .table-wrapper {
-    width: 100% !important;
+    width: 95% !important;
     border-radius: 12px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15), 0px 2px 4px rgba(0, 0, 0, 0.1);
     background-color: #fff;
@@ -181,19 +182,146 @@
         border-bottom-right-radius: 10px !important;
     }
 
+    /* ========================================================================== */
+    /* ESTILOS RESPONSIVOS PARA BOTONES DE ACCIÓN - NUEVOS */
+    /* ========================================================================== */
+
+    /* CONTENEDOR DE BOTONES EN CELDAS DE ACCIÓN */
+    .table-equipgo .acciones-cell {
+        display: flex !important;
+        gap: 6px !important;
+        justify-content: center !important;
+        align-items: center !important;
+        flex-wrap: nowrap !important;
+        min-height: 45px !important;
+        padding: 8px 4px !important;
+        width: 100% !important;
+    }
+
+    /* BOTONES DE ACCIÓN BASE */
+    .table-equipgo .btn-accion {
+        min-width: 32px !important;
+        height: 32px !important;
+        padding: 6px 10px !important;
+        font-size: 0.75rem !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        transition: all 0.2s ease !important;
+        border: 0.5px solid #dc3545 !important;
+        background-color: #E9002B !important;
+        color: white !important;
+        border-radius: 6px !important;
+        cursor: pointer !important;
+        margin: 0 !important;
+        flex-shrink: 1 !important;
+        flex-grow: 0 !important;
+        font-weight: 500 !important;
+        line-height: 1 !important;
+    }
+
+        .table-equipgo .btn-accion:hover {
+            background-color: #c82333 !important;
+            border-color: #c82333 !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15) !important;
+        }
+
+        .table-equipgo .btn-accion:active {
+            transform: translateY(0) !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+        }
+
+        /* BOTONES SECUNDARIOS (si los hay) */
+        .table-equipgo .btn-accion.btn-secondary {
+            background-color: #6c757d !important;
+            border-color: #6c757d !important;
+        }
+
+            .table-equipgo .btn-accion.btn-secondary:hover {
+                background-color: #5a6268 !important;
+                border-color: #545b62 !important;
+            }
+
+        /* BOTONES CON ÍCONOS */
+        .table-equipgo .btn-accion i {
+            font-size: 0.8rem !important;
+            margin-right: 5px !important;
+            flex-shrink: 0 !important;
+        }
+
+        .table-equipgo .btn-accion .texto {
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            flex-shrink: 1 !important;
+        }
+
+    /* CELDA DE ACCIONES ESPECÍFICA */
+    .table-equipgo th.acciones-header,
+    .table-equipgo td.acciones-cell {
+        width: auto !important;
+        min-width: 180px !important;
+        max-width: 280px !important;
+        text-align: center !important;
+    }
+
+/* ========================================================================== */
 /* ESTILOS PARA PAGINACIÓN */
+/* ========================================================================== */
+
 .pagination-container {
+    width: 95% !important;
     flex-shrink: 0 !important;
     padding: 12px !important;
     border-top: 2px solid #000000 !important;
-    background-color: #f9f9f9 !important;
+    background-color: white !important;
     display: flex !important;
     justify-content: space-between !important;
     align-items: center !important;
     gap: 16px !important;
     border-radius: 0 0 10px 10px !important;
     margin-top: auto !important;
+    flex-wrap: wrap !important;
 }
+
+.pagination-controls-left {
+    display: flex !important;
+    align-items: center !important;
+    gap: 16px !important;
+    flex-wrap: wrap !important;
+}
+
+.registros-selector {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    font-size: 0.85rem !important;
+    color: #393e42 !important;
+}
+
+.registros-select {
+    padding: 4px 8px !important;
+    border: 1px solid #000000 !important;
+    border-radius: 4px !important;
+    background-color: white !important;
+    font-size: 0.85rem !important;
+    cursor: pointer !important;
+    transition: all 0.3s !important;
+}
+
+    .registros-select:hover {
+        border-color: #E9002B !important;
+    }
+
+    .registros-select:focus {
+        outline: none !important;
+        border-color: #E9002B !important;
+        box-shadow: 0 0 0 2px rgba(233, 0, 43, 0.1) !important;
+    }
 
 .pagination-info {
     font-size: 0.85rem !important;
@@ -205,6 +333,7 @@
     display: flex !important;
     gap: 8px !important;
     align-items: center !important;
+    flex-wrap: wrap !important;
 }
 
 .pagination-btn {
@@ -242,6 +371,7 @@
 .pagination-pages {
     display: flex !important;
     gap: 4px !important;
+    flex-wrap: wrap !important;
 }
 
 .page-number {
@@ -283,53 +413,67 @@
     min-width: 20px !important;
 }
 
-/* RESPONSIVE - CORREGIDO */
+/* ========================================================================== */
+/* RESPONSIVE DESIGN */
+/* ========================================================================== */
+
+/* TABLETS */
 @media (max-width: 768px) {
     .frame-container {
         padding: 12px !important;
-        border-radius: 0 !important;
         gap: 12px !important;
     }
-
-    .table-wrapper {
-        border-radius: 8px !important;
-        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1) !important;
-    }
-
-    .table-equipgo {
-        border-radius: 8px !important;
-    }
-
-        .table-equipgo th {
-            padding: 10px 6px !important;
-            font-size: 0.8rem !important;
-            height: 45px !important;
-        }
-
-        .table-equipgo td {
-            padding: 10px 6px !important;
-            font-size: 0.8rem !important;
-            height: 40px !important;
-        }
 
     .pagination-container {
         flex-direction: column !important;
         gap: 12px !important;
         padding: 8px !important;
-        border-radius: 0 0 8px 8px !important;
+    }
+
+    .pagination-controls-left {
+        justify-content: center !important;
+        gap: 12px !important;
     }
 
     .pagination-controls {
-        flex-wrap: wrap !important;
         justify-content: center !important;
     }
 
     .pagination-info {
-        text-align: center !important;
         font-size: 0.8rem !important;
+    }
+
+    .registros-selector {
+        font-size: 0.8rem !important;
+    }
+
+    /* BOTONES EN TABLET */
+    .table-equipgo .acciones-cell {
+        gap: 4px !important;
+        padding: 6px 3px !important;
+        flex-wrap: wrap !important;
+    }
+
+    .table-equipgo .btn-accion {
+        min-width: 30px !important;
+        height: 30px !important;
+        padding: 5px 8px !important;
+        font-size: 0.7rem !important;
+    }
+
+        .table-equipgo .btn-accion i {
+            font-size: 0.75rem !important;
+            margin-right: 3px !important;
+        }
+
+    .table-equipgo th.acciones-header,
+    .table-equipgo td.acciones-cell {
+        min-width: 160px !important;
+        max-width: 220px !important;
     }
 }
 
+/* MÓVILES */
 @media (max-width: 480px) {
     .pagination-btn {
         padding: 4px 8px !important;
@@ -345,6 +489,58 @@
         font-size: 0.75rem !important;
     }
 
+    .registros-select {
+        padding: 3px 6px !important;
+        font-size: 0.75rem !important;
+    }
+
+    .pagination-controls-left {
+        flex-direction: column !important;
+        gap: 8px !important;
+    }
+
+    /* BOTONES EN MÓVIL */
+    .table-equipgo .acciones-cell {
+        flex-direction: column !important;
+        gap: 3px !important;
+        padding: 4px 2px !important;
+    }
+
+    .table-equipgo .btn-accion {
+        width: 100% !important;
+        min-width: 28px !important;
+        height: 28px !important;
+        padding: 4px 6px !important;
+        font-size: 0.65rem !important;
+        justify-content: flex-start !important;
+    }
+
+    /* BOTONES SOLO CON ÍCONOS EN MÓVIL MUY PEQUEÑO */
+    @media (max-width: 360px) {
+        .table-equipgo .btn-accion .texto {
+            display: none !important;
+        }
+
+        .table-equipgo .btn-accion i {
+            margin-right: 0 !important;
+            font-size: 0.8rem !important;
+        }
+
+        .table-equipgo .btn-accion {
+            width: 32px !important;
+            height: 32px !important;
+            border-radius: 50% !important;
+            padding: 0 !important;
+            justify-content: center !important;
+        }
+    }
+
+    .table-equipgo th.acciones-header,
+    .table-equipgo td.acciones-cell {
+        min-width: 120px !important;
+        max-width: 150px !important;
+    }
+
     .table-equipgo th {
         padding: 8px 4px !important;
         font-size: 0.75rem !important;
@@ -354,8 +550,65 @@
     .table-equipgo td {
         padding: 8px 4px !important;
         font-size: 0.75rem !important;
-        height: 35px !important;
+        height: auto !important; /* Altura automática para botones apilados */
+        min-height: 35px !important;
     }
+}
+
+/* ESCRITORIO GRANDE */
+@media (min-width: 1200px) {
+    .table-equipgo .acciones-cell {
+        gap: 8px !important;
+    }
+
+    .table-equipgo .btn-accion {
+        min-width: 36px !important;
+        height: 34px !important;
+        padding: 7px 12px !important;
+        font-size: 0.8rem !important;
+    }
+}
+
+/* ========================================================================== */
+/* ESTILOS ADICIONALES PARA TABLAS */
+/* ========================================================================== */
+
+/* SCROLL HORIZONTAL EN TABLAS GRANDES */
+.table-scroll-container {
+    overflow: auto !important;
+    position: relative !important;
+}
+
+.table-equipgo {
+    width: auto !important;
+    min-width: 100% !important;
+}
+
+/* MEJORA VISUAL PARA TABLAS RESPONSIVAS */
+@media (max-width: 1024px) {
+    .table-equipgo th,
+    .table-equipgo td {
+        padding: 10px 6px !important;
+        font-size: 0.82rem !important;
+    }
+}
+
+/* ESTILOS PARA ESTADOS DE CARGA */
+.table-loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+/* ANIMACIONES SUAVES */
+.table-equipgo tbody tr {
+    transition: all 0.2s ease-in-out;
+}
+
+.pagination-btn,
+.page-number,
+.registros-select,
+.btn-accion {
+    transition: all 0.2s ease-in-out;
 }
 
 /* ESTILOS DE EMERGENCIA - SI PERSISTE EL PROBLEMA */

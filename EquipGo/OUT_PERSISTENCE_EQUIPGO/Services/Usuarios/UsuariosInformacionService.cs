@@ -755,5 +755,38 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Usuarios
         }
 
         #endregion
+
+        #region Filtros
+        public async Task<IEnumerable<object>> FiltrarAsync(Dictionary<string, string> filtros)
+        {
+            string filtroTexto = filtros.TryGetValue("nombre", out var valor) ? valor.ToLower() : "";
+
+            var query = _context.UsuariosInformacion.AsQueryable();
+
+            if (!string.IsNullOrEmpty(filtroTexto))
+            {
+                query = query.Where(u =>
+                    u.Nombres.ToLower().Contains(filtroTexto) ||
+                    u.Apellidos.ToLower().Contains(filtroTexto) ||
+                    u.NumeroDocumento.Contains(filtroTexto)
+                );
+            }
+
+            var lista = await query
+                .Select(u => new
+                {
+                    id = u.Id,
+                    tipoDocumento = u.IdTipodocumento,
+                    numeroDocumento = u.NumeroDocumento,
+                    nombreCompleto = $"{u.Nombres} {u.Apellidos}",
+                    area = u.IdArea,
+                    campana = u.IdCampaña,
+                    estado = u.Estado
+                })
+                .ToListAsync();
+
+            return lista;
+        }
+        #endregion
     }
 }

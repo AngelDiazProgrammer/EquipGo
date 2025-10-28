@@ -1,6 +1,6 @@
 ﻿@page "/equipos"
 @using OUT_OS_APP.EQUIPGO.DTO.DTOs.Equipo
-
+@using OUT_APP_EQUIPGO.Components.Shared
 <div class="frame-container">
     <!-- Encabezado -->
     <div class="dashboard-parent">
@@ -32,98 +32,109 @@
         </div>
     </div>
 
-    <!-- Filtros -->
-    <div class="dashboard-filtros">
-        <div class="dashboard-filtro">
-            <div class="buscar-nombre">
-                <label>Marca</label>
-                <div class="frame-div">
-                    <input type="text" class="placeholder" @bind="filtroMarca" placeholder="Filtrar por marca..." />
+    <!-- CONTENIDO PRINCIPAL (ESTRUCTURA IDÉNTICA A USUARIOS) -->
+    <div class="contenido">
+
+        <!-- FILTROS (DENTRO DEL CONTENIDO) -->
+        <div class="dashboard-filtros">
+            <div class="dashboard-filtro">
+                <div class="buscar-nombre">
+                    <label>Marca</label>
+                    <div class="frame-div">
+                        <input type="text"
+                               class="placeholder"
+                               @bind="filtroMarca"
+                               @oninput="OnFiltroMarcaChanged"
+                               placeholder="Filtrar por marca..." />
+                    </div>
                 </div>
-            </div>
-            <div class="buscar-nombre">
-                <label>Modelo</label>
-                <div class="frame-div">
-                    <input type="text" class="placeholder" @bind="filtroModelo" placeholder="Filtrar por modelo..." />
+                <div class="buscar-nombre">
+                    <label>Modelo</label>
+                    <div class="frame-div">
+                        <input type="text"
+                               class="placeholder"
+                               @bind="filtroModelo"
+                               @oninput="OnFiltroModeloChanged"
+                               placeholder="Filtrar por modelo..." />
+                    </div>
                 </div>
-            </div>
-            <div class="buscar-nombre">
-                <label>Serial</label>
-                <div class="frame-div">
-                    <input type="text" class="placeholder" @bind="filtroSerial" placeholder="Filtrar por serial..." />
+                <div class="buscar-nombre">
+                    <label>Serial</label>
+                    <div class="frame-div">
+                        <input type="text"
+                               class="placeholder"
+                               @bind="filtroSerial"
+                               @oninput="OnFiltroSerialChanged"
+                               placeholder="Filtrar por serial..." />
+                    </div>
                 </div>
-            </div>
-            <div class="buscar-nombre">
-                <label>Estado</label>
-                <div class="frame-div">
-                    <input type="text" class="placeholder" @bind="filtroEstado" placeholder="Filtrar por estado..." />
+                <div class="buscar-nombre">
+                    <label>Asset</label>
+                    <div class="frame-div">
+                        <input type="text"
+                               class="placeholder"
+                               @bind="filtroAsset"
+                               @oninput="OnFiltroCodigoDeBarrasChanged"
+                               placeholder="Filtrar por estado..." />
+                    </div>
                 </div>
             </div>
         </div>
+
+        <!-- Botón para añadir equipo -->
         <div class="botonera">
-            <button class="botn3" @onclick="Filtrar">Aplicar Filtros</button>
-            <button class="botn3" style="background-color: #E0E0E0; color:#292929;" @onclick="LimpiarFiltros">Limpiar</button>
+            <button class="botn3" data-bs-toggle="modal" data-bs-target="#modalCrearEquipo" onclick="limpiarFormularioCrear()">
+                <i class="bi bi-plus-lg"></i> Añadir Equipo
+            </button>
+            <button class="botn3" data-bs-toggle="modal" data-bs-target="#modalCargaMasiva">
+                <i class="bi bi-upload"></i> Carga Masiva
+            </button>
         </div>
-    </div>
 
-    <!-- Botón para añadir equipo -->
-    <div class="botonera">
-        <button class="botn3" data-bs-toggle="modal" data-bs-target="#modalCrearEquipo" onclick="limpiarFormularioCrear()">
-            <i class="bi bi-plus-lg"></i> Añadir Equipo
-        </button>
-        <button class="botn3" data-bs-toggle="modal" data-bs-target="#modalCargaMasiva">
-            <i class="bi bi-upload"></i> Carga Masiva
-        </button>
-    </div>
-
-    <!-- Tabla con animación de carga -->
-    <div style="position: relative; width: 100%; height: 100%;">
-        @if (isCargandoEquipos)
-        {
-            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 50; pointer-events: none;">
-                <div style="position: relative; width: 56px; height: 56px;">
-                    <div style="width: 56px; height: 56px; border: 4px solid #ef4444; border-top-color: transparent; border-radius: 50%; animation: spin-slow 1.4s linear infinite;"></div>
+        <!-- Tabla con animación de carga -->
+            @if (isCargandoEquipos)
+            {
+                <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 50; pointer-events: none;">
+                    <div style="position: relative; width: 56px; height: 56px;">
+                        <div style="width: 56px; height: 56px; border: 4px solid #ef4444; border-top-color: transparent; border-radius: 50%; animation: spin-slow 1.4s linear infinite;"></div>
+                    </div>
+                    <p style="margin-top: 12px; color: #ef4444; font-size: 18px; font-weight: 600; letter-spacing: 0.025em; animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;">
+                        Cargando equipos...
+                    </p>
                 </div>
-                <p style="margin-top: 12px; color: #ef4444; font-size: 18px; font-weight: 600; letter-spacing: 0.025em; animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;">
-                    Cargando equipos...
-                </p>
-            </div>
 
-            <style>
-                @@keyframes spin-slow {
-                    0% {
-                        transform: rotate(0deg);
+                <style>
+                    @@keyframes spin-slow {
+                        0% {
+                            transform: rotate(0deg);
+                        }
+
+                        100% {
+                            transform: rotate(360deg);
+                        }
                     }
 
-                    100% {
-                        transform: rotate(360deg);
+                    @@keyframes pulse {
+                        0%, 100% {
+                            opacity: 1;
+                        }
+
+                        50% {
+                            opacity: 0.5;
+                        }
                     }
-                }
+                </style>
+            }
 
-                @@keyframes pulse {
-                    0%, 100% {
-                        opacity: 1;
-                    }
-
-                    50% {
-                        opacity: 0.5;
-                    }
-                }
-            </style>
-        }
-
-        @if (equiposFiltrados == null)
-        {
-            <p>Cargando equipos...</p>
-        }
-        else if (equiposFiltrados.Any())
-        {
-            <!-- CONTENEDOR PRINCIPAL EXPANDIBLE -->
-            <div class="contenido" style="flex: 1; display: flex; flex-direction: column; width: 100%; min-height: 0; gap: 16px;">
-
+        @if (equiposPaginados == null)
+            {
+                <p>Cargando equipos...</p>
+            }
+            else if (equiposPaginados.Any())
+            {
                 <!-- TABLA CON PAGINACIÓN AUTOMÁTICA -->
-                <div class="table-wrapper" style="width: 100%; flex: 1; min-height: 0;">
-                    <table class="table-equipgo" style="width: 100%;">
+                <div class="table-wrapper">
+                    <table class="table-equipgo">
                         <thead>
                             <tr>
                                 <th>Marca</th>
@@ -134,7 +145,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var equipo in equiposFiltrados)
+                        @foreach (var equipo in equiposPaginados)
                             {
                                 <tr>
                                     <td>@equipo.Marca</td>
@@ -154,16 +165,22 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
 
-            <!-- La paginación ahora se maneja automáticamente con JavaScript -->
-        }
-        else
-        {
-            <p>No hay equipos que coincidan con los filtros.</p>
-        }
-    </div>
-
+                <!-- COMPONENTE DE PAGINACIÓN BLAZOR -->
+            <Paginacion 
+                TotalRegistros="@equiposFiltrados.Count"
+                PaginaActual="@paginaActual" 
+                PaginaActualChanged="@OnPaginaCambiada"
+                RegistrosPorPagina="@registrosPorPagina"
+                RegistrosPorPaginaChanged="@OnRegistrosPorPaginaCambiados"
+                ModoAuto="@modoAuto"
+                ModoAutoChanged="@OnModoAutoCambiado" />
+            }
+            else
+            {
+                <p>No hay equipos que coincidan con los filtros.</p>
+            }
+    </div> <!-- CIERRE DEL CONTENIDO PRINCIPAL -->
     <!-- Modal Carga Masiva -->
     <div class="modal fade modal-equipgo" id="modalCargaMasiva" tabindex="-1" aria-labelledby="modalCargaMasivaLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl">
@@ -210,10 +227,10 @@
                                             <h6 class="card-title">Columnas requeridas:</h6>
                                             <ul class="small mb-0">
                                                 <li><strong>Marca</strong> (Obligatorio)</li>
-                                                <li><strong>Modelo</strong> (Obligatorio)</li>  
+                                                <li><strong>Modelo</strong> (Obligatorio)</li>
                                                 <li><strong>Serial</strong> (Obligatorio)</li>
                                                 <li><strong>CódigoBarras</strong> (Obligatorio)</li>
-                                            </ul>                                           
+                                            </ul>
                                         </div>
                                     </div>
                                 </div>

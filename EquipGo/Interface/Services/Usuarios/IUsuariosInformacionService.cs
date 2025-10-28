@@ -35,5 +35,8 @@ namespace Interface.Services.Usuarios
 
         // Usuarios Combinados
         Task<List<object>> ObtenerUsuariosCombinadosAsync();
+
+        //filtros
+        Task<IEnumerable<object>> FiltrarAsync(Dictionary<string, string> filtros);
     }
 }

@@ -145,24 +145,60 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Escaneo
             }
         }
 
+        private bool procesandoCodigo = false;
+        private readonly object lockObject = new object();
+
         [JSInvokable]
         public async Task ProcesarCodigo(string codigoBarras)
         {
+            // 🔒 PREVENIR MÚLTIPLES EJECUCIONES SIMULTÁNEAS
+            lock (lockObject)
+            {
+                if (procesandoCodigo)
+                {
+                    Console.WriteLine($"🛑 Escaneo ignorado - Ya hay un código en proceso: {codigoBarras}");
+                    return;
+                }
+                procesandoCodigo = true;
+            }
+
             Console.WriteLine($"⚡️ ProcesarCodigo ejecutándose con código: {codigoBarras}");
-            equipoEscaneado = await EquipoService.ConsultarPorCodigoBarrasAsync(codigoBarras);
 
-            if (equipoEscaneado != null)
+            try
             {
-                Console.WriteLine("✅ Equipo encontrado.");
-            }
-            else
-            {
-                await JS.InvokeVoidAsync("alert", "⚠️ Equipo no encontrado.");
-                await IniciarEscaneo();
-                return;
-            }
+                equipoEscaneado = await EquipoService.ConsultarPorCodigoBarrasAsync(codigoBarras);
 
-            await InvokeAsync(StateHasChanged);
+                if (equipoEscaneado != null)
+                {
+                    Console.WriteLine("✅ Equipo encontrado.");
+                    await InvokeAsync(StateHasChanged);
+                }
+                else
+                {
+                    await JS.InvokeVoidAsync("alert", "⚠️ Equipo no encontrado.");
+                    await ReiniciarEscaneo();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error procesando código: {ex.Message}");
+                await JS.InvokeVoidAsync("alert", $"❌ Error: {ex.Message}");
+                await ReiniciarEscaneo();
+            }
+            finally
+            {
+                // 🔓 LIBERAR EL LOCK
+                lock (lockObject)
+                {
+                    procesandoCodigo = false;
+                }
+            }
+        }
+
+        private async Task ReiniciarEscaneo()
+        {
+            await Task.Delay(1000); // Pequeña pausa antes de reiniciar
+            await IniciarEscaneo();
         }
 
         private async Task AprobarTransaccion()

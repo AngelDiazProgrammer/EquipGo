@@ -1,20 +1,96 @@
-﻿// sistema-paginacion.js - VERSIÓN COMPLETA
+﻿// sistema-paginacion-automatica-v2.js
 class PaginacionAutomatica {
     constructor() {
         this.tablas = new Map();
-        this.observer = null;
-        this.recalculateTimeout = null;
+        this.mutationObserver = null;
+        this.resizeObservers = new Map();
+        this.isInitialized = false;
+        this.storageKey = 'equipgo-paginacion-config';
         this.init();
     }
 
     init() {
         this.inicializarTablasExistentes();
         this.configurarMutationObserver();
+        this.configurarFiltros();
+        this.isInitialized = true;
 
-        window.addEventListener('resize', () => this.recalcularTodasLasTablas());
-        window.addEventListener('orientationchange', () => setTimeout(() => this.recalcularTodasLasTablas(), 100));
+        console.log('✅ Sistema de paginación automática v2 inicializado');
+    }
 
-        console.log('✅ Sistema de paginación automática inicializado');
+    configurarFiltros() {
+        const inputsFiltro = document.querySelectorAll('.dashboard-filtros input[type="text"]');
+        inputsFiltro.forEach(input => {
+            input.addEventListener('input', () => this.aplicarFiltros());
+        });
+    }
+
+    aplicarFiltros() {
+        const filtroArea = document.querySelector('input[placeholder*="área"]')?.value.toLowerCase() || '';
+        const filtroCampania = document.querySelector('input[placeholder*="campaña"]')?.value.toLowerCase() || '';
+        const filtroEstado = document.querySelector('input[placeholder*="estado"]')?.value.toLowerCase() || '';
+
+        this.tablas.forEach((config, wrapper) => {
+            this.aplicarFiltrosATabla(wrapper, filtroArea, filtroCampania, filtroEstado);
+        });
+    }
+
+    aplicarFiltrosATabla(wrapper, filtroArea, filtroCampania, filtroEstado) {
+        const config = this.tablas.get(wrapper);
+        if (!config || !config.datosOriginales) return;
+
+        const datosFiltrados = config.datosOriginales.filter(dato => {
+            const area = this.extraerTextoDeCelda(dato, 3).toLowerCase();
+            const campania = this.extraerTextoDeCelda(dato, 4).toLowerCase();
+            const estado = this.extraerTextoDeCelda(dato, 5).toLowerCase();
+
+            const coincideArea = !filtroArea || area.includes(filtroArea);
+            const coincideCampania = !filtroCampania || campania.includes(filtroCampania);
+            const coincideEstado = !filtroEstado || estado.includes(filtroEstado);
+
+            return coincideArea && coincideCampania && coincideEstado;
+        });
+
+        config.datos = datosFiltrados;
+        config.paginaActual = 1;
+        this.calcularYActualizarPaginacion(wrapper);
+    }
+
+    extraerTextoDeCelda(htmlFila, indiceCelda) {
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = htmlFila;
+        const celdas = tempDiv.querySelectorAll('td');
+        return celdas[indiceCelda]?.textContent || '';
+    }
+
+    // NUEVO MÉTODO: Obtener configuración guardada
+    obtenerConfiguracionGuardada() {
+        try {
+            const guardado = localStorage.getItem(this.storageKey);
+            if (guardado) {
+                const config = JSON.parse(guardado);
+                console.log('💾 Configuración cargada:', config);
+                return config;
+            }
+        } catch (error) {
+            console.error('❌ Error cargando configuración:', error);
+        }
+        return null;
+    }
+
+    // NUEVO MÉTODO: Guardar configuración
+    guardarConfiguracion() {
+        try {
+            const configGuardar = {
+                registrosPorPagina: this.registrosPorPaginaGlobal,
+                modoAuto: this.modoAutoGlobal,
+                ultimaActualizacion: new Date().toISOString()
+            };
+            localStorage.setItem(this.storageKey, JSON.stringify(configGuardar));
+            console.log('💾 Configuración guardada:', configGuardar);
+        } catch (error) {
+            console.error('❌ Error guardando configuración:', error);
+        }
     }
 
     inicializarTablasExistentes() {
@@ -24,7 +100,7 @@ class PaginacionAutomatica {
     }
 
     configurarMutationObserver() {
-        this.observer = new MutationObserver((mutations) => {
+        this.mutationObserver = new MutationObserver((mutations) => {
             mutations.forEach((mutation) => {
                 mutation.addedNodes.forEach((node) => {
                     if (node.nodeType === 1) {
@@ -40,7 +116,7 @@ class PaginacionAutomatica {
             });
         });
 
-        this.observer.observe(document.body, {
+        this.mutationObserver.observe(document.body, {
             childList: true,
             subtree: true
         });
@@ -48,88 +124,106 @@ class PaginacionAutomatica {
 
     agregarTabla(tabla) {
         const wrapper = tabla.closest('.table-wrapper');
-
-        // BUSCAR CUALQUIER CONTENEDOR PADRE CON ALTURA DEFINIDA
-        let frameContainer = tabla.closest('.frame-container');
-
-        // Si no encuentra frame-container, buscar cualquier contenedor con altura
-        if (!frameContainer) {
-            frameContainer = this.buscarContenedorPadre(tabla);
-        }
+        const frameContainer = tabla.closest('.frame-container') || document.body;
 
         if (!wrapper || this.tablas.has(wrapper)) return;
+
+        // Obtener configuración guardada
+        const configGuardada = this.obtenerConfiguracionGuardada();
+        const registrosInicial = configGuardada?.registrosPorPagina || 5;
+        const modoAutoInicial = configGuardada?.modoAuto !== false; // Por defecto true si no está guardado
 
         const id = 'tabla-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
         this.tablas.set(wrapper, {
             id,
             tabla,
             wrapper,
-            frameContainer, // Puede ser null, pero el sistema lo manejará
+            frameContainer,
             datos: [],
+            datosOriginales: [],
             paginaActual: 1,
-            registrosPorPagina: 10,
+            registrosPorPagina: registrosInicial,
             totalPaginas: 1,
-            thead: null
+            thead: null,
+            modoAuto: modoAutoInicial,
+            alturaThead: 0,
+            alturaFila: 0
         });
 
-        console.log('📊 Tabla detectada:', id, 'Contenedor:', frameContainer ? 'Encontrado' : 'Usando fallback');
+        // Guardar variables globales para persistencia
+        this.registrosPorPaginaGlobal = registrosInicial;
+        this.modoAutoGlobal = modoAutoInicial;
+
+        console.log('📊 Tabla detectada:', id, {
+            registrosInicial,
+            modoAutoInicial,
+            configGuardada: !!configGuardada
+        });
+
         this.configurarTabla(wrapper);
-    }
-
-    // NUEVO MÉTODO PARA BUSCAR CONTENEDOR PADRE
-    buscarContenedorPadre(elemento) {
-        let padre = elemento.parentElement;
-        let profundidad = 0;
-
-        // Buscar hasta 5 niveles hacia arriba
-        while (padre && profundidad < 5) {
-            const estilo = window.getComputedStyle(padre);
-            const altura = parseFloat(estilo.height);
-            const display = estilo.display;
-
-            // Si el padre tiene altura definida y es un contenedor flex/grid/block
-            if (altura > 0 && altura !== Infinity &&
-                (display.includes('flex') || display.includes('grid') || display === 'block')) {
-                console.log('🎯 Contenedor padre encontrado:', padre, 'Altura:', altura);
-                return padre;
-            }
-
-            padre = padre.parentElement;
-            profundidad++;
-        }
-
-        console.log('🔍 No se encontró contenedor padre con altura definida, usando body');
-        return document.body; // Fallback al body
     }
 
     configurarTabla(wrapper) {
         const config = this.tablas.get(wrapper);
         if (!config) return;
 
-        // Agregar clases necesarias
         wrapper.classList.add('with-pagination');
-
-        // Crear contenedor de paginación
         this.crearPaginador(wrapper);
-
-        // Extraer datos de la tabla
         this.extraerDatos(wrapper);
+        this.configurarResizeObserver(wrapper);
 
-        // Calcular y aplicar paginación después de un breve delay
-        setTimeout(() => {
+        requestAnimationFrame(() => {
             this.calcularYActualizarPaginacion(wrapper);
-        }, 150);
+        });
+    }
+
+    configurarResizeObserver(wrapper) {
+        const config = this.tablas.get(wrapper);
+        if (!config) return;
+
+        const resizeObserver = new ResizeObserver(() => {
+            if (config.modoAuto) {
+                this.calcularYActualizarPaginacion(wrapper);
+            }
+        });
+
+        resizeObserver.observe(config.frameContainer);
+        this.resizeObservers.set(wrapper, resizeObserver);
+        resizeObserver.observe(wrapper);
     }
 
     crearPaginador(wrapper) {
         const config = this.tablas.get(wrapper);
         if (!config || wrapper.querySelector('.pagination-container')) return;
 
+        // Obtener configuración guardada para seleccionar la opción correcta
+        const configGuardada = this.obtenerConfiguracionGuardada();
+        const valorSeleccionado = configGuardada?.registrosPorPagina || 5;
+
+        // Generar opciones del 3 al 10 con la selección guardada
+        const opcionesRegistros = Array.from({ length: 8 }, (_, i) => i + 3)
+            .map(num => `<option value="${num}" ${num === valorSeleccionado ? 'selected' : ''}>${num}</option>`)
+            .join('');
+
         const paginationContainer = document.createElement('div');
         paginationContainer.className = 'pagination-container';
         paginationContainer.innerHTML = `
-            <div class="pagination-info" id="${config.id}-info">
-                Mostrando 0 de 0 registros
+            <div class="pagination-controls-left">
+                <div class="modo-selector" style="display: flex; align-items: center; gap: 8px;">
+                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 0.85rem; color: #393e42;">
+                        <input type="checkbox" id="${config.id}-modo-auto" ${config.modoAuto ? 'checked' : ''} style="cursor: pointer; width: 16px; height: 16px;">
+                        <span>Auto</span>
+                    </label>
+                </div>
+                <div class="registros-selector" id="${config.id}-registros-container">
+                    <label for="${config.id}-registros">Registros:</label>
+                    <select id="${config.id}-registros" class="registros-select" ${config.modoAuto ? 'disabled' : ''}>
+                        ${opcionesRegistros}
+                    </select>
+                </div>
+                <div class="pagination-info" id="${config.id}-info">
+                    Calculando...
+                </div>
             </div>
             <div class="pagination-controls">
                 <button class="pagination-btn" id="${config.id}-prev" disabled>
@@ -153,7 +247,77 @@ class PaginacionAutomatica {
             this.cambiarPagina(wrapper, config.paginaActual + 1);
         });
 
-        console.log('🔧 Paginador creado para:', config.id);
+        // Toggle modo automático/manual
+        const checkboxAuto = document.getElementById(`${config.id}-modo-auto`);
+        checkboxAuto.addEventListener('change', (e) => {
+            this.cambiarModoAuto(wrapper, e.target.checked);
+        });
+
+        // Selector de registros (solo funciona en modo manual)
+        const selectRegistros = document.getElementById(`${config.id}-registros`);
+        selectRegistros.value = config.registrosPorPagina;
+
+        // Aplicar estilos iniciales según el modo
+        if (config.modoAuto) {
+            selectRegistros.disabled = true;
+            selectRegistros.style.opacity = '0.5';
+            selectRegistros.style.cursor = 'not-allowed';
+        } else {
+            selectRegistros.disabled = false;
+            selectRegistros.style.opacity = '1';
+            selectRegistros.style.cursor = 'pointer';
+        }
+
+        selectRegistros.addEventListener('change', (e) => {
+            this.cambiarRegistrosPorPagina(wrapper, parseInt(e.target.value));
+        });
+    }
+
+    cambiarModoAuto(wrapper, esAuto) {
+        const config = this.tablas.get(wrapper);
+        if (!config) return;
+
+        config.modoAuto = esAuto;
+        this.modoAutoGlobal = esAuto; // Actualizar global
+
+        const selectRegistros = document.getElementById(`${config.id}-registros`);
+
+        if (esAuto) {
+            selectRegistros.disabled = true;
+            selectRegistros.style.opacity = '0.5';
+            selectRegistros.style.cursor = 'not-allowed';
+            console.log('🔄 Modo automático activado');
+        } else {
+            selectRegistros.disabled = false;
+            selectRegistros.style.opacity = '1';
+            selectRegistros.style.cursor = 'pointer';
+            console.log('✋ Modo manual activado');
+        }
+
+        // Guardar configuración
+        this.guardarConfiguracion();
+
+        config.paginaActual = 1;
+        this.calcularYActualizarPaginacion(wrapper);
+    }
+
+    cambiarRegistrosPorPagina(wrapper, nuevosRegistros) {
+        const config = this.tablas.get(wrapper);
+        if (!config) return;
+
+        // Validar que esté en el rango 3-10
+        nuevosRegistros = Math.max(3, Math.min(10, nuevosRegistros));
+
+        config.registrosPorPagina = nuevosRegistros;
+        this.registrosPorPaginaGlobal = nuevosRegistros; // Actualizar global
+
+        // Guardar configuración inmediatamente
+        this.guardarConfiguracion();
+
+        console.log('💾 Registros por página cambiados y guardados:', nuevosRegistros);
+
+        config.paginaActual = 1;
+        this.calcularYActualizarPaginacion(wrapper);
     }
 
     extraerDatos(wrapper) {
@@ -165,137 +329,132 @@ class PaginacionAutomatica {
 
         if (!tbody || !thead) return;
 
-        // Guardar HTML original de las filas
         config.datos = Array.from(tbody.querySelectorAll('tr')).map(tr => tr.outerHTML);
+        config.datosOriginales = [...config.datos];
         config.thead = thead.outerHTML;
 
+        this.medirAlturas(wrapper);
         console.log('📋 Datos extraídos:', config.datos.length, 'registros');
+    }
+
+    medirAlturas(wrapper) {
+        const config = this.tablas.get(wrapper);
+        if (!config || config.datos.length === 0) return;
+
+        try {
+            const tempTable = document.createElement('table');
+            tempTable.className = 'table-equipgo';
+            tempTable.style.position = 'absolute';
+            tempTable.style.left = '-9999px';
+            tempTable.style.visibility = 'hidden';
+            tempTable.style.width = config.tabla.offsetWidth + 'px';
+
+            // Medir thead
+            tempTable.innerHTML = config.thead;
+            document.body.appendChild(tempTable);
+            config.alturaThead = tempTable.offsetHeight;
+            tempTable.innerHTML = '';
+
+            // Medir fila
+            const tbody = document.createElement('tbody');
+            tbody.innerHTML = config.datos[0];
+            tempTable.appendChild(tbody);
+            config.alturaFila = tbody.firstElementChild.offsetHeight;
+
+            document.body.removeChild(tempTable);
+
+            console.log('📏 Alturas medidas:', {
+                thead: config.alturaThead,
+                fila: config.alturaFila
+            });
+
+        } catch (error) {
+            console.error('❌ Error midiendo alturas:', error);
+            config.alturaThead = 50;
+            config.alturaFila = 45;
+        }
     }
 
     calcularAlturaDisponible(wrapper) {
         const config = this.tablas.get(wrapper);
-        if (!config) {
-            console.warn('⚠️ No se pudo encontrar configuración de tabla');
-            return 400;
-        }
+        if (!config) return 600;
 
         try {
-            // USAR EL CONTENEDOR ENCONTRADO O EL BODY COMO FALLBACK
-            const contenedor = config.frameContainer || document.body;
-            const esBody = contenedor === document.body;
+            const frameContainer = config.frameContainer;
+            let alturaFrame;
 
-            // 1. Altura total del contenedor
-            const alturaContenedor = esBody ? window.innerHeight : contenedor.offsetHeight;
-            const estiloContenedor = window.getComputedStyle(contenedor);
-            const paddingTop = parseFloat(estiloContenedor.paddingTop) || 0;
-            const paddingBottom = parseFloat(estiloContenedor.paddingBottom) || 0;
-
-            const alturaNetaContenedor = alturaContenedor - paddingTop - paddingBottom;
-
-            // 2. Calcular espacio ocupado por elementos anteriores
-            let alturaPrevia = 0;
-
-            if (!esBody) {
-                const elementosContenedor = Array.from(contenedor.children);
-                const indexWrapper = elementosContenedor.indexOf(config.wrapper);
-
-                if (indexWrapper > 0) {
-                    for (let i = 0; i < indexWrapper; i++) {
-                        const elemento = elementosContenedor[i];
-                        const estilo = window.getComputedStyle(elemento);
-                        alturaPrevia += elemento.offsetHeight +
-                            (parseFloat(estilo.marginTop) || 0) +
-                            (parseFloat(estilo.marginBottom) || 0);
-                    }
-                }
+            if (frameContainer === document.body) {
+                alturaFrame = window.innerHeight * 0.9;
             } else {
-                // Si usamos body, calcular altura de elementos antes del wrapper
-                let elementoAnterior = config.wrapper.previousElementSibling;
-                while (elementoAnterior) {
-                    const estilo = window.getComputedStyle(elementoAnterior);
-                    alturaPrevia += elementoAnterior.offsetHeight +
-                        (parseFloat(estilo.marginTop) || 0) +
-                        (parseFloat(estilo.marginBottom) || 0);
-                    elementoAnterior = elementoAnterior.previousElementSibling;
-                }
+                alturaFrame = frameContainer.clientHeight;
             }
 
-            // 3. Altura del paginador (medida real)
             const paginador = wrapper.querySelector('.pagination-container');
-            const alturaPaginador = paginador ? paginador.offsetHeight : 60;
+            const alturaPaginador = paginador ? paginador.offsetHeight : 100;
 
-            // 4. Margen solicitado (10-15px)
-            const margen = 15;
+            let espacioUsadoArriba = 0;
+            let elemento = wrapper.previousElementSibling;
 
-            // 5. Cálculo final
-            const alturaDisponible = alturaNetaContenedor - alturaPrevia - alturaPaginador - margen;
+            while (elemento && frameContainer.contains(elemento)) {
+                if (elemento.offsetHeight > 0) {
+                    espacioUsadoArriba += elemento.offsetHeight;
+                }
+                elemento = elemento.previousElementSibling;
+            }
 
-            console.log('📐 Cálculo de altura para:', config.id, {
-                contenedor: esBody ? 'body' : 'personalizado',
-                alturaContenedor,
-                alturaNetaContenedor,
-                alturaPrevia,
-                alturaPaginador,
-                margen,
-                alturaDisponible
+            const estilosFrame = window.getComputedStyle(frameContainer);
+            const paddingTop = parseInt(estilosFrame.paddingTop) || 0;
+            const paddingBottom = parseInt(estilosFrame.paddingBottom) || 0;
+            const gap = parseInt(estilosFrame.gap) || 16;
+
+            const alturaDisponible = alturaFrame - espacioUsadoArriba - alturaPaginador - paddingTop - paddingBottom - gap - 30;
+
+            console.log('📐 Cálculo de altura:', {
+                alturaFrame: Math.round(alturaFrame),
+                espacioUsadoArriba: Math.round(espacioUsadoArriba),
+                alturaPaginador: Math.round(alturaPaginador),
+                alturaDisponible: Math.round(alturaDisponible)
             });
 
-            return Math.max(150, alturaDisponible); // Mínimo 150px
+            return Math.max(200, alturaDisponible);
 
         } catch (error) {
-            console.error('❌ Error en cálculo de altura:', error);
-            return 400;
+            console.error('❌ Error calculando altura:', error);
+            return 600;
         }
     }
 
     calcularRegistrosPorPagina(wrapper) {
         const config = this.tablas.get(wrapper);
-        if (!config || config.datos.length === 0) {
-            return 5; // Default conservador
+        if (!config || config.datos.length === 0) return 5;
+
+        // Si está en modo manual, usar el valor del selector
+        if (!config.modoAuto) {
+            return config.registrosPorPagina;
         }
 
         try {
             const alturaDisponible = this.calcularAlturaDisponible(wrapper);
+            const alturaThead = config.alturaThead || 50;
+            const alturaFila = config.alturaFila || 45;
 
-            // Crear elemento temporal para medir alturas
-            const tempContainer = document.createElement('div');
-            tempContainer.style.position = 'absolute';
-            tempContainer.style.left = '-9999px';
-            tempContainer.style.visibility = 'hidden';
-            tempContainer.innerHTML = config.thead + '<tbody>' + config.datos[0] + '</tbody>';
+            const alturaUtil = alturaDisponible - alturaThead - 30;
+            let registrosPorPagina = Math.floor(alturaUtil / alturaFila);
 
-            document.body.appendChild(tempContainer);
+            // Aplicar límites: mínimo 3, máximo 10
+            registrosPorPagina = Math.max(3, Math.min(registrosPorPagina, 10));
 
-            const tempTable = tempContainer.querySelector('table');
-            tempTable.classList.add('table-equipgo');
-            tempTable.style.width = '100%';
-
-            // Medir altura del thead
-            const thead = tempTable.querySelector('thead');
-            const alturaThead = thead ? thead.offsetHeight : 50;
-
-            // Medir altura de una fila
-            const fila = tempTable.querySelector('tbody tr');
-            const alturaFila = fila ? fila.offsetHeight : 40;
-
-            document.body.removeChild(tempContainer);
-
-            // Calcular registros que caben
-            const alturaUtil = alturaDisponible - alturaThead - 10; // 10px buffer interno
-            const registrosPorPagina = Math.max(1, Math.floor(alturaUtil / alturaFila));
-
-            console.log('🔢 Cálculo de registros por página:', {
-                alturaDisponible,
-                alturaThead,
-                alturaFila,
-                alturaUtil,
+            console.log('🔢 Registros calculados:', {
+                alturaDisponible: Math.round(alturaDisponible),
+                alturaThead: Math.round(alturaThead),
+                alturaFila: Math.round(alturaFila),
                 registrosPorPagina
             });
 
             return registrosPorPagina;
 
         } catch (error) {
-            console.error('❌ Error en cálculo de registros:', error);
+            console.error('❌ Error calculando registros:', error);
             return 5;
         }
     }
@@ -305,24 +464,27 @@ class PaginacionAutomatica {
         if (!config || config.datos.length === 0) return;
 
         try {
-            config.registrosPorPagina = this.calcularRegistrosPorPagina(wrapper);
-            config.totalPaginas = Math.ceil(config.datos.length / config.registrosPorPagina);
+            const nuevosRegistros = this.calcularRegistrosPorPagina(wrapper);
 
-            // Asegurar que la página actual sea válida
+            if (config.registrosPorPagina !== nuevosRegistros) {
+                config.registrosPorPagina = nuevosRegistros;
+            }
+
+            config.totalPaginas = Math.ceil(config.datos.length / config.registrosPorPagina);
             config.paginaActual = Math.min(config.paginaActual, config.totalPaginas);
             config.paginaActual = Math.max(1, config.paginaActual);
 
-            console.log('🔄 Aplicando paginación:', {
+            console.log('✅ Paginación actualizada:', {
+                modo: config.modoAuto ? 'AUTO' : 'MANUAL',
                 registrosPorPagina: config.registrosPorPagina,
                 totalPaginas: config.totalPaginas,
-                paginaActual: config.paginaActual,
-                totalRegistros: config.datos.length
+                paginaActual: config.paginaActual
             });
 
             this.aplicarPaginacion(wrapper);
 
         } catch (error) {
-            console.error('❌ Error en actualización de paginación:', error);
+            console.error('❌ Error en paginación:', error);
         }
     }
 
@@ -334,17 +496,24 @@ class PaginacionAutomatica {
         const fin = inicio + config.registrosPorPagina;
         const datosPagina = config.datos.slice(inicio, fin);
 
-        // Reconstruir tabla
         const tbody = config.tabla.querySelector('tbody');
         if (tbody) {
             tbody.innerHTML = datosPagina.join('');
         }
 
-        // Actualizar controles de paginación
         this.actualizarControlesPaginacion(wrapper);
-
-        // Actualizar información
         this.actualizarInfoPaginacion(wrapper, inicio, fin);
+        this.actualizarSelectorRegistros(wrapper);
+    }
+
+    actualizarSelectorRegistros(wrapper) {
+        const config = this.tablas.get(wrapper);
+        if (!config) return;
+
+        const select = document.getElementById(`${config.id}-registros`);
+        if (select) {
+            select.value = config.registrosPorPagina;
+        }
     }
 
     actualizarInfoPaginacion(wrapper, inicio, fin) {
@@ -356,7 +525,8 @@ class PaginacionAutomatica {
             const totalRegistros = config.datos.length;
             const mostrandoInicio = totalRegistros > 0 ? inicio + 1 : 0;
             const mostrandoFin = Math.min(fin, totalRegistros);
-            infoElement.textContent = `Mostrando ${mostrandoInicio}-${mostrandoFin} de ${totalRegistros} registros`;
+            const modo = config.modoAuto ? '🔄' : '✋';
+            infoElement.textContent = `${modo} Pág ${config.paginaActual}/${config.totalPaginas} • ${mostrandoInicio}-${mostrandoFin} de ${totalRegistros}`;
         }
     }
 
@@ -370,30 +540,30 @@ class PaginacionAutomatica {
 
         if (!prevBtn || !nextBtn || !pagesContainer) return;
 
-        // Botones anterior/siguiente
         prevBtn.disabled = config.paginaActual === 1;
         nextBtn.disabled = config.paginaActual === config.totalPaginas;
 
-        // Números de página
         pagesContainer.innerHTML = '';
-        const paginas = this.generarNumerosPagina(config.paginaActual, config.totalPaginas);
+        if (config.totalPaginas > 1) {
+            const paginas = this.generarNumerosPagina(config.paginaActual, config.totalPaginas);
 
-        paginas.forEach(pagina => {
-            if (pagina === '...') {
-                const ellipsis = document.createElement('span');
-                ellipsis.className = 'pagination-ellipsis';
-                ellipsis.textContent = '...';
-                pagesContainer.appendChild(ellipsis);
-            } else {
-                const pageBtn = document.createElement('button');
-                pageBtn.className = `page-number ${pagina === config.paginaActual ? 'active' : ''}`;
-                pageBtn.textContent = pagina;
-                pageBtn.addEventListener('click', () => {
-                    this.cambiarPagina(wrapper, pagina);
-                });
-                pagesContainer.appendChild(pageBtn);
-            }
-        });
+            paginas.forEach(pagina => {
+                if (pagina === '...') {
+                    const ellipsis = document.createElement('span');
+                    ellipsis.className = 'pagination-ellipsis';
+                    ellipsis.textContent = '...';
+                    pagesContainer.appendChild(ellipsis);
+                } else {
+                    const pageBtn = document.createElement('button');
+                    pageBtn.className = `page-number ${pagina === config.paginaActual ? 'active' : ''}`;
+                    pageBtn.textContent = pagina;
+                    pageBtn.addEventListener('click', () => {
+                        this.cambiarPagina(wrapper, pagina);
+                    });
+                    pagesContainer.appendChild(pageBtn);
+                }
+            });
+        }
     }
 
     generarNumerosPagina(paginaActual, totalPaginas) {
@@ -401,23 +571,19 @@ class PaginacionAutomatica {
         const maxPaginasVisibles = 5;
 
         if (totalPaginas <= maxPaginasVisibles) {
-            // Mostrar todas las páginas
             for (let i = 1; i <= totalPaginas; i++) {
                 paginas.push(i);
             }
         } else {
             if (paginaActual <= 3) {
-                // Al inicio: 1, 2, 3, 4, ..., última
                 for (let i = 1; i <= 4; i++) paginas.push(i);
                 paginas.push('...');
                 paginas.push(totalPaginas);
             } else if (paginaActual >= totalPaginas - 2) {
-                // Al final: 1, ..., últimas 4 páginas
                 paginas.push(1);
                 paginas.push('...');
                 for (let i = totalPaginas - 3; i <= totalPaginas; i++) paginas.push(i);
             } else {
-                // En medio: 1, ..., actual-1, actual, actual+1, ..., última
                 paginas.push(1);
                 paginas.push('...');
                 for (let i = paginaActual - 1; i <= paginaActual + 1; i++) paginas.push(i);
@@ -433,82 +599,58 @@ class PaginacionAutomatica {
         const config = this.tablas.get(wrapper);
         if (!config || nuevaPagina < 1 || nuevaPagina > config.totalPaginas) return;
 
-        console.log('📄 Cambiando a página:', nuevaPagina);
         config.paginaActual = nuevaPagina;
         this.aplicarPaginacion(wrapper);
     }
 
-    recalcularTodasLasTablas() {
-        clearTimeout(this.recalculateTimeout);
-        this.recalculateTimeout = setTimeout(() => {
-            console.log('🔄 Recalculando todas las tablas por resize/orientation');
-            this.tablas.forEach((config, wrapper) => {
-                this.calcularYActualizarPaginacion(wrapper);
-            });
-        }, 200);
-    }
-
-    // Método público para actualizar datos dinámicamente
     actualizarDatos(wrapper, nuevosDatos) {
         const config = this.tablas.get(wrapper);
         if (!config) return;
 
-        console.log('🔄 Actualizando datos de tabla:', nuevosDatos.length, 'registros');
         config.datos = nuevosDatos;
+        config.datosOriginales = [...nuevosDatos];
         config.paginaActual = 1;
+        this.medirAlturas(wrapper);
         this.calcularYActualizarPaginacion(wrapper);
     }
 
-    // Método público para forzar recálculo
-    forzarRecalculo(wrapper = null) {
-        if (wrapper) {
-            this.calcularYActualizarPaginacion(wrapper);
-        } else {
-            this.recalcularTodasLasTablas();
+    // NUEVO MÉTODO: Limpiar configuración guardada
+    limpiarConfiguracion() {
+        try {
+            localStorage.removeItem(this.storageKey);
+            console.log('🗑️ Configuración limpiada');
+        } catch (error) {
+            console.error('❌ Error limpiando configuración:', error);
         }
     }
 
-    // Método para debug
-    obtenerEstado() {
-        const estado = {};
-        this.tablas.forEach((config, wrapper) => {
-            estado[config.id] = {
-                registrosTotales: config.datos.length,
-                registrosPorPagina: config.registrosPorPagina,
-                paginaActual: config.paginaActual,
-                totalPaginas: config.totalPaginas
-            };
-        });
-        return estado;
+    destruir() {
+        this.resizeObservers.forEach(observer => observer.disconnect());
+        this.resizeObservers.clear();
+
+        if (this.mutationObserver) {
+            this.mutationObserver.disconnect();
+        }
+
+        this.tablas.clear();
+        console.log('🗑️ Sistema de paginación destruido');
     }
 }
 
 // Inicialización automática
 document.addEventListener('DOMContentLoaded', function () {
-    console.log('🚀 Iniciando sistema de paginación automática...');
+    console.log('🚀 Iniciando sistema de paginación automática v2...');
 
-    // Pequeño delay para asegurar que todo esté renderizado
     setTimeout(() => {
-        window.sistemaPaginacion = new PaginacionAutomatica();
+        window.paginacionAutomatica = new PaginacionAutomatica();
 
-        // Recalcular después de que todo esté completamente cargado
         setTimeout(() => {
-            if (window.sistemaPaginacion) {
-                console.log('🎯 Recalculo inicial de tablas...');
-                window.sistemaPaginacion.recalcularTodasLasTablas();
+            if (window.paginacionAutomatica && window.paginacionAutomatica.isInitialized) {
+                window.paginacionAutomatica.tablas.forEach((config, wrapper) => {
+                    window.paginacionAutomatica.calcularYActualizarPaginacion(wrapper);
+                });
+                console.log('✅ Recálculo inicial completado');
             }
-        }, 300);
+        }, 500);
     }, 100);
 });
-
-// También inicializar si el DOM ya está listo (por si el script se carga después)
-if (document.readyState === 'interactive' || document.readyState === 'complete') {
-    setTimeout(() => {
-        window.sistemaPaginacion = new PaginacionAutomatica();
-        setTimeout(() => {
-            if (window.sistemaPaginacion) {
-                window.sistemaPaginacion.recalcularTodasLasTablas();
-            }
-        }, 300);
-    }, 100);
-}

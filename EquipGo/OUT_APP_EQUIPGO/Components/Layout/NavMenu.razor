@@ -1,4 +1,9 @@
-﻿<nav class="cerrar">
+﻿<button class="hamburger-btn" onclick="window.toggleMenu()" aria-label="Abrir menú">
+    <span>☰</span>
+</button>
+
+
+<nav class="cerrar" id="mainNav">
     <!-- Logo con imagen que ocupa todo el contenedor -->
     <div class="logo-container">
         <img src="/img/LogoEquipGO/LogotipoEquipGONavBar.png" alt="EquipGO Logo" class="logo-img" />
@@ -167,6 +172,8 @@
 </nav>
 
 <script>
+
+  
     window.initMenu = function() {
         const menuItems = document.querySelectorAll('.menu-item');
 
@@ -276,23 +283,31 @@
         setTimeout(checkActiveMenu, 150);
     }
 
-    // Cerrar menú al hacer clic fuera (para móviles)
-    document.addEventListener('click', function(e) {
-        if (window.innerWidth <= 768) {
-            const nav = document.querySelector('.cerrar');
-            const isClickInsideNav = nav.contains(e.target);
 
-            if (!isClickInsideNav && nav.classList.contains('mobile-open')) {
-                nav.classList.remove('mobile-open');
-            }
-        }
+    function toggleMenu() {
+      const nav = document.querySelector('.cerrar');
+      if (!nav) {
+        console.error('toggleMenu: no se encontró .cerrar');
+        return;
+      }
+      nav.classList.toggle('mobile-open');
+    }
+
+    // Conectar el botón de forma segura después de cargar DOM
+    document.addEventListener('DOMContentLoaded', function () {
+      const btn = document.getElementById('hamburgerBtn');
+      if (!btn) {
+        console.error('No se encontró #hamburgerBtn');
+        return;
+      }
+      btn.addEventListener('click', toggleMenu);
     });
 
-    // Función para toggle del menú en móviles
-    window.toggleMobileMenu = function() {
+        window.toggleMenu = function () {
         const nav = document.querySelector('.cerrar');
+        if (!nav) return;
         nav.classList.toggle('mobile-open');
-    }
+    };
 </script>
 @code {
     [Inject] public IJSRuntime JS { get; set; }
