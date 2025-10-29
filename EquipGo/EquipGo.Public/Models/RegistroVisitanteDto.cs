@@ -21,7 +21,7 @@
         public int PasoActual { get; set; } = 0;
         public bool InicioFormulario { get; set; } = false;
         public string Mensaje { get; set; } = "";
-
+        public bool RegistroCompletado { get; set; } = false;
         public List<ProveedorDto> Proveedores { get; set; } = new();
     }
 }

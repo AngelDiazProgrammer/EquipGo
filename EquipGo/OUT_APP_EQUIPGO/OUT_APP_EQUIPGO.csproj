@@ -19,7 +19,6 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\css\Dashboard\" />
-    <Folder Include="wwwroot\css\NewFolder\" />
     <Folder Include="wwwroot\img\Fondos\" />
   </ItemGroup>
 

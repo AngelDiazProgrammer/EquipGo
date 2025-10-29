@@ -1,416 +1,347 @@
-﻿.frame-container {
-    height: 90vh;
-    width: 100%;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-    border-radius: 20px;
-    background-color: #fff;
+﻿    /* CONTENEDOR DE CONTENIDO */
+.frame-container > .contenido {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    padding: 1px 24px;
-    box-sizing: border-box;
+    width: 100%;
     gap: 16px;
-    font-family: 'Open Sans', sans-serif;
-    min-height: 50vh;
-    margin-top: 10px;
-    max-height: 98vh;
-    overflow: auto;
+    align-items: center !important;
+    flex: none !important;
+    min-height: 400px !important;
 }
 
-    /* CONTENEDOR PRINCIPAL QUE DEBE EXPANDIRSE */
-    .frame-container > .contenido {
-        flex: 1 !important;
-        display: flex !important;
-        flex-direction: column !important;
-        width: 100% !important;
-        min-height: 0 !important;
-        gap: 16px !important;
-        align-items: center !important;
-    }
-
-/* ESTILOS GENERALES PARA TODAS LAS TABLAS - CORREGIDOS */
+/* CONTENEDOR DE TABLA - SIMPLIFICADO */
 .table-wrapper {
     width: 95% !important;
     border-radius: 12px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15), 0px 2px 4px rgba(0, 0, 0, 0.1);
     background-color: #fff;
-    display: flex !important;
-    flex-direction: column !important;
-    flex: 1 !important; /* CRÍTICO: Expandirse */
-    min-height: 0 !important; /* CRÍTICO: Permitir reducción */
-    overflow: hidden !important;
-}
-
-    /* Table wrapper con paginación */
-    .table-wrapper.with-pagination {
-        display: flex !important;
-        flex-direction: column !important;
-        overflow: hidden !important;
-        width: 100% !important;
-        flex: 1 !important;
-        min-height: 0 !important;
-    }
-
-/* CONTENEDOR DE SCROLL PARA LA TABLA */
-.table-scroll-container {
-    flex: 1 !important;
-    overflow: auto !important;
-    min-height: 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-}
-
-/* La tabla debe ocupar todo el espacio disponible */
-.table-wrapper.with-pagination .table-equipgo {
-    flex: 1 !important;
-    display: table !important;
-    min-height: 0 !important;
+    display: block;
+    flex: none !important;
+    min-height: auto !important;
     height: auto !important;
+    overflow: hidden;
 }
 
-/* ESTRUCTURA CORREGIDA para tabla con paginación */
-.table-wrapper.with-pagination table {
-    width: 100% !important;
-    border-collapse: collapse !important;
-    table-layout: fixed !important;
+/* CONTENEDOR DE SCROLL - SIMPLIFICADO */
+.table-scroll-container {
+    overflow-x: auto;
+    overflow-y: visible;
+    display: block;
+    width: 100%;
+    height: auto;
+    webkit-overflow-scrolling: touch; /* Scroll suave en iOS */
 }
 
-/* CLASE ÚNICA PARA TODAS LAS TABLAS - ESTILO EQUIPGO - CORREGIDO */
+/* TABLA PRINCIPAL - CORREGIDA */
 .table-equipgo {
-    width: 100% !important;
-    border-collapse: collapse !important;
-    font-family: 'Open Sans', sans-serif !important;
-    background-color: #ffffff !important;
-    table-layout: fixed !important;
-    height: 100% !important; /* Ocupar toda la altura */
+    width: 100%;
+    min-width: 600px;
+    border-collapse: collapse;
+    font-family: 'Open Sans', sans-serif;
+    background-color: #ffffff;
+    table-layout: auto;
+    height: auto;
+    display: table;
 }
 
-    /* ENCABEZADO - ESTILOS CORREGIDOS */
-    .table-equipgo thead {
-        display: table-header-group !important;
-    }
-
+    /* ENCABEZADOS - TAMAÑO NATURAL */
     .table-equipgo th {
-        background-color: #E9002B !important;
-        color: white !important;
-        padding: 12px 8px !important;
-        text-align: center !important;
-        font-weight: bold !important;
-        font-size: 0.9rem !important;
-        border-bottom: 2px solid #000000 !important;
-        height: 50px !important;
-        vertical-align: middle !important;
-        line-height: 1.4 !important;
-        white-space: nowrap !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
+        background-color: #E9002B;
+        color: white;
+        padding: 12px 8px;
+        text-align: center;
+        font-weight: bold;
+        font-size: 0.9rem;
+        border-bottom: 2px solid #000000;
+        height: 50px;
+        vertical-align: middle;
+        line-height: 1.4;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: auto;
     }
 
-    /* FILAS DEL CUERPO - ESTILOS CORREGIDOS */
-    .table-equipgo tbody {
-        display: table-row-group !important;
-    }
-
+    /* CELDAS - TAMAÑO NATURAL */
     .table-equipgo td {
-        padding: 12px 8px !important;
-        text-align: center !important;
-        font-size: 0.85rem !important;
-        background-color: #ffffff !important;
-        height: 45px !important;
-        vertical-align: middle !important;
-        line-height: 1.4 !important;
-        white-space: nowrap !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-        border-bottom: 1px solid #f0f0f0 !important;
-    }
-
-    /* ESTILOS PARA FILAS - CORREGIDOS */
-    .table-equipgo tr {
-        display: table-row !important;
-        height: auto !important;
-    }
-
-    .table-equipgo tbody tr {
-        transition: background-color 0.2s ease;
-    }
-
-        .table-equipgo tbody tr:nth-child(even) td {
-            background-color: #f9f9f9 !important;
-        }
-
-        .table-equipgo tbody tr:hover td {
-            background-color: #f1f1f1 !important;
-        }
-
-    /* HEADER STICKY MEJORADO */
-    .table-equipgo thead {
-        position: sticky !important;
-        top: 0 !important;
-        z-index: 100 !important;
-    }
-
-    .table-equipgo th {
-        position: relative !important;
-        z-index: 101 !important;
-    }
-
-/* BORDES REDONDEADOS - CORREGIDOS */
-.table-wrapper {
-    border-radius: 12px !important;
-}
-
-.table-equipgo {
-    border-radius: 12px !important;
-}
-
-    /* Esquinas superiores */
-    .table-equipgo thead tr:first-child th:first-child {
-        border-top-left-radius: 10px !important;
-    }
-
-    .table-equipgo thead tr:first-child th:last-child {
-        border-top-right-radius: 10px !important;
-    }
-
-    /* Esquinas inferiores */
-    .table-equipgo tbody tr:last-child td:first-child {
-        border-bottom-left-radius: 10px !important;
-    }
-
-    .table-equipgo tbody tr:last-child td:last-child {
-        border-bottom-right-radius: 10px !important;
+        padding: 12px 8px;
+        text-align: center;
+        font-size: 0.85rem;
+        background-color: #ffffff;
+        height: 45px;
+        vertical-align: middle;
+        line-height: 1.4;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        border-bottom: 1px solid #f0f0f0;
+        width: auto;
     }
 
     /* ========================================================================== */
-    /* ESTILOS RESPONSIVOS PARA BOTONES DE ACCIÓN - NUEVOS */
+    /* ESTILOS DE FILAS - AGREGADOS DE VUELTA */
     /* ========================================================================== */
 
-    /* CONTENEDOR DE BOTONES EN CELDAS DE ACCIÓN */
+    /* FILAS PARES (fondo gris claro) */
+    .table-equipgo tbody tr:nth-child(even) td {
+        background-color: #f9f9f9 !important;
+    }
+
+    /* HOVER EN FILAS */
+    .table-equipgo tbody tr:hover td {
+        background-color: #f1f1f1 !important;
+    }
+
+    /* CONTENEDOR DE BOTONES - CORREGIDO */
     .table-equipgo .acciones-cell {
-        display: flex !important;
-        gap: 6px !important;
-        justify-content: center !important;
-        align-items: center !important;
-        flex-wrap: nowrap !important;
-        min-height: 45px !important;
-        padding: 8px 4px !important;
-        width: 100% !important;
+        display: flex;
+        gap: 6px;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: nowrap;
+        min-height: 45px;
+        padding: 8px 4px;
+        width: auto;
     }
 
-    /* BOTONES DE ACCIÓN BASE */
+    /* BOTONES */
     .table-equipgo .btn-accion {
-        min-width: 32px !important;
-        height: 32px !important;
-        padding: 6px 10px !important;
-        font-size: 0.75rem !important;
-        white-space: nowrap !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        transition: all 0.2s ease !important;
-        border: 0.5px solid #dc3545 !important;
-        background-color: #E9002B !important;
-        color: white !important;
-        border-radius: 6px !important;
-        cursor: pointer !important;
-        margin: 0 !important;
-        flex-shrink: 1 !important;
-        flex-grow: 0 !important;
-        font-weight: 500 !important;
-        line-height: 1 !important;
+        min-width: 32px;
+        height: 32px;
+        padding: 6px 10px;
+        font-size: 0.75rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        border: 0.5px solid #dc3545;
+        background-color: #E9002B;
+        color: white;
+        border-radius: 6px;
+        cursor: pointer;
+        margin: 0;
+        flex-shrink: 1;
+        flex-grow: 0;
+        font-weight: 500;
+        line-height: 1;
     }
 
         .table-equipgo .btn-accion:hover {
-            background-color: #c82333 !important;
-            border-color: #c82333 !important;
-            transform: translateY(-1px) !important;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.15) !important;
+            background-color: #c82333;
+            border-color: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
         }
 
         .table-equipgo .btn-accion:active {
-            transform: translateY(0) !important;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+            transform: translateY(0);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
-        /* BOTONES SECUNDARIOS (si los hay) */
+        /* BOTONES SECUNDARIOS */
         .table-equipgo .btn-accion.btn-secondary {
-            background-color: #6c757d !important;
-            border-color: #6c757d !important;
+            background-color: #6c757d;
+            border-color: #6c757d;
         }
 
             .table-equipgo .btn-accion.btn-secondary:hover {
-                background-color: #5a6268 !important;
-                border-color: #545b62 !important;
+                background-color: #5a6268;
+                border-color: #545b62;
             }
 
         /* BOTONES CON ÍCONOS */
         .table-equipgo .btn-accion i {
-            font-size: 0.8rem !important;
-            margin-right: 5px !important;
-            flex-shrink: 0 !important;
+            font-size: 0.8rem;
+            margin-right: 5px;
+            flex-shrink: 0;
         }
 
         .table-equipgo .btn-accion .texto {
-            white-space: nowrap !important;
-            overflow: hidden !important;
-            text-overflow: ellipsis !important;
-            flex-shrink: 1 !important;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex-shrink: 1;
         }
 
-    /* CELDA DE ACCIONES ESPECÍFICA */
+    /* CELDA DE ACCIONES */
     .table-equipgo th.acciones-header,
     .table-equipgo td.acciones-cell {
-        width: auto !important;
-        min-width: 180px !important;
-        max-width: 280px !important;
-        text-align: center !important;
+        width: auto;
+        min-width: 180px;
+        max-width: 280px;
+        text-align: center;
     }
 
 /* ========================================================================== */
-/* ESTILOS PARA PAGINACIÓN */
+/* ESTILOS DEL PAGINADOR - CONSERVADOS */
 /* ========================================================================== */
 
 .pagination-container {
     width: 95% !important;
-    flex-shrink: 0 !important;
-    padding: 12px !important;
-    border-top: 2px solid #000000 !important;
-    background-color: white !important;
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    gap: 16px !important;
-    border-radius: 0 0 10px 10px !important;
-    margin-top: auto !important;
-    flex-wrap: wrap !important;
+    flex-shrink: 0;
+    padding: 12px;
+    border-top: 2px solid #000000;
+    background-color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    border-radius: 0 0 10px 10px;
+    margin-top: 0;
+    flex-wrap: wrap;
 }
 
 .pagination-controls-left {
-    display: flex !important;
-    align-items: center !important;
-    gap: 16px !important;
-    flex-wrap: wrap !important;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
 }
 
 .registros-selector {
-    display: flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-    font-size: 0.85rem !important;
-    color: #393e42 !important;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: #393e42;
 }
 
 .registros-select {
-    padding: 4px 8px !important;
-    border: 1px solid #000000 !important;
-    border-radius: 4px !important;
-    background-color: white !important;
-    font-size: 0.85rem !important;
-    cursor: pointer !important;
-    transition: all 0.3s !important;
+    padding: 4px 8px;
+    border: 1px solid #000000;
+    border-radius: 4px;
+    background-color: white;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s;
 }
 
     .registros-select:hover {
-        border-color: #E9002B !important;
+        border-color: #E9002B;
     }
 
     .registros-select:focus {
-        outline: none !important;
-        border-color: #E9002B !important;
-        box-shadow: 0 0 0 2px rgba(233, 0, 43, 0.1) !important;
+        outline: none;
+        border-color: #E9002B;
+        box-shadow: 0 0 0 2px rgba(233, 0, 43, 0.1);
     }
 
 .pagination-info {
-    font-size: 0.85rem !important;
-    color: #393e42 !important;
-    font-weight: 500 !important;
+    font-size: 0.85rem;
+    color: #393e42;
+    font-weight: 500;
 }
 
 .pagination-controls {
-    display: flex !important;
-    gap: 8px !important;
-    align-items: center !important;
-    flex-wrap: wrap !important;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 .pagination-btn {
-    padding: 6px 12px !important;
-    border: 1px solid #000000 !important;
-    background-color: white !important;
-    border-radius: 6px !important;
-    cursor: pointer !important;
-    font-size: 0.85rem !important;
-    transition: all 0.3s !important;
-    min-width: 36px !important;
-    height: 32px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1) !important;
+    padding: 6px 12px;
+    border: 1px solid #000000;
+    background-color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.3s;
+    min-width: 36px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
 }
 
     .pagination-btn:hover:not(:disabled) {
-        background-color: #E9002B !important;
-        color: white !important;
-        border-color: #E9002B !important;
-        transform: translateY(-1px) !important;
-        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15) !important;
+        background-color: #E9002B;
+        color: white;
+        border-color: #E9002B;
+        transform: translateY(-1px);
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15);
     }
 
     .pagination-btn:disabled {
-        background-color: #f5f5f5 !important;
-        color: #999 !important;
-        cursor: not-allowed !important;
-        opacity: 0.6 !important;
-        border-color: #cccccc !important;
+        background-color: #f5f5f5;
+        color: #999;
+        cursor: not-allowed;
+        opacity: 0.6;
+        border-color: #cccccc;
     }
 
 .pagination-pages {
-    display: flex !important;
-    gap: 4px !important;
-    flex-wrap: wrap !important;
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
 }
 
 .page-number {
-    padding: 6px 10px !important;
-    border: 1px solid #000000 !important;
-    background-color: white !important;
-    border-radius: 6px !important;
-    cursor: pointer !important;
-    font-size: 0.85rem !important;
-    min-width: 36px !important;
-    height: 32px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    transition: all 0.3s !important;
-    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1) !important;
+    padding: 6px 10px;
+    border: 1px solid #000000;
+    background-color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    min-width: 36px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
     .page-number.active {
-        background-color: #E9002B !important;
-        color: white !important;
-        border-color: #E9002B !important;
-        box-shadow: 0px 2px 4px rgba(233, 0, 43, 0.3) !important;
+        background-color: #E9002B;
+        color: white;
+        border-color: #E9002B;
+        box-shadow: 0px 2px 4px rgba(233, 0, 43, 0.3);
     }
 
     .page-number:hover:not(.active) {
-        background-color: #f0f0f0 !important;
-        border-color: #333333 !important;
-        transform: translateY(-1px) !important;
+        background-color: #f0f0f0;
+        border-color: #333333;
+        transform: translateY(-1px);
     }
 
 .pagination-ellipsis {
-    padding: 6px 4px !important;
-    color: #666 !important;
-    font-size: 0.85rem !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    min-width: 20px !important;
+    padding: 6px 4px;
+    color: #666;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+}
+
+/* ========================================================================== */
+/* BORDES REDONDEADOS */
+/* ========================================================================== */
+
+.table-wrapper {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.table-equipgo thead tr:first-child th:first-child {
+    border-top-left-radius: 10px;
+}
+
+.table-equipgo thead tr:first-child th:last-child {
+    border-top-right-radius: 10px;
+}
+
+.table-equipgo tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 10px;
+}
+
+.table-equipgo tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 10px;
 }
 
 /* ========================================================================== */
@@ -420,206 +351,145 @@
 /* TABLETS */
 @media (max-width: 768px) {
     .frame-container {
-        padding: 12px !important;
-        gap: 12px !important;
+        padding: 12px;
+        gap: 12px;
+    }
+
+    .table-wrapper {
+        width: 98%;
+    }
+
+    .table-equipgo th,
+    .table-equipgo td {
+        padding: 10px 6px;
+        font-size: 0.82rem;
     }
 
     .pagination-container {
-        flex-direction: column !important;
-        gap: 12px !important;
-        padding: 8px !important;
+        flex-direction: column;
+        gap: 12px;
+        padding: 8px;
     }
 
     .pagination-controls-left {
-        justify-content: center !important;
-        gap: 12px !important;
+        justify-content: center;
+        gap: 12px;
     }
 
     .pagination-controls {
-        justify-content: center !important;
+        justify-content: center;
     }
 
     .pagination-info {
-        font-size: 0.8rem !important;
+        font-size: 0.8rem;
     }
 
     .registros-selector {
-        font-size: 0.8rem !important;
+        font-size: 0.8rem;
     }
 
     /* BOTONES EN TABLET */
     .table-equipgo .acciones-cell {
-        gap: 4px !important;
-        padding: 6px 3px !important;
-        flex-wrap: wrap !important;
+        gap: 4px;
+        padding: 6px 3px;
+        flex-wrap: wrap;
     }
 
     .table-equipgo .btn-accion {
-        min-width: 30px !important;
-        height: 30px !important;
-        padding: 5px 8px !important;
-        font-size: 0.7rem !important;
+        min-width: 30px;
+        height: 30px;
+        padding: 5px 8px;
+        font-size: 0.7rem;
     }
 
         .table-equipgo .btn-accion i {
-            font-size: 0.75rem !important;
-            margin-right: 3px !important;
+            font-size: 0.75rem;
+            margin-right: 3px;
         }
 
     .table-equipgo th.acciones-header,
     .table-equipgo td.acciones-cell {
-        min-width: 160px !important;
-        max-width: 220px !important;
+        min-width: 160px;
+        max-width: 220px;
     }
 }
-
-/* MÓVILES */
+/*CELULARES*/
 @media (max-width: 480px) {
-    .pagination-btn {
-        padding: 4px 8px !important;
-        font-size: 0.75rem !important;
-        min-width: 30px !important;
-        height: 28px !important;
+    .frame-container {
+        padding: 8px;
+        gap: 8px;
     }
 
-    .page-number {
-        padding: 4px 6px !important;
-        min-width: 30px !important;
-        height: 28px !important;
-        font-size: 0.75rem !important;
+    .table-wrapper {
+        width: 100%;
+        border-radius: 8px;
+        overflow: hidden; /* Importante */
     }
 
-    .registros-select {
-        padding: 3px 6px !important;
-        font-size: 0.75rem !important;
+    /* CONTENEDOR DE SCROLL HORIZONTAL */
+    .table-scroll-container {
+        overflow-x: auto;
+        overflow-y: visible;
+        width: 100%;
+        position: relative;
     }
 
-    .pagination-controls-left {
-        flex-direction: column !important;
-        gap: 8px !important;
+    /* TABLA CON ANCHO MÍNIMO PARA FORZAR SCROLL */
+    .table-equipgo {
+        min-width: 650px; /* Aumenté ligeramente para asegurar */
+        width: 100%;
     }
 
-    /* BOTONES EN MÓVIL */
-    .table-equipgo .acciones-cell {
-        flex-direction: column !important;
-        gap: 3px !important;
-        padding: 4px 2px !important;
-    }
-
-    .table-equipgo .btn-accion {
-        width: 100% !important;
-        min-width: 28px !important;
-        height: 28px !important;
-        padding: 4px 6px !important;
-        font-size: 0.65rem !important;
-        justify-content: flex-start !important;
-    }
-
-    /* BOTONES SOLO CON ÍCONOS EN MÓVIL MUY PEQUEÑO */
-    @media (max-width: 360px) {
-        .table-equipgo .btn-accion .texto {
-            display: none !important;
+        .table-equipgo th,
+        .table-equipgo td {
+            padding: 8px 4px;
+            font-size: 0.75rem;
         }
 
-        .table-equipgo .btn-accion i {
-            margin-right: 0 !important;
-            font-size: 0.8rem !important;
+    /* ESCRITORIO GRANDE */
+    @media (min-width: 1200px) {
+        .table-equipgo .acciones-cell {
+            gap: 8px;
         }
 
         .table-equipgo .btn-accion {
-            width: 32px !important;
-            height: 32px !important;
-            border-radius: 50% !important;
-            padding: 0 !important;
-            justify-content: center !important;
+            min-width: 36px;
+            height: 34px;
+            padding: 7px 12px;
+            font-size: 0.8rem;
         }
     }
 
-    .table-equipgo th.acciones-header,
-    .table-equipgo td.acciones-cell {
-        min-width: 120px !important;
-        max-width: 150px !important;
+    /* ========================================================================== */
+    /* ANIMACIONES SUAVES */
+    /* ========================================================================== */
+    /* ESTILOS PARA ESTADOS DE CARGA */
+    .table-loading {
+        opacity: 0.7;
+        pointer-events: none;
     }
 
-    .table-equipgo th {
-        padding: 8px 4px !important;
-        font-size: 0.75rem !important;
-        height: 40px !important;
+    /* ANIMACIONES SUAVES */
+    .table-equipgo tbody tr {
+        transition: all 0.2s ease-in-out;
     }
 
-    .table-equipgo td {
-        padding: 8px 4px !important;
-        font-size: 0.75rem !important;
-        height: auto !important; /* Altura automática para botones apilados */
-        min-height: 35px !important;
-    }
-}
-
-/* ESCRITORIO GRANDE */
-@media (min-width: 1200px) {
-    .table-equipgo .acciones-cell {
-        gap: 8px !important;
+    .pagination-btn,
+    .page-number,
+    .registros-select,
+    .btn-accion {
+        transition: all 0.2s ease-in-out;
     }
 
-    .table-equipgo .btn-accion {
-        min-width: 36px !important;
-        height: 34px !important;
-        padding: 7px 12px !important;
-        font-size: 0.8rem !important;
-    }
-}
-
-/* ========================================================================== */
-/* ESTILOS ADICIONALES PARA TABLAS */
-/* ========================================================================== */
-
-/* SCROLL HORIZONTAL EN TABLAS GRANDES */
-.table-scroll-container {
-    overflow: auto !important;
-    position: relative !important;
-}
-
-.table-equipgo {
-    width: auto !important;
-    min-width: 100% !important;
-}
-
-/* MEJORA VISUAL PARA TABLAS RESPONSIVAS */
-@media (max-width: 1024px) {
-    .table-equipgo th,
-    .table-equipgo td {
-        padding: 10px 6px !important;
-        font-size: 0.82rem !important;
-    }
-}
-
-/* ESTILOS PARA ESTADOS DE CARGA */
-.table-loading {
-    opacity: 0.7;
-    pointer-events: none;
-}
-
-/* ANIMACIONES SUAVES */
-.table-equipgo tbody tr {
-    transition: all 0.2s ease-in-out;
-}
-
-.pagination-btn,
-.page-number,
-.registros-select,
-.btn-accion {
-    transition: all 0.2s ease-in-out;
-}
-
-/* ESTILOS DE EMERGENCIA - SI PERSISTE EL PROBLEMA */
-.force-expand {
-    flex: 1 !important;
-    min-height: 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-}
-
-    .force-expand .table-wrapper {
+    /* ESTILOS DE EMERGENCIA - SI PERSISTE EL PROBLEMA */
+    .force-expand {
         flex: 1 !important;
         min-height: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
     }
+
+        .force-expand .table-wrapper {
+            flex: 1 !important;
+            min-height: 0 !important;
+        }

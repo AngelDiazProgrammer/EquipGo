@@ -1,145 +1,189 @@
 ﻿@page "/subestados"
+@using OUT_APP_EQUIPGO.Components.Shared
 
-<div class="equipos-container">
-    <!-- Encabezado -->
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #ccc; padding-bottom: 4px;">
-        <h4 style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 700; font-size: 1.5rem; line-height: 40px; margin: 0; padding: 0; color: #000;">Subestados</h4>
-        <img src="img/logoOutsourcing.png" alt="Logo" style="height: 40px;" />
-    </div>
-
-    <!-- Contadores -->
-    <div class="row g-3 mb-4">
-        <div class="col-12 col-md-4">
-            <div class="bg-dark text-white rounded p-3 text-center shadow">
-                <h4 class="mb-0">@subEstados?.Count()</h4>
-                <p>Subestados Totales</p>
-            </div>
-        </div>
-        <div class="col-12 col-md-4">
-            <div class="bg-secondary text-white rounded p-3 text-center shadow">
-                <h4 class="mb-0">0</h4>
-                <p>Activos</p>
-            </div>
-        </div>
-        <div class="col-12 col-md-4">
-            <div class="text-white rounded p-3 text-center shadow" style="background-color: #E9002B;">
-                <h4 class="mb-0">0</h4>
-                <p>Inactivos</p>
-            </div>
+<div class="frame-container">
+    <!-- ENCABEZADO -->
+    <div class="dashboard-parent">
+        <b class="dashboard-equipgo">Subestados</b>
+        <div class="logo-os">
+            <img class="dashboard-vector-icon" alt="Logo" src="img/logoOutsourcing.png" />
         </div>
     </div>
 
-    <!-- Botón para añadir subestado -->
-    <div class="mb-3 d-flex justify-content-end">
-        <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalCrearSubEstado">
-            <i class="bi bi-plus-lg"></i> Añadir Subestado
-        </button>
+    <!-- CONTADORES -->
+    <div class="info">
+        <div class="card-registros">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
+            </svg>
+            <div class="datos">
+                <b class="b">@subEstados?.Count()</b>
+                <b class="transacciones-de-hoy">Subestados Totales</b>
+            </div>
+        </div>
+
+        <div class="card-registros">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
+            </svg>
+            <div class="datos">
+                <b class="b">0</b>
+                <b class="transacciones-de-hoy">Activos</b>
+            </div>
+        </div>
+
+        <div class="card-alerta">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
+            </svg>
+            <div class="datos">
+                <b class="b">0</b>
+                <b class="transacciones-de-hoy">Inactivos</b>
+            </div>
+        </div>
     </div>
 
-    <!-- Modal para crear subestado -->
-    <div class="modal fade" id="modalCrearSubEstado" tabindex="-1" aria-labelledby="modalCrearSubEstadoLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalCrearSubEstadoLabel">Registrar Subestado</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="formCrearSubEstado">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label for="nombre" class="form-label">Nombre del Subestado</label>
-                                <input type="text" class="form-control" id="nombre" name="nombre" required />
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="contenido">
+        <!-- Botón para añadir subestado -->
+        <div class="botonera">
+            <button class="botn3" data-bs-toggle="modal" data-bs-target="#modalCrearSubEstado">
+                <i class="bi bi-plus-lg"></i> Añadir Subestado
+            </button>
+        </div>
+
+        <!-- Tabla de subestados -->
+        @if (subEstados == null)
+        {
+            <p>Cargando subestados...</p>
+        }
+        else if (!subEstados.Any())
+        {
+            <p>No hay subestados registrados.</p>
+        }
+        else
+        {
+            <div class="table-wrapper">
+                <table class="table-equipgo">
+                    <thead>
+                        <tr>
+                            <th>Nombre del Subestado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var sub in subEstados)
+                        {
+                            <tr>
+                                <td>@sub.NombreSubEstado</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary" onclick="editarSubEstado(@sub.Id)">✏️</button>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="abrirModalEliminarSubEstado(@sub.Id)">🗑️</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- COMPONENTE DE PAGINACIÓN -->
+            <Paginacion TotalRegistros="@subEstados.Count()"
+                        PaginaActual="@paginaActual"
+                        PaginaActualChanged="@OnPaginaCambiada"
+                        RegistrosPorPagina="@registrosPorPagina"
+                        RegistrosPorPaginaChanged="@OnRegistrosPorPaginaCambiados"
+                        ModoAuto="@modoAuto"
+                        ModoAutoChanged="@OnModoAutoCambiado" />
+        }
+    </div>
+</div>
+
+<!-- Modal para crear subestado -->
+<div class="modal fade modal-equipgo" id="modalCrearSubEstado" tabindex="-1" aria-labelledby="modalCrearSubEstadoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header-equipgo">
+                <h5 class="modal-title-equipgo" id="modalCrearSubEstadoLabel">Registrar Subestado</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body-equipgo">
+                <form id="formCrearSubEstado">
+                    <div class="seccion-modal">
+                        <div class="seccion-header">
+                            <span class="seccion-titulo">📝 Información del Subestado</span>
+                        </div>
+                        <div class="seccion-datos">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-section">
+                                        <label for="nombre" class="form-label">Nombre del Subestado</label>
+                                        <input type="text" class="form-control" id="nombre" name="nombre" required />
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" onclick="guardarSubEstado()">Guardar</button>
-                </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer-equipgo">
+                <button type="button" class="boton-modal-equipgo boton-modal-secundario" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="boton-modal-equipgo" onclick="guardarSubEstado()">Guardar</button>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Tabla de subestados -->
-    @if (subEstados == null)
-    {
-        <p>Cargando subestados...</p>
-    }
-    else if (!subEstados.Any())
-    {
-        <p>No hay subestados registrados.</p>
-    }
-    else
-    {
-        <div class="table-wrapper" style="border: 1px solid #E9002B; border-radius: 10px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);">
-            <table class="table table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre del Subestado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var sub in subEstados)
-                    {
-                        <tr>
-                            <td>@sub.Id</td>
-                            <td>@sub.NombreSubEstado</td>
-                            <td>
-                                <button class="btn btn-sm btn-outline-primary" onclick="editarSubEstado(@sub.Id)">✏️</button>
-                                <button class="btn btn-sm btn-outline-danger" onclick="abrirModalEliminarSubEstado(@sub.Id)">🗑️</button>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Modal editar -->
-        <div class="modal fade" id="modalEditarSubEstado" tabindex="-1" aria-labelledby="modalEditarSubEstadoLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modalEditarSubEstadoLabel">Editar Subestado</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="formEditarSubEstado">
-                            <input type="hidden" id="editarId" />
-                            <div class="mb-3">
-                                <label for="editarNombreSubEstado" class="form-label">Nombre del Subestado</label>
-                                <input type="text" class="form-control" id="editarNombreSubEstado" />
+<!-- Modal editar -->
+<div class="modal fade modal-equipgo" id="modalEditarSubEstado" tabindex="-1" aria-labelledby="modalEditarSubEstadoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header-equipgo">
+                <h5 class="modal-title-equipgo" id="modalEditarSubEstadoLabel">Editar Subestado</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body-equipgo">
+                <form id="formEditarSubEstado">
+                    <input type="hidden" id="editarId" />
+                    <div class="seccion-modal">
+                        <div class="seccion-header">
+                            <span class="seccion-titulo">📝 Información del Subestado</span>
+                        </div>
+                        <div class="seccion-datos">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-section">
+                                        <label for="editarNombreSubEstado" class="form-label">Nombre del Subestado</label>
+                                        <input type="text" class="form-control" id="editarNombreSubEstado" />
+                                    </div>
+                                </div>
                             </div>
-                        </form>
+                        </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="button" class="btn btn-primary" onclick="guardarCambiosSubEstado()">Guardar Cambios</button>
-                    </div>
-                </div>
+                </form>
+            </div>
+            <div class="modal-footer-equipgo">
+                <button type="button" class="boton-modal-equipgo boton-modal-secundario" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="boton-modal-equipgo" onclick="guardarCambiosSubEstado()">Guardar Cambios</button>
             </div>
         </div>
+    </div>
+</div>
 
-        <!-- Modal eliminar -->
-        <div class="modal fade" id="modalEliminarSubEstado" tabindex="-1" aria-labelledby="modalEliminarSubEstadoLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modalEliminarSubEstadoLabel">Confirmar eliminación</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                    </div>
-                    <div class="modal-body">
-                        ¿Estás seguro de que deseas eliminar este subestado?
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="button" class="btn btn-danger" onclick="confirmarEliminarSubEstado()">Eliminar</button>
-                    </div>
-                </div>
+<!-- Modal eliminar -->
+<div class="modal fade modal-equipgo" id="modalEliminarSubEstado" tabindex="-1" aria-labelledby="modalEliminarSubEstadoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header-equipgo">
+                <h5 class="modal-title-equipgo" id="modalEliminarSubEstadoLabel">Confirmar eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body-equipgo">
+                ¿Estás seguro de que deseas eliminar este subestado?
+            </div>
+            <div class="modal-footer-equipgo">
+                <button type="button" class="boton-modal-equipgo boton-modal-secundario" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="boton-modal-equipgo" style="background-color: #dc3545; border-color: #dc3545;" onclick="confirmarEliminarSubEstado()">Eliminar</button>
             </div>
         </div>
-    }
+    </div>
 </div>

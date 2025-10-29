@@ -36,6 +36,7 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Usuarios
                                            .Include(u => u.IdAreaNavigation)
                                            .Include(u => u.IdCampañaNavigation)
                                            .Include(u => u.Estado)
+                                           .OrderByDescending(u => u.FechaCreacion)
                                            .AsNoTracking()
                                            .ToListAsync();
 

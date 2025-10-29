@@ -8,142 +8,572 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>@ViewData["Title"]</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <title>Registro de Visitante - EQUIPGO</title>
 
     <style>
-        .fade-transition {
-            opacity: 0;
-            transform: translateY(10px);
-            transition: opacity 0.4s ease, transform 0.4s ease;
+        /* Reset y estilos base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        .fade-show {
-            opacity: 1 !important;
-            transform: translateY(0) !important;
+        body {
+            font-family: 'Open Sans', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, black 100%);
+            /* background-image: url('/wwwroot/img/FondoLogin.jpg'); */
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+        }
+
+        /* Contenedor principal más pequeño */
+        .usuario {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sign-up {
+            width: 100%;
+            max-width: 700px;
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* Header más compacto */
+        .sup {
+            width: 100%;
+            height: 70px;
+            background: linear-gradient(90deg, rgba(53, 56, 60, 0.7), #35383c);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+        }
+
+        .logo-os {
+            color: white;
+            font-size: 22px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        /* Contenido principal más compacto */
+        .frame-parent {
+            width: 100%;
+            padding: 25px 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .frame-group {
+            width: 100%;
+            max-width: 550px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .usuario-equipgo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #393e42;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        .completa-los-pasos {
+            font-size: 14px;
+            color: #6c757d;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        /* Migas de pan más compactas */
+        .migas-de-pan {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .paso-activo {
+            color: #ea0029;
+            font-weight: bold;
+            padding: 8px 16px;
+            border-bottom: 2px solid #ea0029;
+            font-size: 14px;
+        }
+
+        .paso-inactivo {
+            color: #474747;
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        /* Línea divisoria */
+        .linea-divisoria {
+            width: 100%;
+            height: 1px;
+            background-color: #d8d8d8;
+            margin: 15px 0;
+        }
+
+        /* Contenido del formulario más compacto */
+        .contenido-formulario {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .titulo-seccion {
+            font-size: 20px;
+            color: #ea0029;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        /* Formularios más compactos */
+        .formulario {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .grupo-formulario {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .etiqueta {
+            font-size: 14px;
+            font-weight: 500;
+            color: #393e42;
+            margin-bottom: 3px;
+        }
+
+        .input-estilo {
+            width: 100%;
+            height: 42px;
+            border-radius: 25px;
+            background-color: #ededed;
+            border: none;
+            padding: 0 18px;
+            font-size: 14px;
+            font-family: 'Open Sans';
+            color: #393e42;
+            transition: all 0.3s ease;
+        }
+
+            .input-estilo:focus {
+                outline: none;
+                background-color: #e0e0e0;
+            }
+
+            .input-estilo::placeholder {
+                color: #9b9b9b;
+            }
+
+        .select-estilo {
+            width: 100%;
+            height: 42px;
+            border-radius: 25px;
+            background-color: #ededed;
+            border: none;
+            padding: 0 18px;
+            font-size: 14px;
+            font-family: 'Open Sans';
+            color: #393e42;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 12 7'%3E%3Cpath fill='%238e8e8e' d='M6 7L0 0h12L6 7z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 18px center;
+            background-size: 10px 6px;
+        }
+
+        /* Botones más compactos */
+        .contenedor-botones {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .boton-principal {
+            width: 100%;
+            max-width: 400px;
+            height: 42px;
+            border-radius: 25px;
+            background: linear-gradient(90deg, rgba(234, 0, 41, 0.7), #ea0029);
+            border: none;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+            .boton-principal:hover {
+                transform: translateY(-1px);
+                box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.25);
+            }
+
+        .boton-secundario {
+            background: linear-gradient(90deg, #6c757d, #495057);
+        }
+
+        .grupo-botones {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+            .grupo-botones .boton-principal {
+                flex: 1;
+            }
+
+        /* Ventana emergente más pequeña */
+        .ventana-emergente {
+            width: 100%;
+            max-width: 400px;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            margin-top: 15px;
+        }
+
+        .encabezado-ventana {
+            background: linear-gradient(90deg, #717376, #35383c);
+            padding: 15px;
+            text-align: center;
+        }
+
+        .titulo-ventana {
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .contenido-ventana {
+            padding: 25px 20px;
+            text-align: center;
+        }
+
+        .icono-exito {
+            font-size: 45px;
+            color: #28a745;
+            margin-bottom: 15px;
+        }
+
+        .mensaje-exito {
+            font-size: 18px;
+            color: #28a745;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .descripcion-exito {
+            font-size: 14px;
+            color: #525252;
+            line-height: 1.4;
+            margin-bottom: 20px;
+        }
+
+        /* Animaciones */
+        .transicion-desvanecimiento {
+            opacity: 0;
+            transform: translateY(8px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .mostrar {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Mensajes más compactos */
+        .mensaje-alerta {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            border-radius: 8px;
+            color: #0c5460;
+            font-size: 13px;
+            margin-top: 15px;
+        }
+
+        /* Responsive para contenedor pequeño */
+        @@media (max-width: 768px) {
+            .frame-parent
+
+        {
+            padding: 20px;
+        }
+
+        .usuario-equipgo {
+            font-size: 20px;
+        }
+
+        .migas-de-pan {
+            gap: 12px;
+        }
+
+        .paso-activo,
+        .paso-inactivo {
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+
+        .titulo-seccion {
+            font-size: 18px;
+        }
+
+        .input-estilo,
+        .select-estilo {
+            height: 40px;
+            font-size: 13px;
+            padding: 0 15px;
+        }
+
+        .boton-principal {
+            height: 40px;
+            font-size: 13px;
+            max-width: 350px;
+        }
+
+        }
+
+        @@media (max-width: 480px) {
+            body
+
+        {
+            padding: 10px;
+        }
+
+        .sign-up {
+            border-radius: 12px;
+            max-width: 100%;
+        }
+
+        .sup {
+            height: 60px;
+        }
+
+        .logo-os {
+            font-size: 18px;
+        }
+
+        .frame-parent {
+            padding: 15px;
+        }
+
+        .usuario-equipgo {
+            font-size: 18px;
+        }
+
+        .completa-los-pasos {
+            font-size: 13px;
+        }
+
+        .migas-de-pan {
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .contenido-ventana {
+            padding: 20px 15px;
+        }
+
+        .icono-exito {
+            font-size: 35px;
+        }
+
+        .mensaje-exito {
+            font-size: 16px;
+        }
+
+        .descripcion-exito {
+            font-size: 13px;
+        }
+
+        .grupo-botones {
+            flex-direction: column;
+        }
+
         }
     </style>
 </head>
-<body class="bg-light">
+<body>
+    <div class="usuario">
+        <div class="sign-up">
+            <div class="sup">
+                <div class="logo-os">EQUIPGO</div>
+            </div>
 
-    <div class="container d-flex justify-content-center align-items-center min-vh-100">
-        <div class="bg-white p-4 rounded shadow border border-danger w-100" style="max-width: 600px;">
-            @if (!Model.InicioFormulario)
-            {
-                <form method="post">
-                    <div class="text-center fade-transition fade-show">
-                        <h2 class="fw-bold text-danger">¡Bienvenido al registro de visitantes!</h2>
-                        <p class="text-secondary">Completa los pasos para registrar un ingreso externo.</p>
-                        <button name="accion" value="comenzar" class="btn btn-danger mt-3 w-100">Comenzar Registro</button>
+            <div class="frame-parent">
+                <div class="frame-group">
+                    <div class="equipgo-parent">
+                        <div class="usuario-equipgo">Registro de Visitante</div>
                     </div>
-                </form>
-            }
-            else if (Model.PasoActual == 1)
-            {
-                <form method="post" class="fade-transition fade-show">
-                    <input type="hidden" name="InicioFormulario" value="true" />
-                    <input type="hidden" name="PasoActual" value="1" />
-
-                    <h4 class="mb-3 text-danger fw-bold">Paso 1: Datos del Visitante</h4>
-
-                    <div class="mb-3">
-                        <label class="form-label">Tipo de Documento</label>
-                        <input class="form-control" name="Visitante.TipoDocumento" value="@Model.Visitante.TipoDocumento" />
+                    <div class="iniciar-parent">
+                        <div class="completa-los-pasos">
+                            Completa los pasos para registrar un ingreso externo
+                        </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Número de Documento</label>
-                        <input class="form-control" name="Visitante.NumeroDocumento" value="@Model.Visitante.NumeroDocumento" />
+                    <div class="migas-de-pan">
+                        <div class="@(Model.PasoActual == 1 ? "paso-activo" : "paso-inactivo")">Paso 1</div>
+                        <div class="@(Model.PasoActual == 2 ? "paso-activo" : "paso-inactivo")">Paso 2</div>
                     </div>
+                </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Nombres</label>
-                        <input class="form-control" name="Visitante.Nombres" value="@Model.Visitante.Nombres" />
-                    </div>
+                <div class="linea-divisoria"></div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Apellidos</label>
-                        <input class="form-control" name="Visitante.Apellidos" value="@Model.Visitante.Apellidos" />
-                    </div>
+                <div class="contenido-formulario">
+                    @if (!Model.InicioFormulario)
+                    {
+                        <div class="transicion-desvanecimiento mostrar">
+                            <div class="titulo-seccion">¡Bienvenido al registro de visitantes!</div>
+                            <form method="post" class="contenedor-botones">
+                                <button name="accion" value="comenzar" class="boton-principal">
+                                    Comenzar Registro
+                                </button>
+                            </form>
+                        </div>
+                    }
+                    else if (Model.PasoActual == 1)
+                    {
+                        <form method="post" class="transicion-desvanecimiento mostrar formulario">
+                            <input type="hidden" name="InicioFormulario" value="true" />
+                            <input type="hidden" name="PasoActual" value="1" />
 
-                    <div class="mb-3">
-                        <label class="form-label">Tipo de Usuario</label>
-                        <select class="form-select" name="Visitante.TipoUsuario" onchange="mostrarProveedor(this.value)" required>
-                            <option value="">Seleccione...</option>
-                            @Html.Raw($"<option value=\"visitante\" {(Model.Visitante.TipoUsuario == "visitante" ? "selected" : "")}>Visitante</option>")
-                            @Html.Raw($"<option value=\"proveedor\" {(Model.Visitante.TipoUsuario == "proveedor" ? "selected" : "")}>Proveedor</option>")
-                            @Html.Raw($"<option value=\"contratista\" {(Model.Visitante.TipoUsuario == "contratista" ? "selected" : "")}>Contratista</option>")
-                        </select>
-                    </div>
+                            <div class="titulo-seccion">Paso 1: Datos del Visitante</div>
 
-                    <div class="mb-3" id="proveedorDiv" style="display:@(Model.Visitante.TipoUsuario == "proveedor" ? "block" : "none")">
-                        <label class="form-label">Proveedor</label>
-                        <select name="Visitante.IdProveedor" class="form-select">
-                            <option value="">Seleccione proveedor...</option>
-                            @foreach (var p in Model.Proveedores)
-                            {
-                                @Html.Raw($"<option value=\"{p.Id}\" {(Model.Visitante.IdProveedor == p.Id ? "selected" : "")}>{p.Nombre}</option>")
-                            }
-                        </select>
-                    </div>
+                            <div class="grupo-formulario">
+                                <label class="etiqueta">Tipo de Documento</label>
+                                <input class="input-estilo" name="Visitante.TipoDocumento" value="@Model.Visitante.TipoDocumento" placeholder="Seleccione tipo de documento" />
+                            </div>
 
-                    <button name="accion" value="siguiente" class="btn btn-danger w-100">Siguiente</button>
-                </form>
-            }
-            else if (Model.PasoActual == 2)
-            {
-                <form method="post" class="fade-transition fade-show">
-                    <input type="hidden" name="InicioFormulario" value="true" />
-                    <input type="hidden" name="PasoActual" value="2" />
+                            <div class="grupo-formulario">
+                                <label class="etiqueta">Número de Documento</label>
+                                <input class="input-estilo" name="Visitante.NumeroDocumento" value="@Model.Visitante.NumeroDocumento" placeholder="Ingrese número de documento" />
+                            </div>
 
-                    <!-- Campos ocultos para mantener datos -->
-                    <input type="hidden" name="Visitante.TipoDocumento" value="@Model.Visitante.TipoDocumento" />
-                    <input type="hidden" name="Visitante.NumeroDocumento" value="@Model.Visitante.NumeroDocumento" />
-                    <input type="hidden" name="Visitante.Nombres" value="@Model.Visitante.Nombres" />
-                    <input type="hidden" name="Visitante.Apellidos" value="@Model.Visitante.Apellidos" />
-                    <input type="hidden" name="Visitante.TipoUsuario" value="@Model.Visitante.TipoUsuario" />
-                    <input type="hidden" name="Visitante.IdProveedor" value="@Model.Visitante.IdProveedor" />
+                            <div class="grupo-formulario">
+                                <label class="etiqueta">Nombres</label>
+                                <input class="input-estilo" name="Visitante.Nombres" value="@Model.Visitante.Nombres" placeholder="Ingrese sus nombres" />
+                            </div>
 
-                    <h4 class="mb-3 text-danger fw-bold">Paso 2: Datos del Equipo</h4>
+                            <div class="grupo-formulario">
+                                <label class="etiqueta">Apellidos</label>
+                                <input class="input-estilo" name="Visitante.Apellidos" value="@Model.Visitante.Apellidos" placeholder="Ingrese sus apellidos" />
+                            </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Marca</label>
-                        <input class="form-control" name="Visitante.Marca" value="@Model.Visitante.Marca" />
-                    </div>
+                            <div class="grupo-formulario">
+                                <label class="etiqueta">Tipo de Usuario</label>
+                                <select class="select-estilo" name="Visitante.TipoUsuario" onchange="mostrarProveedor(this.value)" required>
+                                    <option value="">Seleccione tipo de usuario...</option>
+                                    @Html.Raw($"<option value=\"visitante\" {(Model.Visitante.TipoUsuario == "visitante" ? "selected" : "")}>Visitante</option>")
+                                    @Html.Raw($"<option value=\"proveedor\" {(Model.Visitante.TipoUsuario == "proveedor" ? "selected" : "")}>Proveedor</option>")
+                                    @Html.Raw($"<option value=\"contratista\" {(Model.Visitante.TipoUsuario == "contratista" ? "selected" : "")}>Contratista</option>")
+                                </select>
+                            </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Modelo</label>
-                        <input class="form-control" name="Visitante.Modelo" value="@Model.Visitante.Modelo" />
-                    </div>
+                            <div class="grupo-formulario" id="proveedorDiv" style="display:@(Model.Visitante.TipoUsuario == "proveedor" ? "flex" : "none")">
+                                <label class="etiqueta">Proveedor</label>
+                                <select name="Visitante.IdProveedor" class="select-estilo">
+                                    <option value="">Seleccione proveedor...</option>
+                                    @foreach (var p in Model.Proveedores)
+                                    {
+                                        @Html.Raw($"<option value=\"{p.Id}\" {(Model.Visitante.IdProveedor == p.Id ? "selected" : "")}>{p.Nombre}</option>")
+                                    }
+                                </select>
+                            </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Serial</label>
-                        <input class="form-control" name="Visitante.Serial" value="@Model.Visitante.Serial" />
-                    </div>
+                            <div class="contenedor-botones">
+                                <button name="accion" value="siguiente" class="boton-principal">Siguiente</button>
+                            </div>
+                        </form>
+                    }
+                    else if (Model.PasoActual == 2)
+                    {
+                        <form method="post" class="transicion-desvanecimiento mostrar formulario">
+                            <input type="hidden" name="InicioFormulario" value="true" />
+                            <input type="hidden" name="PasoActual" value="2" />
 
-                    <div class="mb-3">
-                        <label class="form-label">Foto del equipo (obligatorio)</label>
-                        <input type="file" class="form-control" accept="image/*" onchange="convertirImagen(this)" capture="environment" />
-                        <input type="hidden" name="Visitante.FotoBase64" id="fotoBase64" />
-                    </div>
+                            <!-- Campos ocultos para mantener datos -->
+                            <input type="hidden" name="Visitante.TipoDocumento" value="@Model.Visitante.TipoDocumento" />
+                            <input type="hidden" name="Visitante.NumeroDocumento" value="@Model.Visitante.NumeroDocumento" />
+                            <input type="hidden" name="Visitante.Nombres" value="@Model.Visitante.Nombres" />
+                            <input type="hidden" name="Visitante.Apellidos" value="@Model.Visitante.Apellidos" />
+                            <input type="hidden" name="Visitante.TipoUsuario" value="@Model.Visitante.TipoUsuario" />
+                            <input type="hidden" name="Visitante.IdProveedor" value="@Model.Visitante.IdProveedor" />
 
+                            <div class="titulo-seccion">Paso 2: Datos del Equipo</div>
 
-                    <div class="d-flex justify-content-between">
-                        <button name="accion" value="atras" class="btn btn-secondary">Atrás</button>
-                        <button name="accion" value="registrar" class="btn btn-success">Registrar</button>
-                    </div>
-                </form>
-            }
+                            <div class="grupo-formulario">
+                                <label class="etiqueta">Marca</label>
+                                <input class="input-estilo" name="Visitante.Marca" value="@Model.Visitante.Marca" placeholder="Ingrese marca del equipo" />
+                            </div>
 
-            @if (!string.IsNullOrEmpty(Model.Mensaje))
-            {
-                <div class="alert alert-info mt-3">@Model.Mensaje</div>
-            }
+                            <div class="grupo-formulario">
+                                <label class="etiqueta">Modelo</label>
+                                <input class="input-estilo" name="Visitante.Modelo" value="@Model.Visitante.Modelo" placeholder="Ingrese modelo del equipo" />
+                            </div>
+
+                            <div class="grupo-formulario">
+                                <label class="etiqueta">Serial</label>
+                                <input class="input-estilo" name="Visitante.Serial" value="@Model.Visitante.Serial" placeholder="Ingrese serial del equipo" />
+                            </div>
+
+                            <div class="grupo-formulario">
+                                <label class="etiqueta">Foto del equipo (obligatorio)</label>
+                                <input type="file" class="input-estilo" accept="image/*" onchange="convertirImagen(this)" capture="environment" />
+                                <input type="hidden" name="Visitante.FotoBase64" id="fotoBase64" />
+                            </div>
+
+                            <div class="contenedor-botones">
+                                <div class="grupo-botones">
+                                    <button name="accion" value="atras" class="boton-principal boton-secundario">Atrás</button>
+                                    <button name="accion" value="registrar" class="boton-principal">Registrar</button>
+                                </div>
+                            </div>
+                        </form>
+                    }
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.Mensaje))
+                {
+                    <div class="mensaje-alerta">@Model.Mensaje</div>
+                }
+            </div>
         </div>
     </div>
 
     <script>
-                function convertirImagen(input) {
+        function convertirImagen(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
                 reader.onload = function (e) {
@@ -154,16 +584,17 @@
         }
 
         function mostrarProveedor(value) {
-            document.getElementById('proveedorDiv').style.display = value === 'proveedor' ? 'block' : 'none';
+            const proveedorDiv = document.getElementById('proveedorDiv');
+            if (proveedorDiv) {
+                proveedorDiv.style.display = value === 'proveedor' ? 'flex' : 'none';
+            }
         }
 
         // Animación de aparición al cargar
         window.onload = () => {
-            const forms = document.querySelectorAll(".fade-transition");
-            forms.forEach(f => setTimeout(() => f.classList.add("fade-show"), 100));
+            const elementos = document.querySelectorAll(".transicion-desvanecimiento");
+            elementos.forEach(el => setTimeout(() => el.classList.add("mostrar"), 100));
         };
-
-
     </script>
 </body>
 </html>

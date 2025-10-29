@@ -214,13 +214,14 @@
     background-color: #e0e0e0;
     display: flex;
     align-items: center;
-    padding: 3px;
+    padding: 1px;
     flex-shrink: 0 !important;
     width: fit-content;
     max-width: 100%;
-    margin: 0 auto;
+    margin: 0;
 }
 
+/* ESTILOS BASE PARA TABS - REORDENADOS */
 .corporativo, .visitante {
     border-radius: 20px;
     height: clamp(28px, 4vw, 32px);
@@ -235,12 +236,23 @@
     font-size: clamp(0.8rem, 1.5vw, 0.9rem);
     flex-shrink: 0 !important;
     white-space: nowrap;
+    background-color: transparent;
 }
 
-    .corporativo.active-tab, .visitante.active-tab {
-        background-color: #292929;
-        color: #fff;
-    }
+/* ESTILOS ACTIVOS CON MÁXIMA ESPECIFICIDAD */
+.btn-cambio .corporativo.active-tab,
+.btn-cambio .visitante.active-tab {
+    background-color: #292929 !important;
+    color: #ffffff !important;
+    font-weight: 600;
+}
+
+/* Estados hover para mejor UX */
+.corporativo:hover:not(.active-tab),
+.visitante:hover:not(.active-tab) {
+    background-color: #f5f5f5;
+    color: #292929;
+}
 
 .corporativo2, .visitante2 {
     align-items: center;
@@ -588,3 +600,15 @@
     margin: clamp(4px, 1vw, 8px);
 }
 
+/* ========================================================================== */
+/* SOLUCIÓN DE EMERGENCIA PARA TABS - MÁXIMA ESPECIFICIDAD */f
+/* ========================================================================== */
+/* SOLUCIÓN NUCLEAR - MÁXIMA ESPECIFICIDAD */
+div.btn-cambio > div.corporativo.active-tab,
+div.btn-cambio > div.visitante.active-tab,
+div.btn-cambio > div.corporativo.active-tab b.dashboard-equipgo,
+div.btn-cambio > div.visitante.active-tab b.dashboard-equipgo {
+    background-color: #292929 !important;
+    color: #ffffff !important;
+    font-weight: 400 !important;
+}
