@@ -1,0 +1,14 @@
+﻿using OUT_OS_APP.EQUIPGO.DTO.DTOs.Geofecing;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Interface.Services.Geofecing
+{
+    public interface IGeofencingService
+    {
+        Task<GeofencingResponse> ProcessLocation(LocationRequest request);
+    }
+}
