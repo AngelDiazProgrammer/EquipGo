@@ -72,6 +72,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xNYXBzXE1hcGEucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/User/Documents/GitHub/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/Pages/Monitoreo/Monitoreo.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xNb25pdG9yZW9cTW9uaXRvcmVvLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/User/Documents/GitHub/EquipGo/EquipGo/OUT_APP_EQUIPGO/Components/Pages/SubEstados/SubEstados.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xTdWJFc3RhZG9zXFN1YkVzdGFkb3MucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 

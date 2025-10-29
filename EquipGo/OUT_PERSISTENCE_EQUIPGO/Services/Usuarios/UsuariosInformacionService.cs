@@ -88,6 +88,7 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Usuarios
             };
         }
 
+
         public async Task<UsuariosInformacion?> ConsultarUsuarioPorDocumentoAsync(string documento)
         {
             if (string.IsNullOrEmpty(documento))

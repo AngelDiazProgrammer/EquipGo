@@ -45,7 +45,9 @@
                 <div class="visitante" id="tabVisitante"><b class="dashboard-equipgo">Visitante</b></div>
             </div>
         </div>
+        <div class="corporativo2" id="corporativoSection" style="display: flex;">
             <div class="table-wrapper">
+
                 <!-- TABLA CON ID -->
                 <table class="table-equipgo" style="width: 100%;" id="tablaDashboard">
                     <thead>
@@ -82,52 +84,10 @@
                     </tbody>
                 </table>
             </div>
-
-            <div class="pagination-controls d-flex justify-content-between align-items-center p-2">
-                <button class="btn btn-sm btn-outline-primary" @onclick="GoToPreviousCorporativoPage" disabled="@(CurrentCorporativoPage == 1)">Anterior</button>
-                <span>Página @CurrentCorporativoPage de @TotalCorporativoPages</span>
-                <button class="btn btn-sm btn-outline-primary" @onclick="GoToNextCorporativoPage" disabled="@(CurrentCorporativoPage == TotalCorporativoPages)">Siguiente</button>
-            </div>
+        </div>
 
         <!-- SECCIÓN VISITANTES -->
         <div class="visitante2" id="visitanteSection" style="display: none;">
-            <div class="dashboard-subtitulo"><b class="corporativo3">Visitante</b></div>
-            <div class="dashboard-filtros">
-                <div class="dashboard-filtro">
-                    <div class="buscar-nombre">
-                        <label>Nombre Visitante</label>
-                        <div class="frame-div">
-                            <input type="text" class="placeholder filter-input" placeholder="Buscar" name="nombreVisitante" />
-                        </div>
-                    </div>
-                    <div class="buscar-nombre">
-                        <label>Marca</label>
-                        <div class="frame-div">
-                            <input type="text" class="placeholder filter-input" placeholder="Buscar" name="marca" />
-                        </div>
-                    </div>
-                    <div class="transaccin">
-                        <label>Tipo Transacción</label>
-                        <div class="dashboard-contenido">
-                            <select class="placeholder filter-input" name="tipoTransaccion">
-                                <option value="">Todos</option>
-                                <option value="entrada">Entrada</option>
-                                <option value="salida">Salida</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="buscar-nombre">
-                        <label>Aprobado por</label>
-                        <div class="frame-div">
-                            <input type="text" class="placeholder filter-input" placeholder="Buscar" name="aprobadoPor" />
-                        </div>
-                    </div>
-                </div>
-                <div class="botonera">
-                    <button class="botn3">Limpiar Filtros</button>
-                </div>
-            </div>
-
             <div class="table-wrapper">
                 <!-- TABLA CON ID -->
                 <table class="table-equipgo" style="width: 100%;" id="tablaVisitantes">
@@ -165,17 +125,64 @@
                     </tbody>
                 </table>
             </div>
-
-            <div class="pagination-controls d-flex justify-content-between align-items-center p-2">
-                <button class="btn btn-sm btn-outline-primary" @onclick="GoToPreviousVisitantePage" disabled="@(CurrentVisitantePage == 1)">Anterior</button>
-                <span>Página @CurrentVisitantePage de @TotalVisitantePages</span>
-                <button class="btn btn-sm btn-outline-primary" @onclick="GoToNextVisitantePage" disabled="@(CurrentVisitantePage == TotalVisitantePages)">Siguiente</button>
-            </div>
         </div>
     </div>
 </div>
 
+<style>
+    /* Mensaje de carga cuando tbody está vacío - CORPORATIVO */
+    #tbodyDashboard:empty::after {
+        content: 'Esperando a que se realicen escaneos';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        color: #666;
+        font-size: 16px;
+        font-weight: 500;
+        white-space: nowrap;
+        animation: dots 1.5s steps(4, end) infinite;
+        z-index: 10;
+    }
+
+    /* Mensaje de carga cuando tbody está vacío - VISITANTES */
+    #tbodyVisitantes:empty::after {
+        content: 'Esperando a que se realicen escaneos';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        color: #666;
+        font-size: 16px;
+        font-weight: 500;
+        white-space: nowrap;
+        animation: dots 1.5s steps(4, end) infinite;
+        z-index: 10;
+    }
+
+    @@keyframes dots {
+        0%, 20% {
+            content: 'Esperando a que se realicen escaneos';
+        }
+
+        40% {
+            content: 'Esperando a que se realicen escaneos.';
+        }
+
+        60% {
+            content: 'Esperando a que se realicen escaneos..';
+        }
+
+        80%, 100% {
+            content: 'Esperando a que se realicen escaneos...';
+        }
+    }
+</style>
+
 <script>
+    //IniciarTabla
     function initDashboardUI(dotNetHelper) {
         console.log("UI del Dashboard inicializada.");
 

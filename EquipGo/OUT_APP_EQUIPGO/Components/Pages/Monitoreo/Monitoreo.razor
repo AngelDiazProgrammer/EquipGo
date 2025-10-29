@@ -1,0 +1,212 @@
+﻿@page "/monitoreo"
+@using OUT_OS_APP.EQUIPGO.DTO.DTOs.Equipo
+
+<div class="frame-container">
+    <!-- Encabezado -->
+    <div class="dashboard-parent">
+        <h4 class="dashboard-equipgo">Monitoreo de Equipos</h4>
+        <div class="logo-os">
+            <img src="img/logoOutsourcing.png" alt="Logo" class="dashboard-vector-icon" />
+        </div>
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="contenido">
+        <div class="contenido-scrollable">
+
+            <!-- FILTRO -->
+            <div class="dashboard-filtros">
+                <div class="dashboard-filtro">
+                    <div class="buscar-nombre">
+                        <label>Asset</label>
+                        <div class="frame-div">
+                            <input type="text"
+                                   class="placeholder"
+                                   @bind="filtroAssetMonitoreo"
+                                   @oninput="OnFiltroCodigoDeBarrasChanged"
+                                   placeholder="Ingresa código de barras, serial o modelo..." />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Indicador de carga -->
+            @if (cargando)
+            {
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Buscando equipo...</span>
+                    </div>
+                    <p class="text-muted mt-2">Buscando equipo...</p>
+                </div>
+            }
+
+            <!-- Mensaje cuando no hay resultados -->
+            @if (!cargando && equipoSeleccionado == null && !string.IsNullOrEmpty(filtroAssetMonitoreo))
+            {
+                <div class="alert alert-warning text-center">
+                    <i class="bi bi-search"></i>
+                    <strong>No se encontró ningún equipo</strong>
+                    <p class="mb-0">Intenta con otro código de barras, serial o modelo</p>
+                </div>
+            }
+
+            <!-- Vista Detalles Equipo -->
+            @if (equipoSeleccionado != null)
+            {
+                <div class="monitoreo-layout">
+                    <!-- COLUMNA IZQUIERDA - INFO -->
+                    <div class="columna-info">
+                        <div class="vista-detalles-equipo">
+                            <div class="vista-header-equipgo">
+                                <h5 class="vista-title-equipgo">Detalles del Equipo</h5>
+                                <span class="badge bg-primary">@(equipoSeleccionado.EstadoNombre ?? "Sin estado")</span>
+                            </div>
+                            <div class="vista-body-equipgo">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <!-- Datos del Equipo -->
+                                        <div class="seccion-modal">
+                                            <div class="seccion-header">
+                                                <span class="seccion-titulo">💻 Datos del Equipo</span>
+                                            </div>
+                                            <div class="seccion-datos">
+                                                <div class="dato-fila">
+                                                    <span class="dato-label">Marca:</span>
+                                                    <span class="dato-valor">@(equipoSeleccionado.Marca ?? "N/A")</span>
+                                                </div>
+                                                <div class="dato-fila">
+                                                    <span class="dato-label">Modelo:</span>
+                                                    <span class="dato-valor">@(equipoSeleccionado.Modelo ?? "N/A")</span>
+                                                </div>
+                                                <div class="dato-fila">
+                                                    <span class="dato-label">Serial:</span>
+                                                    <span class="dato-valor">@(equipoSeleccionado.Serial ?? "N/A")</span>
+                                                </div>
+                                                <div class="dato-fila">
+                                                    <span class="dato-label">Código de Barras:</span>
+                                                    <span class="dato-valor">@(equipoSeleccionado.CodigoBarras ?? "N/A")</span>
+                                                </div>
+                                                <div class="dato-fila">
+                                                    <span class="dato-label">Sistema Operativo:</span>
+                                                    <span class="dato-valor">@(equipoSeleccionado.SistemaOperativo ?? "N/A")</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Características -->
+                                        <div class="seccion-modal">
+                                            <div class="seccion-header">
+                                                <span class="seccion-titulo">⚙️ Características</span>
+                                            </div>
+                                            <div class="seccion-datos">
+                                                <div class="dato-fila">
+                                                    <span class="dato-label">Estado:</span>
+                                                    <span class="dato-valor">@(equipoSeleccionado.EstadoNombre ?? "N/A")</span>
+                                                </div>
+                                                <div class="dato-fila">
+                                                    <span class="dato-label">Tipo de dispositivo:</span>
+                                                    <span class="dato-valor">@(equipoSeleccionado.TipoDispositivoNombre ?? "N/A")</span>
+                                                </div>
+                                                <div class="dato-fila">
+                                                    <span class="dato-label">Proveedor:</span>
+                                                    <span class="dato-valor">@(equipoSeleccionado.ProveedorNombre ?? "N/A")</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Asignación -->
+                                        <div class="seccion-modal">
+                                            <div class="seccion-header">
+                                                <span class="seccion-titulo">👤 Asignación</span>
+                                            </div>
+                                            <div class="seccion-datos">
+                                                <div class="dato-fila">
+                                                    <span class="dato-label">Usuario:</span>
+                                                    <span class="dato-valor">
+                                                        @if (!string.IsNullOrEmpty(equipoSeleccionado.UsuarioNombreCompleto))
+                                                        {
+                                                            @equipoSeleccionado.UsuarioNombreCompleto
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="text-muted">Sin asignar</span>
+                                                        }
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COLUMNA DERECHA - MAPA -->
+                    <div class="columna-mapa">
+                        <div class="seccion-modal">
+                            <div class="seccion-header">
+                                <span class="seccion-titulo">🗺️ Ubicación</span>
+                            </div>
+                            <div class="seccion-datos p-0">
+                                <div id="google-map" style="height: 500px; width: 100%; background: #f8f9fa;">
+                                    @if (equipoSeleccionado.Latitud.HasValue && equipoSeleccionado.Longitud.HasValue)
+                                    {
+                                        <div class="text-center py-4">
+                                            <div class="spinner-border text-primary" role="status">
+                                                <span class="visually-hidden">Cargando mapa...</span>
+                                            </div>
+                                            <p class="text-muted mt-2">Cargando ubicación...</p>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="text-center py-4 text-muted">
+                                            <i class="bi bi-map" style="font-size: 2rem;"></i>
+                                            <p>No hay ubicación disponible para este equipo</p>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            else if (string.IsNullOrEmpty(filtroAssetMonitoreo))
+            {
+                <!-- Estado inicial - antes de buscar -->
+                <div class="text-center py-5 text-muted">
+                    <i class="bi bi-search" style="font-size: 3rem;"></i>
+                    <h4 class="mt-3">Buscar Equipo</h4>
+                    <p>Ingresa un código de barras, serial o modelo en el campo de búsqueda para ver los detalles del equipo</p>
+                </div>
+            }
+
+        </div>
+    </div>
+</div>
+
+<style>
+    /* LAYOUT PRINCIPAL */
+    .monitoreo-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        width: 100%;
+    }
+
+    .columna-info {
+        /* Info a la izquierda */
+    }
+
+    .columna-mapa {
+        /* Mapa a la derecha */
+    }
+
+    /* RESPONSIVE */
+    @@media (max-width: 768px) {
+        .monitoreo-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
