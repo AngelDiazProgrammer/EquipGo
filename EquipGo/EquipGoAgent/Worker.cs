@@ -1,9 +1,13 @@
 ﻿using EquipGoAgent.Dtos;
 using System;
 using System.Management;
+using System.Net.Http;
 using System.Net.NetworkInformation;
 using System.Reflection;
+using System.Text;
+using System.Text.Json;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace EquipGo.Agent
 {
@@ -12,22 +16,33 @@ namespace EquipGo.Agent
         private readonly FileLogger _logger;
         private readonly GeoHelper _geoHelper;
         private readonly HttpAgentSender _sender;
-        private readonly HttpGeofencingSender _geoSender;
+        private readonly HttpClient _httpClient;
+        private readonly string _apiBaseUrl;
 
         public Worker()
         {
             _logger = new FileLogger();
             _geoHelper = new GeoHelper(_logger);
             _sender = new HttpAgentSender(_logger);
-            _geoSender = new HttpGeofencingSender(_logger);
+
+            // 🔌 Configurar HttpClient para llamar al backend
+            _httpClient = new HttpClient();
+            _apiBaseUrl = " https://steady-optimal-eagle.ngrok-free.app/api";
+            _httpClient.Timeout = TimeSpan.FromSeconds(30);
+
+            _logger.Log("🚀 Worker iniciado - Modo Integrado con Backend");
         }
 
-        public void Start()
+        public async Task StartAsync()
         {
+            _logger.Log("🔗 Worker conectado al backend de geofencing");
+
             while (true)
             {
                 try
                 {
+                    _logger.Log("🔄 Iniciando ciclo de verificación...");
+
                     // 🛰️ Obtener ubicación actual
                     var (lat, lon) = _geoHelper.GetLocation();
 
@@ -94,29 +109,28 @@ namespace EquipGo.Agent
 
                     // 📤 Enviar DTO de sincronización
                     _logger.Log($"📡 Iniciando envío de Sync: Serial={serial}, Marca={marca}, Modelo={modelo}, MAC={mac}, SO={sistemaOperativo}, Lat={lat}, Lon={lon}");
-                    _sender.Send(dtoSync);
+                    await Task.Run(() => _sender.Send(dtoSync));
 
                     // =====================================================
-                    // 📍 Enviar DTO de geofencing
+                    // 🔄 NUEVO: Procesar geofencing con el BACKEND
                     // =====================================================
-                    var dtoGeo = new LocationRequestDto
-                    {
-                        Latitude = lat,
-                        Longitude = lon,
-                        Serial = serial
-                    };
-
-                    _logger.Log($"📍 Enviando ubicación a geofencing: Serial={serial}, Lat={lat}, Lon={lon}");
+                    _logger.Log($"📍 Enviando ubicación al BACKEND: Serial={serial}, Lat={lat}, Lon={lon}");
 
                     try
                     {
-                        var geoResponse = _geoSender.Send(dtoGeo);
+                        var geoResponse = await ProcesarUbicacionEnBackend(serial, lat, lon);
 
                         if (geoResponse != null && geoResponse.DebeNotificar)
                         {
-                            _logger.Log($"⚠️ Notificación requerida: {geoResponse.Mensaje}");
-                            NotificacionWindowsService.MostrarAlerta(geoResponse.Mensaje ??
-                                "⚠️ El equipo ha salido de la sede sin registrar salida.");
+                            _logger.Log($"⚠️ Notificación desde backend ({geoResponse.ContadorNotificaciones}/5): {geoResponse.Mensaje}");
+
+                            // 🎯 Mostrar alerta según el nivel del backend
+                            bool esNoCerrable = geoResponse.NivelAlerta >= 4; // 4 = Bloqueado
+                            NotificacionWindowsService.MostrarAlerta(
+                                geoResponse.Mensaje,
+                                esNoCerrable,
+                                geoResponse.ContadorNotificaciones
+                            );
                         }
                         else
                         {
@@ -125,7 +139,7 @@ namespace EquipGo.Agent
                     }
                     catch (Exception ex)
                     {
-                        _logger.Log($"❌ Error procesando respuesta GEO: {ex.Message}");
+                        _logger.Log($"❌ Error procesando geofencing con backend: {ex.Message}");
                     }
                 }
                 catch (Exception ex)
@@ -134,7 +148,62 @@ namespace EquipGo.Agent
                 }
 
                 // ⏳ Esperar 5 minutos antes del siguiente ciclo
-                Thread.Sleep(TimeSpan.FromMinutes(5));
+                _logger.Log("⏳ Esperando 24 horas para próximo ciclo...");
+                await Task.Delay(TimeSpan.FromHours(24));
+            }
+        }
+
+        // 🔌 MÉTODO PARA LLAMAR AL BACKEND DE GEOFENCING
+        private async Task<GeofencingResponseDto> ProcesarUbicacionEnBackend(string serial, double lat, double lon)
+        {
+            try
+            {
+                _logger.Log($"🔗 Enviando ubicación al backend: {serial}");
+
+                var request = new LocationRequestDto
+                {
+                    Serial = serial,
+                    Latitude = lat,
+                    Longitude = lon
+                };
+
+                var json = JsonSerializer.Serialize(request);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_apiBaseUrl}/geofencing/process-location", content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseJson = await response.Content.ReadAsStringAsync();
+                    var result = JsonSerializer.Deserialize<GeofencingResponseDto>(responseJson);
+                    _logger.Log($"✅ Respuesta recibida del backend: DebeNotificar={result?.DebeNotificar}, Contador={result?.ContadorNotificaciones}");
+                    return result;
+                }
+                else
+                {
+                    _logger.Log($"❌ Error del backend: {response.StatusCode}");
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Log($"❌ Error llamando al backend: {ex.Message}");
+                return null;
+            }
+        }
+
+        // 🧪 MÉTODO DE PRUEBA OPCIONAL
+        private async Task ProbarConexionBackend()
+        {
+            try
+            {
+                _logger.Log("🔍 Probando conexión con backend...");
+                var response = await _httpClient.GetAsync($"{_apiBaseUrl}/geofencing");
+                _logger.Log($"✅ Backend responde: {response.StatusCode}");
+            }
+            catch (Exception ex)
+            {
+                _logger.Log($"❌ No se puede conectar al backend: {ex.Message}");
             }
         }
     }

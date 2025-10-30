@@ -31,6 +31,7 @@ namespace OUT_PERSISTENCE_EQUIPGO.Context
         public DbSet<UsuariosInformacion> UsuariosInformacion { get; set; }
         public DbSet<Transacciones> Transacciones { get; set; }
         public DbSet<AlertasGeofencing> AlertasGeofencing { get; set; }
+        public DbSet<ContadorGeofencing> ContadoresGeofencing { get; set; }
         public DbSet<BitacoraEventos> BitacoraEventos { get; set; }
         public DbSet<HistorialUbicaciones> HistorialUbicaciones { get; set; }
         public DbSet<LogEventos> LogEventos { get; set; }
@@ -58,6 +59,11 @@ namespace OUT_PERSISTENCE_EQUIPGO.Context
             modelBuilder.Entity<Equipos>()
     .HasIndex(e => e.CodigoBarras)
     .IsUnique();
+            modelBuilder.Entity<ContadorGeofencing>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.HasIndex(e => e.Serial).IsUnique();
+            });
         }
     }
 }

@@ -11,6 +11,8 @@ namespace OUT_OS_APP.EQUIPGO.DTO.DTOs.Geofecing
         public bool DebeNotificar { get; set; }          
         public string Mensaje { get; set; }              
         public string Serial { get; set; }               
-        public DateTime? UltimaTransaccionFecha { get; set; } 
+        public DateTime? UltimaTransaccionFecha { get; set; }
+        public int ContadorNotificaciones { get; set; }
+        public int NivelAlerta { get; set; }
     }
 }

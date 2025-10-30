@@ -27,7 +27,10 @@ namespace OUT_DOMAIN_EQUIPGO.Entities.Procesos
         [Column("fecha")]
         public DateTime Fecha { get; set; }
 
-        public virtual Equipos IdEquipoNavigation { get; set; }
-        public virtual TipoAlerta IdTipoAlertaNavigation { get; set; }
+        [ForeignKey("IdEquipo")]
+        public virtual Equipos Equipo { get; set; }
+
+        [ForeignKey("IdTipoAlerta")]
+        public virtual TipoAlerta TipoAlerta { get; set; }
     }
 }
