@@ -3,13 +3,17 @@
 .login-body {
     background: linear-gradient(to right, #000000, #2b2b2b);
     font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
 }
 
 .login-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 .login-box {
@@ -25,16 +29,18 @@
 .login-header img.logo {
     width: 120px;
     margin-bottom: 1rem;
+    max-width: 100%;
+    height: auto;
 }
 
 .login-header h2 {
-    font-size: 28px;
+    font-size: clamp(24px, 5vw, 28px);
     font-weight: bold;
     margin: 0;
 }
 
 .login-header h4 {
-    font-size: 18px;
+    font-size: clamp(16px, 4vw, 18px);
     color: #555;
     margin-top: 0.5rem;
     margin-bottom: 1.5rem;
@@ -49,13 +55,16 @@
         display: block;
         font-weight: bold;
         margin-bottom: 0.3rem;
+        font-size: clamp(14px, 4vw, 16px);
     }
 
 .form-control {
     width: 100%;
-    padding: 0.5rem;
+    padding: 0.75rem;
     border-radius: 5px;
     border: 1px solid #ccc;
+    font-size: clamp(14px, 4vw, 16px);
+    box-sizing: border-box;
 }
 
 .form-options {
@@ -63,10 +72,12 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
     .form-options a {
-        font-size: 0.9rem;
+        font-size: clamp(12px, 3vw, 14px);
         color: #d9002b;
         text-decoration: none;
     }
@@ -79,9 +90,9 @@
     background-color: #d9002b;
     color: white;
     border: none;
-    padding: 0.6rem 1.5rem;
+    padding: 0.75rem 1.5rem;
     border-radius: 25px;
-    font-size: 1rem;
+    font-size: clamp(14px, 4vw, 16px);
     cursor: pointer;
     width: 100%;
     transition: background-color 0.3s ease;
@@ -94,5 +105,463 @@
 .mensaje {
     margin-top: 1rem;
     color: red;
-    font-size: 0.9rem;
+    font-size: clamp(12px, 3vw, 14px);
 }
+
+/* Estilos responsive para el layout específico */
+.login-administrador {
+    width: 100%;
+    position: relative;
+    min-height: 100vh;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: url('../img/Fondos/FondoLogin.jpg') center/cover no-repeat, linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(43, 43, 43, 0.7));
+    background-blend-mode: overlay;
+    text-align: center;
+    font-size: clamp(16px, 4vw, 20px);
+    color: #393e42;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.sign-up {
+    width: 100%;
+    max-width: min(95vw, 950px);
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 20px;
+    background-color: #fff;
+    min-height: min(90vh, 700px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.sup {
+    width: 100%;
+    border-radius: 20px 20px 0px 0px;
+    background: linear-gradient(90deg, rgba(53, 56, 60, 0.7), #35383c);
+    height: auto;
+    min-height: 89px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 15px 19px;
+    box-sizing: border-box;
+}
+
+.logo-os {
+    width: min(173px, 40vw);
+    position: relative;
+    height: auto;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .logo-os img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        filter: brightness(0) invert(1);
+    }
+
+.equipgo-parent {
+    width: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: clamp(15px, 3vw, 20px);
+    box-sizing: border-box;
+}
+
+.equipgo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    font-size: clamp(32px, 8vw, 60px);
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.login-administrador-equipgo {
+    position: relative;
+    font-weight: bold;
+    font-size: inherit;
+}
+
+.iniciar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    margin-bottom: clamp(20px, 4vw, 30px);
+    font-size: clamp(18px, 5vw, 24px);
+}
+
+.ingreso-datos-parent {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(15px, 3vw, 25px);
+    text-align: left;
+}
+
+.ingreso-datos {
+    width: 100%;
+    max-width: min(90vw, 750px);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    padding: 0px clamp(20px, 5vw, 50px);
+    gap: clamp(20px, 4vw, 30px);
+    box-sizing: border-box;
+}
+
+.ingreso-usuario {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.usuario-wrapper {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 8px 0px;
+}
+
+.usuario-container {
+    width: 100%;
+    border-radius: 30px;
+    background-color: #ededed;
+    height: auto;
+    min-height: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 12px 15px;
+    box-sizing: border-box;
+    color: #89898c;
+}
+
+.login-administrador-usuario {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    gap: 10px;
+    box-sizing: border-box;
+}
+
+    .ingrese-su-nombre,
+    .login-administrador-usuario input {
+        border: none;
+        background: transparent;
+        outline: none;
+        font-size: clamp(16px, 4vw, 20px);
+        color: #89898c;
+        flex: 1;
+        line-height: 22px;
+        width: 100%;
+    }
+
+        .login-administrador-usuario input::placeholder {
+            color: #89898c;
+            font-size: clamp(14px, 3vw, 16px);
+        }
+
+.contrasea {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(15px, 3vw, 25px);
+}
+
+.guardar-contrasea {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0px 10px;
+    gap: 15px;
+    font-size: clamp(14px, 3vw, 16px);
+    flex-wrap: wrap;
+}
+
+.c1 {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    flex: 1;
+    min-width: min-content;
+}
+
+.check {
+    width: 20px;
+    height: 20px;
+    position: relative;
+    flex-shrink: 0;
+}
+
+    .check input[type="checkbox"] {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+    }
+
+.recordar-contrasea {
+    line-height: 24px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.c2 {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    cursor: pointer;
+    flex: 1;
+    min-width: min-content;
+}
+
+.olvido-su-contrasea {
+    text-decoration: underline;
+    line-height: 24px;
+    font-weight: bold;
+    white-space: nowrap;
+    text-align: right;
+}
+
+.button {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: clamp(15px, 3vw, 20px);
+}
+
+.botn {
+    width: 100%;
+    max-width: min(90vw, 488px);
+    height: auto;
+    min-height: 50px;
+    border-radius: 30px;
+    background: linear-gradient(90deg, rgba(234, 0, 41, 0.7), #ea0029);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    border: none;
+    color: white;
+    font-size: clamp(16px, 4vw, 18px);
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    padding: 12px 20px;
+}
+
+    .botn:hover {
+        background: linear-gradient(90deg, rgba(234, 0, 41, 0.8), #c5001f);
+        transform: translateY(-1px);
+    }
+
+.login-administrador-icono {
+    width: 18px;
+    height: 15px;
+    transform: rotate(-180deg);
+}
+
+.mensaje-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    max-width: calc(100vw - 40px);
+}
+
+.mensaje {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 10px 15px;
+    margin: 0;
+    color: #393e42;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    font-size: clamp(12px, 3vw, 14px);
+    word-wrap: break-word;
+}
+
+/* Iconos */
+.icono-usuario {
+    width: clamp(18px, 4vw, 22px);
+    height: clamp(18px, 4vw, 22px);
+    opacity: 0.7;
+    transition: opacity 0.2s ease-in-out;
+    cursor: default;
+    flex-shrink: 0;
+}
+
+.icono-ojo {
+    width: clamp(18px, 4vw, 22px);
+    height: clamp(18px, 4vw, 22px);
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s ease-in-out;
+    flex-shrink: 0;
+}
+
+    .icono-ojo:hover {
+        opacity: 1;
+    }
+
+/* Media Queries para ajustes específicos */
+@media (max-width: 768px) {
+    .login-administrador {
+        padding: 15px;
+    }
+
+    .sign-up {
+        border-radius: 15px;
+        gap: 15px;
+    }
+
+    .sup {
+        border-radius: 15px 15px 0px 0px;
+        padding: 12px 15px;
+    }
+
+    .equipgo-parent {
+        padding: 12px;
+    }
+
+    .ingreso-datos {
+        padding: 0px 20px;
+    }
+
+    .guardar-contrasea {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .c1, .c2 {
+        justify-content: center;
+    }
+
+    .olvido-su-contrasea {
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-administrador {
+        padding: 10px;
+    }
+
+    .sign-up {
+        border-radius: 12px;
+        gap: 12px;
+    }
+
+    .sup {
+        border-radius: 12px 12px 0px 0px;
+        padding: 10px 12px;
+    }
+
+    .ingreso-datos {
+        padding: 0px 15px;
+        gap: 15px;
+    }
+
+    .usuario-container {
+        padding: 10px 12px;
+        border-radius: 20px;
+    }
+
+    .login-administrador-usuario {
+        padding: 8px;
+    }
+
+    .botn {
+        border-radius: 25px;
+        padding: 10px 15px;
+    }
+
+    .mensaje-container {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+}
+
+@media (max-width: 320px) {
+    .login-administrador {
+        padding: 5px;
+    }
+
+    .ingreso-datos {
+        padding: 0px 10px;
+    }
+
+    .equipgo {
+        font-size: 28px;
+    }
+
+    .iniciar {
+        font-size: 16px;
+    }
+}
+
+/* Quitar borde verde/rojo por validación de Blazor */
+input.modified.valid,
+input.modified.invalid,
+input.valid,
+input.invalid {
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+input:focus {
+    outline: none !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+/* Eliminamos estilos de Bootstrap que puedan interferir */
+.form-control, .form-group, .btn, .container, .d-flex,
+.justify-content-center, .align-items-center, .min-vh-100,
+.text-center, .flex-wrap, .shadow, .rounded, .bg-white,
+.w-100, .img-fluid, .mb-2, .mb-3, .mb-4, .mt-3,
+.justify-content-between, .btn-danger {
+    all: unset;
+}
+
+/* Quitar fondo azul en autocompletado */
+input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px #ededed inset !important;
+    -webkit-text-fill-color: #89898c !important;
+    transition: background-color 9999s ease-in-out 0s;
+    font-size: clamp(16px, 4vw, 20px) !important;
+}
+
+    input:-webkit-autofill:focus {
+        -webkit-box-shadow: 0 0 0px 1000px #ededed inset !important;
+        -webkit-text-fill-color: #89898c !important;
+    }
