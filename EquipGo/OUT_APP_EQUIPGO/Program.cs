@@ -70,6 +70,7 @@ builder.Services.AddScoped<ICampañaService, CampañaService>();
 builder.Services.AddScoped<IEquipoService, EquipoService>();
 builder.Services.AddScoped<IGeofencingService, GeofencingService>();
 builder.Services.AddScoped<IUsuariosInformacionService, UsuariosInformacionService>();
+builder.Services.AddScoped<IUsuariosSessionService, UsuariosSessionService>();
 builder.Services.AddScoped<IEstadoService, EstadoService>();
 builder.Services.AddScoped<ISubEstadoService, SubEstadoService>();
 builder.Services.AddScoped<ISedesService, SedesService>();

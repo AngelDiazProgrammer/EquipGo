@@ -30,12 +30,14 @@ namespace OUT_DOMAIN_EQUIPGO.Entities.Seguridad
         [Column("contraseña")]
         public string Contraseña { get; set; }
 
-
         [Column("id_estado")]
         public int IdEstado { get; set; }
 
         [Column("id_rol")]
         public int IdRol { get; set; }
+
+        [Column("id_sede")]
+        public int IdSede { get; set; }
 
         [Column("fecha_creacion")]
         public DateTime FechaCreacion { get; set; }
@@ -52,5 +54,8 @@ namespace OUT_DOMAIN_EQUIPGO.Entities.Seguridad
 
         [ForeignKey("IdRol")]
         public virtual Rol Rol { get; set; }
+
+        [ForeignKey("IdSede")]
+        public virtual Sedes Sede { get; set; }
     }
 }

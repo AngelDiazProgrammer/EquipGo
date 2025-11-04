@@ -1,0 +1,216 @@
+﻿@page "/transaccionesVisitantes"
+@using Microsoft.AspNetCore.Authorization
+@using OUT_OS_APP.EQUIPGO.DTO.DTOs.Transacciones
+@using OUT_APP_EQUIPGO.Components.Shared
+@inject Interface.Services.Transacciones.ITransaccionService TransaccionService
+
+<link href="css/Dashboard/dashboard.css" rel="stylesheet" />
+
+<div class="frame-container">
+    <!-- ENCABEZADO -->
+    <div class="dashboard-parent">
+        <b class="dashboard-equipgo">Gestión de Transacciones de Visitantes</b>
+        <div class="logo-os">
+            <img class="dashboard-vector-icon" alt="Logo" src="img/logoOutsourcing.png" />
+        </div>
+    </div>
+
+    <!-- CONTADORES -->
+    <div class="info">
+        <div class="card-registros">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
+            </svg>
+            <div class="datos">
+                <b class="b">@TotalTransacciones</b>
+                <b class="transacciones-de-hoy">Total Transacciones</b>
+            </div>
+        </div>
+
+        <div class="card-registros">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
+            </svg>
+            <div class="datos">
+                <b class="b">@TransaccionesHoy</b>
+                <b class="transacciones-de-hoy">Transacciones Hoy</b>
+            </div>
+        </div>
+
+        <div class="card-alerta">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
+            </svg>
+            <div class="datos">
+                <b class="b">@TransaccionesSinAprobador</b>
+                <b class="transacciones-de-hoy">Sin Aprobador</b>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="contenido">
+        <!-- FILTROS -->
+        <div class="dashboard-filtros" id="transaccionesVisitantesFiltros">
+            <div class="dashboard-filtro">
+                <!-- Filtro por Visitante -->
+                <div class="buscar-nombre">
+                    <b class="dashboard-equipgo">Visitante</b>
+                    <div class="frame-div">
+                        <div class="placeholder-wrapper">
+                            <input type="text"
+                                   class="placeholder"
+                                   @bind="filtroVisitante"
+                                   @oninput="OnFiltroVisitanteChanged"
+                                   data-filtro="visitante"
+                                   placeholder="Buscar por visitante..." />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtro por Aprobador -->
+                <div class="buscar-nombre">
+                    <b class="dashboard-equipgo">Aprobador</b>
+                    <div class="frame-div">
+                        <div class="placeholder-wrapper">
+                            <input type="text"
+                                   class="placeholder"
+                                   @bind="filtroAprobador"
+                                   @oninput="OnFiltroAprobadorChanged"
+                                   data-filtro="aprobador"
+                                   placeholder="Buscar por aprobador..." />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtro por Tipo Transacción -->
+                <div class="buscar-nombre">
+                    <b class="dashboard-equipgo">Tipo Transacción</b>
+                    <div class="frame-div">
+                        <div class="placeholder-wrapper">
+                            <input type="text"
+                                   class="placeholder"
+                                   @bind="filtroTipoTransaccion"
+                                   @oninput="OnFiltroTipoTransaccionChanged"
+                                   data-filtro="tipoTransaccion"
+                                   placeholder="Filtrar por tipo..." />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtro por Sede -->
+                <div class="buscar-nombre">
+                    <b class="dashboard-equipgo">Sede</b>
+                    <div class="frame-div">
+                        <div class="placeholder-wrapper">
+                            <input type="text"
+                                   class="placeholder"
+                                   @bind="filtroSede"
+                                   @oninput="OnFiltroSedeChanged"
+                                   data-filtro="sede"
+                                   placeholder="Filtrar por sede..." />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtro por Fecha (simple) -->
+                <div class="buscar-nombre">
+                    <b class="dashboard-equipgo">Fecha</b>
+                    <div class="frame-div">
+                        <div class="placeholder-wrapper">
+                            <input type="date"
+                                   class="placeholder"
+                                   value="@filtroFecha"
+                                   @onchange="@((ChangeEventArgs e) => OnFiltroFechaChanged(e))"
+                                   data-filtro="fecha" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Botones -->
+        <div class="botonera">
+            <button class="botn3" @onclick="DescargarExcelConFiltros">
+                <i class="bi bi-file-earmark-excel"></i> Descargar Excel
+            </button>
+        </div>
+
+        <!-- TABLA CON PAGINACIÓN -->
+        @if (isCargandoTransacciones)
+        {
+            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 50; pointer-events: none;">
+                <div style="position: relative; width: 56px; height: 56px;">
+                    <div style="width: 56px; height: 56px; border: 4px solid #ef4444; border-top-color: transparent; border-radius: 50%; animation: spin-slow 1.4s linear infinite;"></div>
+                </div>
+                <p style="margin-top: 12px; color: #ef4444; font-size: 18px; font-weight: 600; letter-spacing: 0.025em; animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;">
+                    Cargando transacciones...
+                </p>
+            </div>
+        }
+        else if (!transaccionesPaginadas.Any())
+        {
+            <p>No hay transacciones de visitantes que coincidan con los filtros.</p>
+        }
+        else
+        {
+            <div class="table-wrapper" style="width: 100%;">
+                <table class="table-equipgo" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Visitante</th>
+                            <th>Marca Equipo</th>
+                            <th>Aprobador</th>
+                            <th>Sede</th>
+                            <th>Tipo Transacción</th>
+                            <th>Fecha Transacción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var transaccion in transaccionesPaginadas)
+                        {
+                            <tr>
+                                <td>@transaccion.NombresVisitante</td>
+                                <td>@transaccion.MarcaEquipo</td>
+                                <td>@transaccion.NombreAprobador</td>
+                                <td>@transaccion.NombreSede</td>
+                                <td>@transaccion.TipoTransaccion</td>
+                                <td>@transaccion.FechaTransaccion.ToString("dd/MM/yyyy HH:mm")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- COMPONENTE DE PAGINACIÓN -->
+            <Paginacion TotalRegistros="@transaccionesFiltradas.Count"
+                        PaginaActual="@paginaActual"
+                        PaginaActualChanged="@OnPaginaCambiada"
+                        RegistrosPorPagina="@registrosPorPagina"
+                        RegistrosPorPaginaChanged="@OnRegistrosPorPaginaCambiados"
+                        ModoAuto="@modoAuto"
+                        ModoAutoChanged="@OnModoAutoCambiado" />
+        }
+    </div>
+</div>
+
+<style>
+    @@keyframes spin-slow {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    @@keyframes pulse {
+        0%, 100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.5;
+        }
+    }
+</style>

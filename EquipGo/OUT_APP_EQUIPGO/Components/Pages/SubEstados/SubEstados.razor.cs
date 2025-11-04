@@ -133,9 +133,6 @@ namespace OUT_APP_EQUIPGO.Components.Pages.SubEstados
             StateHasChanged();
         }
 
-        // Propiedades para las cards
-        private int TotalSubEstados => subEstados.Count;
-
         [JSInvokable]
         public async Task<string> RefrescarListaSubEstados()
         {

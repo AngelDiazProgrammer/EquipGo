@@ -14,6 +14,8 @@ namespace OUT_OS_APP.EQUIPGO.DTO.DTOs.Transacciones
         public string NombreEquipoPersonal { get; set; }
         public string NombreUsuarioSession { get; set; }
         public string NombreSedeOs { get; set; }
+
+        public DateTime FechaHora {  get; set; }
     }
 
 

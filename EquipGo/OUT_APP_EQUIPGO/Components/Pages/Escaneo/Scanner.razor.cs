@@ -33,6 +33,7 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Escaneo
         private DotNetObjectReference<Scanner>? dotNetRef;
         private EquipoEscaneadoDto? equipoEscaneado;
         private int tipoTransaccionSeleccionado = 2; // Por defecto 'Salida'
+        private int tipoTransaccionAutomatico = 1;
         #endregion
 
         #region Validación de Visitante
@@ -147,7 +148,6 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Escaneo
 
         private bool procesandoCodigo = false;
         private readonly object lockObject = new object();
-
         [JSInvokable]
         public async Task ProcesarCodigo(string codigoBarras)
         {
@@ -171,6 +171,11 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Escaneo
                 if (equipoEscaneado != null)
                 {
                     Console.WriteLine("✅ Equipo encontrado.");
+
+                    // ✅ NUEVO: Determinar tipo de transacción automáticamente
+                    tipoTransaccionAutomatico = await DeterminarTipoTransaccionAutomatico(equipoEscaneado.CodigoBarras);
+                    tipoTransaccionSeleccionado = tipoTransaccionAutomatico; // También actualizar la variable de enlace
+
                     await InvokeAsync(StateHasChanged);
                 }
                 else
@@ -192,6 +197,35 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Escaneo
                 {
                     procesandoCodigo = false;
                 }
+            }
+        }
+
+        private async Task<int> DeterminarTipoTransaccionAutomatico(string codigoBarras)
+        {
+            try
+            {
+                // ✅ CONSULTAR LA ÚLTIMA TRANSACCIÓN REAL DESDE LA BASE DE DATOS
+                var ultimaTransaccion = await TransaccionService.ObtenerUltimaTransaccionPorCodigoBarrasAsync(codigoBarras);
+
+                if (ultimaTransaccion == null)
+                {
+                    Console.WriteLine("📝 No hay transacciones previas - Tipo: ENTRADA (1)");
+                    return 1; // Primera transacción = ENTRADA
+                }
+
+                Console.WriteLine($"📝 Última transacción encontrada - Tipo: {ultimaTransaccion.TipoTransaccion}");
+
+                // ✅ LÓGICA: Si la última fue SALIDA (2), ahora es ENTRADA (1)
+                // Si la última fue ENTRADA (1), ahora es SALIDA (2)
+                int tipoSiguiente = ultimaTransaccion.TipoTransaccion == 2 ? 1 : 2;
+
+                Console.WriteLine($"🔄 Transacción siguiente - Tipo: {tipoSiguiente}");
+                return tipoSiguiente;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error determinando tipo automático: {ex.Message}");
+                return 1; // Por defecto entrada en caso de error
             }
         }
 
@@ -217,7 +251,7 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Escaneo
             var transaccion = new TransaccionRequest
             {
                 CodigoBarras = equipoEscaneado.CodigoBarras,
-                TipoTransaccion = tipoTransaccionSeleccionado,
+                TipoTransaccion = tipoTransaccionAutomatico,
                 IdEquipoPersonal = equipoEscaneado.IdEquipoPersonal,
                 IdUsuarioInfo = equipoEscaneado.IdUsuarioInfo ?? 0,
                 IdUsuarioSession = int.Parse(idUsuarioSessionClaim.Value),
@@ -237,6 +271,7 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Escaneo
         private async Task CerrarModal()
         {
             equipoEscaneado = null;
+            tipoTransaccionAutomatico = 1;
             await InvokeAsync(StateHasChanged);
             await IniciarEscaneo();
         }
