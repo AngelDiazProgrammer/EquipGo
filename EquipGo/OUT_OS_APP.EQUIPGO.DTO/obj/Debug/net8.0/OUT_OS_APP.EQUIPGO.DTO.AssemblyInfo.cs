@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("OUT_OS_APP.EQUIPGO.DTO")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bfa59e6b25376ce5442ab2d78d002b00c31d1eac")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5941e93e094abfe9862aa25ff820cb3c4646afdd")]
 [assembly: System.Reflection.AssemblyProductAttribute("OUT_OS_APP.EQUIPGO.DTO")]
 [assembly: System.Reflection.AssemblyTitleAttribute("OUT_OS_APP.EQUIPGO.DTO")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

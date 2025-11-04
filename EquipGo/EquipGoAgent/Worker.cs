@@ -27,7 +27,7 @@ namespace EquipGo.Agent
 
             // 🔌 Configurar HttpClient para llamar al backend
             _httpClient = new HttpClient();
-            _apiBaseUrl = " https://steady-optimal-eagle.ngrok-free.app/api";
+            _apiBaseUrl = "https://test.outsourcing.com.co:8025/api";
             _httpClient.Timeout = TimeSpan.FromSeconds(30);
 
             _logger.Log("🚀 Worker iniciado - Modo Integrado con Backend");

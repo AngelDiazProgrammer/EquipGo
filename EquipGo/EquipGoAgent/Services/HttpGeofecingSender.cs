@@ -9,7 +9,7 @@ namespace EquipGo.Agent
     public class HttpGeofencingSender
     {
         private readonly FileLogger _logger;
-        private readonly string _url = "http://steady-optimal-eagle.ngrok-free.app/api/geofencing/process-location";
+        private readonly string _url = "https://test.outsourcing.com.co:8025/api/geofencing/process-location";
 
         public HttpGeofencingSender(FileLogger logger)
         {

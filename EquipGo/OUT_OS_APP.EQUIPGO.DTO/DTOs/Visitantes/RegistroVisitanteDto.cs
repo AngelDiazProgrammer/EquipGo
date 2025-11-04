@@ -28,5 +28,7 @@ namespace OUT_OS_APP.EQUIPGO.DTO.DTOs.Visitantes
         public int TipoTransaccionSiguiente { get; set; }
         public string TipoTransaccion { get; set; } = "";
     }
+
+
 }
 

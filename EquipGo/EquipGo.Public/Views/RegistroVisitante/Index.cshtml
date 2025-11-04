@@ -20,8 +20,8 @@
 
         body {
             font-family: 'Open Sans', Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, black 100%);
-            /* background-image: url('/wwwroot/img/FondoLogin.jpg'); */
+            /* background: linear-gradient(135deg, #667eea 0%, black 100%); */
+            background-image: url('../img/FondoLogin.jpg');
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -323,105 +323,130 @@
             margin-top: 15px;
         }
 
+        /* Estilos para debug */
+        .debug-info {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+
+        .debug-title {
+            color: #856404;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .debug-error {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .debug-success {
+            color: #28a745;
+            font-weight: bold;
+        }
+
         /* Responsive para contenedor pequeño */
         @@media (max-width: 768px) {
-            .frame-parent
+            .frame-parent {
+                padding: 20px;
+            }
 
-        {
-            padding: 20px;
-        }
+            .usuario-equipgo {
+                font-size: 20px;
+            }
 
-        .usuario-equipgo {
-            font-size: 20px;
-        }
+            .migas-de-pan {
+                gap: 12px;
+            }
 
-        .migas-de-pan {
-            gap: 12px;
-        }
+            .paso-activo,
+            .paso-inactivo {
+                padding: 6px 12px;
+                font-size: 13px;
+            }
 
-        .paso-activo,
-        .paso-inactivo {
-            padding: 6px 12px;
-            font-size: 13px;
-        }
+            .titulo-seccion {
+                font-size: 18px;
+            }
 
-        .titulo-seccion {
-            font-size: 18px;
-        }
+            .input-estilo,
+            .select-estilo {
+                height: 40px;
+                font-size: 13px;
+                padding: 0 15px;
+            }
 
-        .input-estilo,
-        .select-estilo {
-            height: 40px;
-            font-size: 13px;
-            padding: 0 15px;
-        }
+            .boton-principal {
+                height: 40px;
+                font-size: 13px;
+                max-width: 350px;
+            }
 
-        .boton-principal {
-            height: 40px;
-            font-size: 13px;
-            max-width: 350px;
-        }
-
+            .debug-info {
+                padding: 10px;
+                font-size: 11px;
+            }
         }
 
         @@media (max-width: 480px) {
-            body
+            body {
+                padding: 10px;
+            }
 
-        {
-            padding: 10px;
-        }
+            .sign-up {
+                border-radius: 12px;
+                max-width: 100%;
+            }
 
-        .sign-up {
-            border-radius: 12px;
-            max-width: 100%;
-        }
+            .sup {
+                height: 60px;
+            }
 
-        .sup {
-            height: 60px;
-        }
+            .logo-os {
+                font-size: 18px;
+            }
 
-        .logo-os {
-            font-size: 18px;
-        }
+            .frame-parent {
+                padding: 15px;
+            }
 
-        .frame-parent {
-            padding: 15px;
-        }
+            .usuario-equipgo {
+                font-size: 18px;
+            }
 
-        .usuario-equipgo {
-            font-size: 18px;
-        }
+            .completa-los-pasos {
+                font-size: 13px;
+            }
 
-        .completa-los-pasos {
-            font-size: 13px;
-        }
+            .migas-de-pan {
+                flex-direction: column;
+                gap: 8px;
+                align-items: center;
+            }
 
-        .migas-de-pan {
-            flex-direction: column;
-            gap: 8px;
-            align-items: center;
-        }
+            .contenido-ventana {
+                padding: 20px 15px;
+            }
 
-        .contenido-ventana {
-            padding: 20px 15px;
-        }
+            .icono-exito {
+                font-size: 35px;
+            }
 
-        .icono-exito {
-            font-size: 35px;
-        }
+            .mensaje-exito {
+                font-size: 16px;
+            }
 
-        .mensaje-exito {
-            font-size: 16px;
-        }
+            .descripcion-exito {
+                font-size: 13px;
+            }
 
-        .descripcion-exito {
-            font-size: 13px;
-        }
-
-        .grupo-botones {
-            flex-direction: column;
-        }
-
+            .grupo-botones {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
@@ -472,10 +497,15 @@
                             <div class="titulo-seccion">Paso 1: Datos del Visitante</div>
 
                             <div class="grupo-formulario">
-                                <label class="etiqueta">Tipo de Documento</label>
-                                <input class="input-estilo" name="Visitante.TipoDocumento" value="@Model.Visitante.TipoDocumento" placeholder="Seleccione tipo de documento" />
-                            </div>
-
+    <label class="etiqueta">Tipo de Documento</label>
+    <select class="select-estilo" name="Visitante.TipoDocumento" required>
+        <option value="">Seleccione tipo de documento...</option>
+        @foreach (var tipoDoc in Model.TiposDocumento)
+        {
+            @Html.Raw($"<option value=\"{tipoDoc.NombreDocumento}\" {(Model.Visitante.TipoDocumento == tipoDoc.NombreDocumento ? "selected" : "")}>{tipoDoc.NombreDocumento}</option>")
+        }
+    </select>
+</div>
                             <div class="grupo-formulario">
                                 <label class="etiqueta">Número de Documento</label>
                                 <input class="input-estilo" name="Visitante.NumeroDocumento" value="@Model.Visitante.NumeroDocumento" placeholder="Ingrese número de documento" />
@@ -568,6 +598,40 @@
                 {
                     <div class="mensaje-alerta">@Model.Mensaje</div>
                 }
+
+                <!-- DEBUG INFO - Cambia display: none a display: block para ver la información -->
+                <div class="debug-info" style="display: none;">
+                    <div class="debug-title">INFORMACIÓN DE DEBUG:</div>
+                    <p><strong>Total Tipos de Documento:</strong> 
+                        <span class="@(Model.TiposDocumento.Any() ? "debug-success" : "debug-error")">
+                            @Model.TiposDocumento.Count
+                        </span>
+                    </p>
+                    
+                    <p><strong>Total Proveedores:</strong> 
+                        <span class="@(Model.Proveedores.Any() ? "debug-success" : "debug-error")">
+                            @Model.Proveedores.Count
+                        </span>
+                    </p>
+                    
+                    @if (Model.TiposDocumento.Any())
+                    {
+                        <div style="margin-top: 10px;">
+                            <strong>Tipos de documento encontrados:</strong>
+                            <ul>
+                                @foreach (var tipo in Model.TiposDocumento)
+                                {
+                                    <li>ID: @tipo.Id - Nombre: "@tipo.NombreDocumento"</li>
+                                }
+                            </ul>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="debug-error">No se encontraron tipos de documento en la API</p>
+                        <p><strong>URL utilizada:</strong> https://test.outsourcing.col:6997/api/tiposdocumentos</p>
+                    }
+                </div>
             </div>
         </div>
     </div>

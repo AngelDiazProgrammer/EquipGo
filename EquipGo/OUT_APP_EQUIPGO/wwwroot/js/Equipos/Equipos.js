@@ -1360,9 +1360,9 @@ window.cargarSelectsEditar = async function () {
         ];
 
         // 🎯 CARGAR SUBESTADOS PRIMERO
-        if (data.subEstados) {
-            window.cargarSubEstados(data.subEstados, true);
-        }
+        //if (data.subEstados) {
+        //    window.cargarSubEstados(data.subEstados, true);
+        //}
 
         for (const { id, list, value, text } of selects) {
             const select = document.getElementById(id);

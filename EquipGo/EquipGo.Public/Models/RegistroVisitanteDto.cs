@@ -18,6 +18,7 @@
     public class RegistroVisitanteViewModel
     {
         public RegistroVisitanteDto Visitante { get; set; } = new();
+        public List<TipoDocumentoDto> TiposDocumento { get; set; } = new();
         public int PasoActual { get; set; } = 0;
         public bool InicioFormulario { get; set; } = false;
         public string Mensaje { get; set; } = "";

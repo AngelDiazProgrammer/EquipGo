@@ -9,7 +9,7 @@ public class ProxyController : ControllerBase
 {
     private readonly HttpClient _httpClient;
     private readonly ILogger<ProxyController> _logger;
-    private readonly string _servidorBaseUrl = "https://localhost:7096";
+    private readonly string _servidorBaseUrl = "https://test.outsourcing.col:6997";
 
     public ProxyController(HttpClient httpClient, ILogger<ProxyController> logger)
     {
