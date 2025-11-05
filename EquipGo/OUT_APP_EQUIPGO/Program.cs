@@ -6,6 +6,7 @@ using Infrastructure.Services;
 using Interface;
 using Interface.Services;
 using Interface.Services.Active_Directory;
+using Interface.Services.Alertas;
 using Interface.Services.Areas;
 using Interface.Services.Autenticacion;
 using Interface.Services.Campañas;
@@ -27,6 +28,7 @@ using OUT_APP_EQUIPGO.Components;
 using OUT_APP_EQUIPGO.Middlewares;
 using OUT_PERSISTENCE_EQUIPGO.Context;
 using OUT_PERSISTENCE_EQUIPGO.Hubs;
+using OUT_PERSISTENCE_EQUIPGO.Services.Alertas;
 using OUT_PERSISTENCE_EQUIPGO.Services.Areas;
 using OUT_PERSISTENCE_EQUIPGO.Services.Campañas;
 using OUT_PERSISTENCE_EQUIPGO.Services.Equipos;
@@ -80,6 +82,7 @@ builder.Services.AddScoped<ITransaccionService, TransaccionService>();
 builder.Services.AddScoped<IVisitanteService, VisitanteService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IAlertasService, AlertasService>();
 builder.Services.AddSignalR();
 
 

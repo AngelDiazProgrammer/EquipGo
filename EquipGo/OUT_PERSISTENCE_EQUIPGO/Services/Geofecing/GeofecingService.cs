@@ -263,7 +263,6 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Geofecing
             }
         }
 
-        // 📍 MÉTODOS EXISTENTES (sin cambios)
 
         private async Task<OUT_DOMAIN_EQUIPGO.Entities.Procesos.Transacciones> GetUltimaTransaccionPorSerial(string serial)
         {
