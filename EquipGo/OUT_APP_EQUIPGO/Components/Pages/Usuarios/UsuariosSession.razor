@@ -1,0 +1,509 @@
+﻿@page "/usuariosSession"
+@using Microsoft.AspNetCore.Authorization
+@using OUT_OS_APP.EQUIPGO.DTO.DTOs.Usuarios
+@using OUT_APP_EQUIPGO.Components.Shared
+
+<link href="css/Dashboard/dashboard.css" rel="stylesheet" />
+
+<div class="frame-container">
+    <!-- ENCABEZADO -->
+    <div class="dashboard-parent">
+        <b class="dashboard-equipgo">Gestión de Usuarios</b>
+        <div class="logo-os">
+            <img class="dashboard-vector-icon" alt="Logo" src="img/logoOutsourcing.png" />
+        </div>
+    </div>
+
+    <!-- CONTADORES -->
+    <div class="info">
+        <div class="card-registros">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
+            </svg>
+            <div class="datos">
+                <b class="b">@TotalUsuarios</b>
+                <b class="transacciones-de-hoy">Total Usuarios</b>
+            </div>
+        </div>
+
+        <div class="card-registros">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
+            </svg>
+            <div class="datos">
+                <b class="b">@UsuariosActivos</b>
+                <b class="transacciones-de-hoy">Usuarios Activos</b>
+            </div>
+        </div>
+
+        <div class="card-alerta">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
+            </svg>
+            <div class="datos">
+                <b class="b">@UsuariosInactivos</b>
+                <b class="transacciones-de-hoy">Usuarios Inactivos</b>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="contenido">
+        <!-- FILTROS ACTUALIZADOS -->
+        <div class="dashboard-filtros">
+            <div class="dashboard-filtro">
+                <!-- Filtro por Número de Documento -->
+                <div class="buscar-nombre">
+                    <b class="dashboard-equipgo">N° Documento</b>
+                    <div class="frame-div">
+                        <div class="placeholder-wrapper">
+                            <input type="text"
+                                   class="placeholder"
+                                   @bind="filtroNumeroDocumento"
+                                   @oninput="OnFiltroNumeroDocumentoChanged"
+                                   placeholder="Buscar por documento..." />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtro por Nombre Completo -->
+                <div class="buscar-nombre">
+                    <b class="dashboard-equipgo">Nombre Completo</b>
+                    <div class="frame-div">
+                        <div class="placeholder-wrapper">
+                            <input type="text"
+                                   class="placeholder"
+                                   @bind="filtroNombreCompleto"
+                                   @oninput="OnFiltroNombreCompletoChanged"
+                                   placeholder="Buscar por nombre..." />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtro por Rol -->
+                <div class="buscar-nombre">
+                    <b class="dashboard-equipgo">Rol</b>
+                    <div class="frame-div">
+                        <div class="placeholder-wrapper">
+                            <input type="text"
+                                   class="placeholder"
+                                   @bind="filtroRol"
+                                   @oninput="OnFiltroRolChanged"
+                                   placeholder="Filtrar por rol..." />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botones -->
+        <div class="botonera">
+            <button class="botn3" @onclick="AbrirModalCrearUsuario">
+                <i class="bi bi-plus-lg"></i> Añadir Usuario Session
+            </button>
+            <button class="botn3" @onclick="LimpiarFiltros">
+                <i class="bi bi-arrow-clockwise"></i> Limpiar Filtros
+            </button>
+        </div>
+
+        <!-- TABLA CON PAGINACIÓN BLAZOR -->
+        @if (isCargandoUsuarios)
+        {
+            <div class="loading-overlay">
+                <div class="spinner-container">
+                    <div class="spinner-equipgo"></div>
+                </div>
+                <p class="loading-text">Cargando usuarios...</p>
+            </div>
+        }
+        else if (!usuariosPaginados.Any())
+        {
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i> No hay usuarios que coincidan con los filtros.
+            </div>
+        }
+        else
+        {
+            <div class="table-wrapper" style="width: 100%;">
+                <table class="table-equipgo" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Tipo Documento</th>
+                            <th>Número Documento</th>
+                            <th>Nombre Completo</th>
+                            <th>Rol</th>
+                            <th>Sede</th>
+                            <th>Estado</th>
+                            <th>Fecha Creación</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var usuario in usuariosPaginados)
+                        {
+                            <tr>
+                                <td>@usuario.TipoDocumento</td>
+                                <td>@usuario.NumeroDocumento</td>
+                                <td>@usuario.NombreCompleto</td>
+                                <td>@usuario.Rol</td>
+                                <td>@usuario.Sede</td>
+                                <td>
+                                    <span class="badge @(usuario.Estado == "Activo" ? "bg-success" : "bg-danger")">
+                                        @usuario.Estado
+                                    </span>
+                                </td>
+                                <td>@usuario.FechaCreacion.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary" @onclick="() => EditarUsuario(usuario.Id)" title="Editar">
+                                        <i class="bi bi-pencil">✏️</i>
+                                    </button>
+                                    @*                                     <button class="btn btn-sm btn-outline-danger ms-1" @onclick="() => EliminarUsuario(usuario.Id)" title="Eliminar">
+                                        <i class="bi bi-trash"></i>
+                                    </button> *@
+                                    <button class="btn btn-sm btn-outline-warning ms-1" @onclick="() => CambiarContraseña(usuario.Id)" title="Cambiar Contraseña">
+                                        <i class="bi bi-key">🔐</i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- COMPONENTE DE PAGINACIÓN -->
+            <Paginacion TotalRegistros="@usuariosFiltrados.Count"
+                        PaginaActual="@paginaActual"
+                        PaginaActualChanged="@OnPaginaCambiada"
+                        RegistrosPorPagina="@registrosPorPagina"
+                        RegistrosPorPaginaChanged="@OnRegistrosPorPaginaCambiados"
+                        ModoAuto="@modoAuto"
+                        ModoAutoChanged="@OnModoAutoCambiado" />
+        }
+    </div>
+</div>
+
+<!-- Modal Crear Usuario Session -->
+<div class="modal fade modal-equipgo" id="modalCrearUsuarioSession" tabindex="-1" aria-labelledby="modalCrearUsuarioSessionLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header-equipgo">
+                <h5 class="modal-title-equipgo" id="tituloModalUsuarioSession">
+                    @(usuarioEditando == null ? "Crear Usuario Session" : "Editar Usuario Session")
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body-equipgo">
+                <EditForm Model="@usuarioForm" OnValidSubmit="@GuardarUsuario" autocomplete="off">
+                    <DataAnnotationsValidator />
+                    <!-- INPUTS TRAMPA OCULTOS -->
+                    <input type="email" style="display: none; height: 0; width: 0; opacity: 0; position: absolute; left: -1000px;" aria-hidden="true" tabindex="-1">
+                    <input type="password" style="display: none; height: 0; width: 0; opacity: 0; position: absolute; left: -1000px;" aria-hidden="true" tabindex="-1" autocomplete="new-password">
+
+                    <div class="seccion-modal">
+                        <div class="seccion-header">
+                            <span class="seccion-titulo">👤 Información del Usuario</span>
+                        </div>
+                        <div class="seccion-datos">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-section">
+                                        <label>Tipo de Documento <span class="text-danger">*</span></label>
+                                        <InputSelect @bind-Value="usuarioForm.IdTipodocumento" class="form-control">
+                                            <option value="">Seleccionar...</option>
+                                            @foreach (var tipoDoc in tiposDocumento)
+                                            {
+                                                <option value="@tipoDoc.Id">@tipoDoc.NombreDocumento</option>
+                                            }
+                                        </InputSelect>
+                                        <ValidationMessage For="@(() => usuarioForm.IdTipodocumento)" />
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-section">
+                                        <label>Número de Documento <span class="text-danger">*</span></label>
+                                        <InputText @bind-Value="usuarioForm.NumeroDocumento" class="form-control" placeholder="Ej: 1234567890" autocomplete="off" autocorrect="off" />
+                                        <ValidationMessage For="@(() => usuarioForm.NumeroDocumento)" />
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-section">
+                                        <label>Nombre <span class="text-danger">*</span></label>
+                                        <InputText @bind-Value="usuarioForm.Nombre" class="form-control" placeholder="Ej: Juan" autocomplete="off" autocorrect="off" />
+                                        <ValidationMessage For="@(() => usuarioForm.Nombre)" />
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-section">
+                                        <label>Apellido <span class="text-danger">*</span></label>
+                                        <InputText @bind-Value="usuarioForm.Apellido"
+                                                   class="form-control"
+                                                   placeholder="Ej: Pérez"
+                                                   autocomplete="off"
+                                                   autocorrect="off"
+                                                   autocapitalize="off"
+                                                   spellcheck="false"
+                                                   readonly
+                                                   onfocus="this.removeAttribute('readonly')" />
+                                        <ValidationMessage For="@(() => usuarioForm.Apellido)" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            @if (usuarioEditando == null)
+                            {
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-section">
+                                            <label>Contraseña <span class="text-danger">*</span></label>
+                                            <InputText type="password"
+                                                       @bind-Value="usuarioForm.Contraseña"
+                                                       class="form-control"
+                                                       placeholder="Ingrese contraseña"
+                                                       autocomplete="new-password"
+                                                       autocorrect="off"
+                                                       autocapitalize="off"
+                                                       spellcheck="false"
+                                                       readonly
+                                                       onfocus="this.removeAttribute('readonly')" />
+                                            <ValidationMessage For="@(() => usuarioForm.Contraseña)" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-section">
+                                            <label>Confirmar Contraseña <span class="text-danger">*</span></label>
+                                            <InputText type="password"
+                                                       @bind-Value="confirmarContraseña"
+                                                       class="form-control"
+                                                       placeholder="Confirme contraseña"
+                                                       autocomplete="new-password"
+                                                       autocorrect="off"
+                                                       autocapitalize="off"
+                                                       spellcheck="false"
+                                                       readonly
+                                                       onfocus="this.removeAttribute('readonly')" />
+                                            @if (!string.IsNullOrEmpty(confirmarContraseña) && usuarioForm.Contraseña != confirmarContraseña)
+                                            {
+                                                <small class="text-danger">Las contraseñas no coinciden</small>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-section">
+                                        <label>Rol <span class="text-danger">*</span></label>
+                                        <InputSelect @bind-Value="usuarioForm.IdRol" class="form-control">
+                                            <option value="">Seleccionar...</option>
+                                            @foreach (var rol in roles)
+                                            {
+                                                <option value="@rol.Id">@rol.NombreRol</option>
+                                            }
+                                        </InputSelect>
+                                        <ValidationMessage For="@(() => usuarioForm.IdRol)" />
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-section">
+                                        <label>Sede <span class="text-danger">*</span></label>
+                                        <InputSelect @bind-Value="usuarioForm.IdSede" class="form-control">
+                                            <option value="">Seleccionar...</option>
+                                            @foreach (var sede in sedes)
+                                            {
+                                                <option value="@sede.Id">@sede.NombreSede</option>
+                                            }
+                                        </InputSelect>
+                                        <ValidationMessage For="@(() => usuarioForm.IdSede)" />
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-section">
+                                        <label>Estado <span class="text-danger">*</span></label>
+                                        <InputSelect @bind-Value="usuarioForm.IdEstado" class="form-control">
+                                            <option value="">Seleccionar...</option>
+                                            @foreach (var estado in estados)
+                                            {
+                                                <option value="@estado.Id">@estado.NombreEstado</option>
+                                            }
+                                        </InputSelect>
+                                        <ValidationMessage For="@(() => usuarioForm.IdEstado)" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </EditForm>
+            </div>
+            <div class="modal-footer-equipgo">
+                <button class="boton-modal-equipgo boton-modal-secundario" data-bs-dismiss="modal" type="button">Cancelar</button>
+                <button class="boton-modal-equipgo" @onclick="GuardarUsuario" disabled="@isGuardando">
+                    @if (isGuardando)
+                    {
+                        <span>
+                            <i class="bi bi-arrow-repeat spinner"></i> Guardando...
+                        </span>
+                    }
+                    else
+                    {
+                        <span>@(usuarioEditando == null ? "Guardar" : "Actualizar")</span>
+                    }
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Cambiar Contraseña -->
+<div class="modal fade modal-equipgo" id="modalCambiarContraseña" tabindex="-1" aria-labelledby="modalCambiarContraseñaLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header-equipgo">
+                <h5 class="modal-title-equipgo">Cambiar Contraseña</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body-equipgo">
+                <EditForm Model="@cambioContraseñaForm" OnValidSubmit="@ProcesarCambioContraseña" autocomplete="off">
+                    <DataAnnotationsValidator />
+                    <!-- INPUTS TRAMPA OCULTOS -->
+                    <input type="email" style="display: none; height: 0; width: 0; opacity: 0; position: absolute; left: -1000px;" aria-hidden="true" tabindex="-1">
+                    <input type="password" style="display: none; height: 0; width: 0; opacity: 0; position: absolute; left: -1000px;" aria-hidden="true" tabindex="-1" autocomplete="new-password">
+
+                    <div class="seccion-modal">
+                        <div class="seccion-datos">
+                            <div class="form-section">
+                                <label>Nueva Contraseña <span class="text-danger">*</span></label>
+                                <InputText type="password"
+                                           @bind-Value="cambioContraseñaForm.NuevaContraseña"
+                                           class="form-control"
+                                           autocomplete="new-password"
+                                           autocorrect="off"
+                                           autocapitalize="off"
+                                           spellcheck="false"
+                                           readonly
+                                           onfocus="this.removeAttribute('readonly')" />
+                                <ValidationMessage For="@(() => cambioContraseñaForm.NuevaContraseña)" />
+                            </div>
+                            <div class="form-section">
+                                <label>Confirmar Contraseña <span class="text-danger">*</span></label>
+                                <InputText type="password"
+                                           @bind-Value="cambioContraseñaForm.ConfirmarContraseña"
+                                           class="form-control"
+                                           autocomplete="new-password"
+                                           autocorrect="off"
+                                           autocapitalize="off"
+                                           spellcheck="false"
+                                           readonly
+                                           onfocus="this.removeAttribute('readonly')" />
+                                <ValidationMessage For="@(() => cambioContraseñaForm.ConfirmarContraseña)" />
+                                @if (!string.IsNullOrEmpty(cambioContraseñaForm.ConfirmarContraseña) && cambioContraseñaForm.NuevaContraseña != cambioContraseñaForm.ConfirmarContraseña)
+                                {
+                                    <small class="text-danger">Las contraseñas no coinciden</small>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </EditForm>
+            </div>
+            <div class="modal-footer-equipgo">
+                <button class="boton-modal-equipgo boton-modal-secundario" data-bs-dismiss="modal" type="button">Cancelar</button>
+                <button class="boton-modal-equipgo" @onclick="ProcesarCambioContraseña" disabled="@isCambiandoContraseña">
+                    @if (isCambiandoContraseña)
+                    {
+                        <span>
+                            <i class="bi bi-arrow-repeat spinner"></i> Cambiando...
+                        </span>
+                    }
+                    else
+                    {
+                        <span>Cambiar Contraseña</span>
+                    }
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .loading-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 50;
+        pointer-events: none;
+    }
+
+    .spinner-container {
+        position: relative;
+        width: 56px;
+        height: 56px;
+    }
+
+    .spinner-equipgo {
+        width: 56px;
+        height: 56px;
+        border: 4px solid #ef4444;
+        border-top-color: transparent;
+        border-radius: 50%;
+        animation: spin-slow 1.4s linear infinite;
+    }
+
+    .loading-text {
+        margin-top: 12px;
+        color: #ef4444;
+        font-size: 18px;
+        font-weight: 600;
+        letter-spacing: 0.025em;
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    @@keyframes spin-slow {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    @@keyframes pulse {
+        0%, 100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.5;
+        }
+    }
+
+    .spinner {
+        animation: spin-slow 1s linear infinite;
+    }
+
+    .form-section {
+        margin-bottom: 1rem;
+    }
+
+        .form-section label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+    .badge {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+    }
+
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+    }
+</style>

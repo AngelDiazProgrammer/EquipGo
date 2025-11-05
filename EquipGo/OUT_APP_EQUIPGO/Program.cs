@@ -64,6 +64,7 @@ builder.Services.AddHttpClient("API", client =>
     client.BaseAddress = new Uri("https://localhost:7096"); // Ajusta destino de servidor
 });
 
+builder.Services.AddMemoryCache();
 builder.Services.AddScoped<EquipGoDbContext>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IActiveDirectoryService, ActiveDirectoryService>();

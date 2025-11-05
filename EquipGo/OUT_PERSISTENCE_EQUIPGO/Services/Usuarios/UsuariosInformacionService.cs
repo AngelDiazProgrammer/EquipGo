@@ -1,15 +1,18 @@
 ﻿using Interface;
 using Interface.Services.Usuarios;
+using Interface.Services.Active_Directory;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using ClosedXML.Excel;
 using OUT_DOMAIN_EQUIPGO.Entities.Procesos;
 using OUT_DOMAIN_EQUIPGO.Entities.Smart;
 using OUT_OS_APP.EQUIPGO.DTO.DTOs.Usuarios;
 using OUT_PERSISTENCE_EQUIPGO.Context;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Interface.Services.Active_Directory;
+using System.IO;
 
 namespace OUT_PERSISTENCE_EQUIPGO.Services.Usuarios
 {
@@ -18,12 +21,21 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Usuarios
         private readonly IUnitOfWork _unitOfWork;
         private readonly EquipGoDbContext _context;
         private readonly IActiveDirectoryService _activeDirectoryService;
+        private readonly IMemoryCache _cache;
 
-        public UsuariosInformacionService(IUnitOfWork unitOfWork, EquipGoDbContext context, IActiveDirectoryService activeDirectoryService)
+        private const string CACHE_KEY = "usuarios_combinados_cache";
+        private const int CACHE_MINUTES = 10; // Ajusta según necesites
+
+        public UsuariosInformacionService(
+            IUnitOfWork unitOfWork,
+            EquipGoDbContext context,
+            IActiveDirectoryService activeDirectoryService,
+            IMemoryCache cache)
         {
             _unitOfWork = unitOfWork;
             _context = context;
             _activeDirectoryService = activeDirectoryService;
+            _cache = cache;
         }
 
         #region Métodos CRUD Básicos
@@ -89,7 +101,6 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Usuarios
             };
         }
 
-
         public async Task<UsuariosInformacion?> ConsultarUsuarioPorDocumentoAsync(string documento)
         {
             if (string.IsNullOrEmpty(documento))
@@ -125,6 +136,10 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Usuarios
 
             await _unitOfWork.UsuariosInformacion.AddAsync(usuario);
             await _unitOfWork.CompleteAsync();
+
+            // 🔥 Limpiar caché después de crear
+            LimpiarCache();
+
             return usuario.Id;
         }
 
@@ -133,9 +148,11 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Usuarios
             if (usuario == null)
                 return false;
 
-            // La entidad ya está siendo rastreada por el DbContext,
-            // así que solo necesitamos llamar a CompleteAsync para guardar los cambios.
             await _unitOfWork.CompleteAsync();
+
+            // 🔥 Limpiar caché después de actualizar
+            LimpiarCache();
+
             return true;
         }
 
@@ -168,6 +185,10 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Usuarios
             {
                 await _unitOfWork.CompleteAsync();
                 Console.WriteLine("💾 Cambios guardados en la base de datos");
+
+                // 🔥 Limpiar caché después de actualizar
+                LimpiarCache();
+
                 return true;
             }
             catch (Exception ex)
@@ -186,6 +207,10 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Usuarios
 
                 _context.UsuariosInformacion.Remove(usuario);
                 await _context.SaveChangesAsync();
+
+                // 🔥 Limpiar caché después de eliminar
+                LimpiarCache();
+
                 return true;
             }
             catch (Exception ex)
@@ -198,184 +223,8 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Usuarios
         #endregion
 
         #region Cargue Masiva
-        //public async Task<ResultadoCargaMasivaDto> CargaMasivaUsuariosAsyncSinuso(List<UsuarioCrearDto> usuariosDto)
-        //{
-        //    var resultado = new ResultadoCargaMasivaDto
-        //    {
-        //        TotalRegistros = usuariosDto.Count
-        //    };
 
-        //    if (usuariosDto == null || !usuariosDto.Any())
-        //    {
-        //        resultado.Mensaje = "La lista de usuarios está vacía";
-        //        return resultado;
-        //    }
-
-        //    using var transaction = await _context.Database.BeginTransactionAsync();
-
-        //    try
-        //    {
-        //        // 🔥 LISTA PARA VERIFICAR DUPLICADOS DENTRO DEL MISMO ARCHIVO
-        //        var documentosProcesados = new HashSet<string>();
-        //        var hayErrores = false;
-
-        //        // 🔥 PRECARGAR CAMPAÑAS PARA OPTIMIZACIÓN
-        //        var nombresCampañas = usuariosDto
-        //            .Where(u => !string.IsNullOrEmpty(u.NombreCampaña))
-        //            .Select(u => u.NombreCampaña.Trim())
-        //            .Distinct()
-        //            .ToList();
-
-        //        var campañasExistentes = await _context.Campañas
-        //            .Where(c => nombresCampañas.Contains(c.NombreCampaña))
-        //            .ToDictionaryAsync(c => c.NombreCampaña, c => c.Id);
-
-        //        for (int i = 0; i < usuariosDto.Count; i++)
-        //        {
-        //            var usuarioDto = usuariosDto[i];
-
-        //            try
-        //            {
-        //                // 🔥 Validación 1: CAMPAÑA obligatoria por nombre
-        //                if (string.IsNullOrWhiteSpace(usuarioDto.NombreCampaña))
-        //                {
-        //                    resultado.Errores.Add(new ErrorCargaMasivaDto
-        //                    {
-        //                        IndiceFila = i + 1,
-        //                        Nombres = usuarioDto.Nombres ?? "",
-        //                        Apellidos = usuarioDto.Apellidos ?? "",
-        //                        NumeroDocumento = usuarioDto.NumeroDocumento ?? "",
-        //                        Error = "El nombre de la campaña es obligatorio"
-        //                    });
-        //                    hayErrores = true;
-        //                    continue;
-        //                }
-
-        //                var nombreCampaña = usuarioDto.NombreCampaña.Trim();
-
-        //                // 🔥 Validación 2: Verificar si la campaña existe
-        //                if (!campañasExistentes.TryGetValue(nombreCampaña, out var idCampaña))
-        //                {
-        //                    resultado.Errores.Add(new ErrorCargaMasivaDto
-        //                    {
-        //                        IndiceFila = i + 1,
-        //                        Nombres = usuarioDto.Nombres ?? "",
-        //                        Apellidos = usuarioDto.Apellidos ?? "",
-        //                        NumeroDocumento = usuarioDto.NumeroDocumento ?? "",
-        //                        Error = $"La campaña '{nombreCampaña}' no existe en el sistema"
-        //                    });
-        //                    hayErrores = true;
-        //                    continue;
-        //                }
-
-        //                // 🔥 Validación 3: Verificar duplicados dentro del mismo archivo
-        //                var documento = usuarioDto.NumeroDocumento?.Trim();
-        //                if (!string.IsNullOrEmpty(documento))
-        //                {
-        //                    if (documentosProcesados.Contains(documento))
-        //                    {
-        //                        resultado.Errores.Add(new ErrorCargaMasivaDto
-        //                        {
-        //                            IndiceFila = i + 1,
-        //                            Nombres = usuarioDto.Nombres,
-        //                            Apellidos = usuarioDto.Apellidos,
-        //                            NumeroDocumento = documento,
-        //                            Error = "Número de documento duplicado dentro del mismo archivo"
-        //                        });
-        //                        hayErrores = true;
-        //                        continue;
-        //                    }
-        //                    documentosProcesados.Add(documento);
-        //                }
-
-        //                // 🔥 Validación 4: Verificar si el documento ya existe en la base de datos
-        //                if (!string.IsNullOrEmpty(documento))
-        //                {
-        //                    var documentoExistente = await _unitOfWork.UsuariosInformacion.Query()
-        //                        .AnyAsync(u => u.NumeroDocumento == documento);
-
-        //                    if (documentoExistente)
-        //                    {
-        //                        resultado.Errores.Add(new ErrorCargaMasivaDto
-        //                        {
-        //                            IndiceFila = i + 1,
-        //                            Nombres = usuarioDto.Nombres,
-        //                            Apellidos = usuarioDto.Apellidos,
-        //                            NumeroDocumento = documento,
-        //                            Error = "Ya existe un usuario con este número de documento en el sistema"
-        //                        });
-        //                        hayErrores = true;
-        //                        continue;
-        //                    }
-        //                }
-
-        //                // 🔥 SOLO si no hay errores, crear usuario
-        //                var usuario = new UsuariosInformacion
-        //                {
-        //                    IdTipodocumento = usuarioDto.IdTipoDocumento > 0 ? usuarioDto.IdTipoDocumento : null,
-        //                    NumeroDocumento = documento,
-        //                    Nombres = usuarioDto.Nombres?.Trim(),
-        //                    Apellidos = usuarioDto.Apellidos?.Trim(),
-        //                    IdArea = usuarioDto.IdArea > 0 ? usuarioDto.IdArea : null,
-        //                    IdCampaña = idCampaña, // ✅ Usamos el ID encontrado por el nombre
-        //                    IdEstado = 1,
-        //                    FechaCreacion = DateTime.UtcNow,
-        //                    UltimaModificacion = DateTime.UtcNow
-        //                };
-
-        //                await _unitOfWork.UsuariosInformacion.AddAsync(usuario);
-        //                resultado.RegistrosExitosos++;
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                resultado.Errores.Add(new ErrorCargaMasivaDto
-        //                {
-        //                    IndiceFila = i + 1,
-        //                    Nombres = usuarioDto.Nombres ?? "",
-        //                    Apellidos = usuarioDto.Apellidos ?? "",
-        //                    NumeroDocumento = usuarioDto.NumeroDocumento ?? "",
-        //                    Error = $"Error interno: {ex.Message}"
-        //                });
-        //                hayErrores = true;
-        //            }
-        //        }
-
-        //        resultado.RegistrosFallidos = resultado.Errores.Count;
-
-        //        // 🔥 DECISIÓN CRÍTICA: Commit o Rollback
-        //        if (resultado.RegistrosExitosos > 0 && !hayErrores)
-        //        {
-        //            await _unitOfWork.CompleteAsync();
-        //            await transaction.CommitAsync();
-        //            resultado.Mensaje = $"Carga masiva completada exitosamente: {resultado.RegistrosExitosos} usuarios registrados";
-        //        }
-        //        else if (resultado.RegistrosExitosos > 0 && hayErrores)
-        //        {
-        //            await transaction.RollbackAsync();
-        //            resultado.RegistrosExitosos = 0;
-        //            resultado.Mensaje = "❌ Carga cancelada: Se detectaron errores en el archivo. No se registró ningún usuario. Revise los detalles abajo.";
-        //        }
-        //        else
-        //        {
-        //            await transaction.RollbackAsync();
-        //            resultado.Mensaje = "No se pudo procesar ningún registro. Revise los errores.";
-        //        }
-
-        //        return resultado;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        await transaction.RollbackAsync();
-
-        //        resultado.Mensaje = $"Error general en la carga masiva: {ex.Message}";
-        //        resultado.RegistrosExitosos = 0;
-        //        resultado.RegistrosFallidos = resultado.TotalRegistros;
-
-        //        return resultado;
-        //    }
-        //}
-
-        public async Task<ResultadoCargaMasivaDto> CargaMasivaUsuariosAsync(List<UsuarioCrearDto> usuariosDto,Dictionary<string, int> campañasExistentes)
+        public async Task<ResultadoCargaMasivaDto> CargaMasivaUsuariosAsync(List<UsuarioCrearDto> usuariosDto, Dictionary<string, int> campañasExistentes)
         {
             var resultado = new ResultadoCargaMasivaDto
             {
@@ -527,6 +376,9 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Usuarios
                     var cambios = await _unitOfWork.CompleteAsync();
                     Console.WriteLine($"✅ Usuarios guardados exitosamente: {cambios}");
 
+                    // 🔥 Limpiar caché después de carga masiva
+                    LimpiarCache();
+
                     if (!hayErrores)
                     {
                         resultado.Mensaje = $"Carga masiva completada exitosamente: {resultado.RegistrosExitosos} usuarios registrados";
@@ -569,7 +421,7 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Usuarios
                 worksheet.Cell("A1").Value = "NumeroDocumento";
                 worksheet.Cell("B1").Value = "Nombres";
                 worksheet.Cell("C1").Value = "Apellidos";
-                worksheet.Cell("D1").Value = "NombreCampaña"; // ✅ Cambiado a nombre
+                worksheet.Cell("D1").Value = "NombreCampaña";
 
                 // Obtener campañas existentes para ejemplos
                 var campañasEjemplo = await _context.Campañas
@@ -632,16 +484,24 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Usuarios
 
         #endregion
 
-        #region Usuarios Combinados (AD + Local)
+        #region Usuarios Combinados (AD + Local) - OPTIMIZADO
 
         public async Task<List<object>> ObtenerUsuariosCombinadosAsync()
         {
-            Console.WriteLine("🔄 [ObtenerUsuariosCombinadosAsync] Iniciando combinación de usuarios...");
+            // 🚀 Intentar obtener del caché primero
+            if (_cache.TryGetValue(CACHE_KEY, out List<object> usuariosCacheados))
+            {
+                Console.WriteLine($"⚡ Usando caché - {usuariosCacheados.Count} usuarios");
+                return usuariosCacheados;
+            }
+
+            Console.WriteLine("🔄 [ObtenerUsuariosCombinadosAsync] Iniciando combinación optimizada...");
+            var inicio = DateTime.Now;
 
             var listaCombinada = new List<object>();
-            var usuariosProcesados = new HashSet<string>();
+            var usuariosProcesados = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-            // 1. Añadir la opción para crear un nuevo usuario
+            // 1. Opción de crear usuario
             listaCombinada.Add(new
             {
                 usuario = "nuevo",
@@ -649,89 +509,79 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Usuarios
                 origen = "sistema"
             });
 
-            // 2. Obtener TODOS los usuarios locales de una sola vez
-            var usuariosLocales = await _unitOfWork.UsuariosInformacion
-                                           .Query()
-                                           .Include(u => u.IdTipodocumentoNavigation)
-                                           .Include(u => u.IdAreaNavigation)
-                                           .Include(u => u.IdCampañaNavigation)
-                                           .AsNoTracking()
-                                           .ToListAsync();
+            // 🚀 2. PARALELIZACIÓN: Consultar BD y AD simultáneamente
+            var tareaUsuariosLocales = ObtenerUsuariosLocalesOptimizadoAsync();
+            var tareaUsuariosAD = _activeDirectoryService.ObtenerUsuariosAsync();
 
-            Console.WriteLine($"📊 Usuarios locales encontrados: {usuariosLocales.Count}");
+            await Task.WhenAll(tareaUsuariosLocales, tareaUsuariosAD);
 
-            // 3. Crear Lookup para búsqueda por nombre
+            var usuariosLocales = await tareaUsuariosLocales;
+            var usuariosAD = await tareaUsuariosAD;
+
+            Console.WriteLine($"📊 Usuarios locales: {usuariosLocales.Count} | AD: {usuariosAD.Count}");
+
+            // 3. Crear HashSet para búsqueda O(1) en lugar de Lookup
+            var nombresLocalesSet = new HashSet<string>(
+                usuariosLocales.Select(u => $"{u.NombresLower}_{u.ApellidosLower}"),
+                StringComparer.OrdinalIgnoreCase
+            );
+
+            // 4. Crear diccionario de usuarios locales por nombre (para detectar duplicados)
             var usuariosLocalesPorNombre = usuariosLocales
-                .ToLookup(
-                    u => $"{u.Nombres?.Trim().ToLower()}_{u.Apellidos?.Trim().ToLower()}",
-                    u => u,
-                    StringComparer.OrdinalIgnoreCase
-                );
+                .GroupBy(u => $"{u.NombresLower}_{u.ApellidosLower}", StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(g => g.Key, g => g.ToList(), StringComparer.OrdinalIgnoreCase);
 
-            // 4. Procesar TODOS los usuarios locales individualmente
+            // 5. Procesar usuarios locales (ya vienen optimizados)
             foreach (var usuario in usuariosLocales)
             {
-                var claveNombre = $"{usuario.Nombres?.Trim().ToLower()}_{usuario.Apellidos?.Trim().ToLower()}";
-                var claveDocumento = usuario.NumeroDocumento?.Trim().ToLower() ?? "";
+                var claveNombre = $"{usuario.NombresLower}_{usuario.ApellidosLower}";
+                var claveUnica = $"{claveNombre}_{usuario.NumeroDocumento.ToLower()}";
 
-                // Crear clave única que combine nombre + documento
-                var claveUnica = $"{claveNombre}_{claveDocumento}";
-
-                if (!usuariosProcesados.Contains(claveUnica))
+                if (usuariosProcesados.Add(claveUnica)) // Add retorna false si ya existe
                 {
-                    usuariosProcesados.Add(claveUnica);
+                    var tieneDuplicados = usuariosLocalesPorNombre[claveNombre].Count > 1;
 
-                    // Verificar si hay duplicados por nombre
-                    var usuariosMismoNombre = usuariosLocalesPorNombre[claveNombre].ToList();
-                    var tieneDuplicadosPorNombre = usuariosMismoNombre.Count > 1;
-
-                    // CORREGIDO: Solo mostrar documento en nombreCompleto si hay duplicados
-                    // y usar un identificador único para el campo "usuario"
                     listaCombinada.Add(new
                     {
-                        usuario = $"local_{usuario.NumeroDocumento}", // Identificador único
-                        nombreCompleto = tieneDuplicadosPorNombre ?
-                            $"{usuario.Nombres} {usuario.Apellidos} N.º doc. " :
-                            $"{usuario.Nombres} {usuario.Apellidos}",
+                        usuario = $"local_{usuario.NumeroDocumento}",
+                        nombreCompleto = tieneDuplicados
+                            ? $"{usuario.Nombres} {usuario.Apellidos} N.º doc. {usuario.NumeroDocumento}"
+                            : $"{usuario.Nombres} {usuario.Apellidos}",
                         nombres = usuario.Nombres,
                         apellidos = usuario.Apellidos,
-                        numeroDocumento = usuario.NumeroDocumento.ToString(),
-                        area = usuario.IdAreaNavigation?.NombreArea,
-                        campana = usuario.IdCampañaNavigation?.NombreCampaña,
-                        tipoDocumento = usuario.IdTipodocumentoNavigation?.NombreDocumento,
-                        idTipoDocumento = usuario.IdTipodocumento,
+                        numeroDocumento = usuario.NumeroDocumento,
+                        area = usuario.Area,
+                        campana = usuario.Campana,
+                        tipoDocumento = usuario.TipoDocumento,
+                        idTipoDocumento = usuario.IdTipoDocumento,
                         idArea = usuario.IdArea,
                         idCampaña = usuario.IdCampaña,
                         origen = "local",
                         tieneDatosCompletos = true,
-                        tieneDuplicadosPorNombre = tieneDuplicadosPorNombre
+                        tieneDuplicadosPorNombre = tieneDuplicados
                     });
                 }
             }
 
-            // 5. Obtener usuarios de AD y buscar coincidencias en la base local
-            var usuariosAD = await _activeDirectoryService.ObtenerUsuariosAsync();
-            Console.WriteLine($" Usuarios AD encontrados: {usuariosAD.Count}");
-
+            // 6. Procesar usuarios AD (solo los que NO existen en local)
             foreach (var usuarioAD in usuariosAD)
             {
-                var claveNombreAD = $"{usuarioAD.Nombre?.Trim().ToLower()}_{usuarioAD.Apellidos?.Trim().ToLower()}";
+                // Normalizar una sola vez
+                var nombreADLower = usuarioAD.Nombre?.Trim().ToLower() ?? "";
+                var apellidosADLower = usuarioAD.Apellidos?.Trim().ToLower() ?? "";
+                var claveNombreAD = $"{nombreADLower}_{apellidosADLower}";
 
-                // Buscar coincidencias en usuarios locales por NOMBRE
-                var usuariosCoincidentes = usuariosLocalesPorNombre[claveNombreAD].ToList();
-
-                // SOLO agregar usuario AD si NO existe en local
-                if (!usuariosCoincidentes.Any())
+                // Búsqueda O(1) en HashSet
+                if (!nombresLocalesSet.Contains(claveNombreAD))
                 {
-                    var claveUnicaAD = $"{claveNombreAD}_ad_{usuarioAD.Usuario?.ToLower()}";
+                    var usuarioADLower = usuarioAD.Usuario?.ToLower() ?? "";
+                    var claveUnicaAD = $"{claveNombreAD}_ad_{usuarioADLower}";
 
-                    if (!usuariosProcesados.Contains(claveUnicaAD))
+                    if (usuariosProcesados.Add(claveUnicaAD))
                     {
-                        usuariosProcesados.Add(claveUnicaAD);
-
                         listaCombinada.Add(new
                         {
-                            usuario = $"ad_{usuarioAD.Usuario}", // Identificador único para AD
+                            usuario = $"ad_{usuarioAD.Usuario}",
                             nombreCompleto = $"{usuarioAD.NombreCompleto} (AD)",
                             nombres = usuarioAD.Nombre,
                             apellidos = usuarioAD.Apellidos,
@@ -751,9 +601,43 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Usuarios
                 }
             }
 
-            Console.WriteLine($"✅ [ObtenerUsuariosCombinadosAsync] Combinación finalizada. Total: {listaCombinada.Count - 1}");
+            var duracion = (DateTime.Now - inicio).TotalSeconds;
+            Console.WriteLine($"✅ Combinación completada en {duracion:F2}s - Total: {listaCombinada.Count} usuarios");
+
+            // 🔥 Guardar en caché
+            _cache.Set(CACHE_KEY, listaCombinada, TimeSpan.FromMinutes(CACHE_MINUTES));
 
             return listaCombinada;
+        }
+
+        // 🚀 Método optimizado para obtener usuarios locales
+        private async Task<List<UsuarioLocalDto>> ObtenerUsuariosLocalesOptimizadoAsync()
+        {
+            return await _unitOfWork.UsuariosInformacion
+                .Query()
+                .AsNoTracking() // Sin tracking para solo lectura
+                .Select(u => new UsuarioLocalDto
+                {
+                    NumeroDocumento = u.NumeroDocumento,
+                    Nombres = u.Nombres,
+                    Apellidos = u.Apellidos,
+                    NombresLower = u.Nombres.ToLower().Trim(),
+                    ApellidosLower = u.Apellidos.ToLower().Trim(),
+                    Area = u.IdAreaNavigation.NombreArea,
+                    Campana = u.IdCampañaNavigation.NombreCampaña,
+                    TipoDocumento = u.IdTipodocumentoNavigation.NombreDocumento,
+                    IdTipoDocumento = u.IdTipodocumento,
+                    IdArea = u.IdArea,
+                    IdCampaña = u.IdCampaña
+                })
+                .ToListAsync();
+        }
+
+        // 🔥 Método para limpiar caché manualmente
+        public void LimpiarCache()
+        {
+            _cache.Remove(CACHE_KEY);
+            Console.WriteLine("🗑️ Caché de usuarios limpiado");
         }
 
         #endregion
@@ -790,5 +674,21 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Usuarios
             return lista;
         }
         #endregion
+    }
+
+    // DTO optimizado para usuarios locales
+    public class UsuarioLocalDto
+    {
+        public string NumeroDocumento { get; set; }
+        public string Nombres { get; set; }
+        public string Apellidos { get; set; }
+        public string NombresLower { get; set; } // Pre-calculado
+        public string ApellidosLower { get; set; } // Pre-calculado
+        public string Area { get; set; }
+        public string Campana { get; set; }
+        public string TipoDocumento { get; set; }
+        public int? IdTipoDocumento { get; set; }
+        public int? IdArea { get; set; }
+        public int? IdCampaña { get; set; }
     }
 }
