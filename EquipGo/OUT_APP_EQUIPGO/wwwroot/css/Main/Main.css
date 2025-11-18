@@ -128,6 +128,29 @@
     flex-shrink: 0;
 }
 
+
+/* ========================================================================== */
+/* Icono de selectores
+/* ========================================================================== */
+
+
+.select-with-arrow {
+    width: 100%;
+    padding: 8px 35px 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background-color: white;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%236c757d' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+}
+
+
 /* ========================================================================== */
 /* CARDS DE INFORMACIÓN - COMPLETAMENTE RESPONSIVAS */
 /* ========================================================================== */
@@ -142,7 +165,7 @@
     width: 100% !important;
 }
 
-.card-registros, .dashboard-card-registros, .card-alerta {
+.card-registros, .dashboard-card-registros, .card-alerta, .card-bloqueo {
     flex: 1;
     min-width: min(200px, 100%);
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
@@ -168,6 +191,10 @@
 
 .card-alerta {
     background-color: #E9002B;
+}
+
+.card-bloqueo {
+    background-color: #334155;
 }
 
 .datos, .dashboard-datos {
@@ -313,7 +340,7 @@
 .frame-div {
     align-self: stretch;
     border-radius: clamp(20px, 3vw, 30px);
-    background-color: #ededed;
+    background-color: white;
     border: 1px solid #ced4da;
     box-sizing: border-box;
     height: clamp(28px, 4vw, 32px);
@@ -448,10 +475,10 @@
         border-bottom: 1px solid #f0f0f0 !important;
     }
 
+
 /* ========================================================================== */
 /* RESPONSIVE DESIGN - BREAKPOINTS ESPECÍFICOS */
 /* ========================================================================== */
-
 /* TABLETS (768px - 1024px) */
 @media (max-width: 1024px) {
     .frame-container {
@@ -612,3 +639,4 @@ div.btn-cambio > div.visitante.active-tab b.dashboard-equipgo {
     color: #ffffff !important;
     font-weight: 400 !important;
 }
+

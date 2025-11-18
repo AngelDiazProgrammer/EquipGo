@@ -27,48 +27,75 @@
 
             @if (equipoEscaneado != null)
             {
-                <div id="scanner-modal-overlay" class="scanner-modal-overlay">
-                    <div id="scanner-modal-dialog" class="scanner-modal-dialog">
-                        <div id="scanner-modal-content" class="scanner-modal-content">
-                            <div id="scanner-modal-header" class="scanner-modal-header scanner-validation-header">
-                                <h5 id="scanner-modal-title" class="scanner-modal-title">⚠️ <strong>Requiere validación</strong></h5>
+                <div class="modal-equipgo" style="display: block; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1055; padding: 20px; box-sizing: border-box;">
+                    <div style="position: relative; width: auto; margin: 0 auto; max-width: 500px; pointer-events: none; top: 50%; transform: translateY(-50%);">
+                        <div class="modal-content">
+                            <div class="modal-header-equipgo" style="background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%); border-bottom: 2px solid #d39e00;">
+                                <h5 class="modal-title-equipgo">⚠️ <strong>Requiere validación</strong></h5>
                             </div>
-                            <div id="scanner-modal-body" class="scanner-modal-body">
-                                <p><strong>📌 Área:</strong> @equipoEscaneado.Area</p>
-                                <p><strong>👤 Usuario:</strong> @equipoEscaneado.NombreUsuario</p>
-                                <p><strong>🆔 Documento:</strong> @equipoEscaneado.DocumentoUsuario</p>
-                                <p><strong>💻 Modelo:</strong> @equipoEscaneado.Modelo</p>
-                                <p><strong>🏷️ Serial:</strong> @equipoEscaneado.Serial</p>
- @*                                <p><strong>📍 Ubicación:</strong> @equipoEscaneado.Ubicacion</p> *@
-                                <p><strong>🔖 Asset:</strong> @equipoEscaneado.CodigoBarras</p>
+                            <div class="modal-body-equipgo">
+                                <div class="seccion-modal">
+                                    <div class="dato-fila">
+                                        <span class="dato-label">📌 Área:</span>
+                                        <span class="dato-valor">@equipoEscaneado.Area</span>
+                                    </div>
+                                    <div class="dato-fila">
+                                        <span class="dato-label">👤 Usuario:</span>
+                                        <span class="dato-valor">@equipoEscaneado.NombreUsuario</span>
+                                    </div>
+                                    <div class="dato-fila">
+                                        <span class="dato-label">🆔 Documento:</span>
+                                        <span class="dato-valor">@equipoEscaneado.DocumentoUsuario</span>
+                                    </div>
+                                    <div class="dato-fila">
+                                        <span class="dato-label">💻 Modelo:</span>
+                                        <span class="dato-valor">@equipoEscaneado.Modelo</span>
+                                    </div>
+                                    <div class="dato-fila">
+                                        <span class="dato-label">🏷️ Serial:</span>
+                                        <span class="dato-valor">@equipoEscaneado.Serial</span>
+                                    </div>
+                                    <div class="dato-fila">
+                                        <span class="dato-label">🔖 Asset:</span>
+                                        <span class="dato-valor">@equipoEscaneado.CodigoBarras</span>
+                                    </div>
+                                </div>
 
-                                <div id="scanner-form-group" class="scanner-form-group">
-                                    <p>
-                                        <strong>🚥 Tipo de Transacción:</strong>
+                                <div class="seccion-modal">
+                                    <div class="dato-fila">
+                                        <span class="dato-label">🚥 Tipo de Transacción:</span>
                                         <span class="scanner-badge @(tipoTransaccionAutomatico == 1 ? "scanner-badge-success" : "scanner-badge-warning")">
                                             @(tipoTransaccionAutomatico == 1 ? "ENTRADA" : "SALIDA")
                                         </span>
-                                    </p>
+                                    </div>
                                     <small class="scanner-text-muted">* Determinado automáticamente según el historial</small>
                                 </div>
 
                                 @if (equipoEscaneado.HistorialTransacciones?.Any() == true)
                                 {
-                                    <hr id="scanner-hr" class="scanner-hr" />
-                                    <h6 id="scanner-history-title" class="scanner-history-title">🕒 Historial de Transacciones:</h6>
-                                    <ul id="scanner-list-group" class="scanner-list-group">
-                                        @foreach (var item in equipoEscaneado.HistorialTransacciones)
-                                        {
-                                            <li id="scanner-list-group-item" class="scanner-list-group-item">@item</li>
-                                        }
-                                    </ul>
+                                    <div class="seccion-modal">
+                                        <div class="seccion-header">
+                                            <span class="seccion-icon">🕒</span>
+                                            <span class="seccion-titulo">Historial de Transacciones</span>
+                                        </div>
+                                        <div class="seccion-datos">
+                                            <ul style="list-style: none; padding: 0; margin: 0; max-height: 150px; overflow-y: auto;">
+                                                @foreach (var item in equipoEscaneado.HistorialTransacciones)
+                                                {
+                                                    <li class="dato-fila" style="padding: 4px 0; border-bottom: 1px solid #f0f0f0;">
+                                                        <span class="dato-valor">@item</span>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
                                 }
                             </div>
-                            <div id="scanner-modal-footer" class="scanner-modal-footer">
-                                <button id="scanner-btn-danger" class="scanner-btn scanner-btn-danger scanner-btn-flex" @onclick="CerrarModal">
+                            <div class="modal-footer-equipgo">
+                                <button class="boton-modal-equipgo boton-modal-secundario" @onclick="CerrarModal">
                                     ❌ Denegar
                                 </button>
-                                <button id="scanner-btn-success" class="scanner-btn scanner-btn-success scanner-btn-flex" @onclick="AprobarTransaccion">
+                                <button class="boton-modal-equipgo" style="background: linear-gradient(135deg, #198754 0%, #157347 100%);" @onclick="AprobarTransaccion">
                                     ✅ Aprobar
                                 </button>
                             </div>
@@ -78,28 +105,28 @@
             }
 
             <div id="scanner-actions" class="scanner-actions">
-                <button id="scanner-btn-success" class="scanner-btn scanner-btn-success scanner-btn-large" @onclick="AbrirModalValidarVisitante">
-                    🔍 Validar visitante
+                <button class="scanner-btn-premium scanner-btn-validate" @onclick="AbrirModalValidarVisitante">
+                    <span class="scanner-btn-premium-icon">🔍</span>
+                    <span class="scanner-btn-premium-text">Validar visitante</span>
                 </button>
             </div>
 
             @if (mostrarModalValidarVisitante)
             {
-                <div id="scanner-modal-overlay" class="scanner-modal-overlay">
-                    <div id="scanner-modal-dialog" class="scanner-modal-dialog">
-                        <div id="scanner-modal-content" class="scanner-modal-content">
-                            <div id="scanner-modal-header" class="scanner-modal-header scanner-info-header">
-                                <h5 id="scanner-modal-title" class="scanner-modal-title">🔍 Validación de visitante</h5>
+                <div class="modal-equipgo" style="display: block; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1055; padding: 20px; box-sizing: border-box;">
+                    <div style="position: relative; width: auto; margin: 0 auto; max-width: 500px; pointer-events: none; top: 50%; transform: translateY(-50%);">
+                        <div class="modal-content">
+                            <div class="modal-header-equipgo" style="background: linear-gradient(135deg, #0dcaf0 0%, #0aa2c0 100%); border-bottom: 2px solid #0997b7;">
+                                <h5 class="modal-title-equipgo">🔍 Validación de visitante</h5>
                             </div>
-                            <div id="scanner-modal-body" class="scanner-modal-body">
-                                <div id="scanner-form-group" class="scanner-form-group">
-                                    <label id="scanner-form-label" class="scanner-form-label">
-                                        <strong>🆔 Número de Documento:</strong>
-                                    </label>
+                            <div class="modal-body-equipgo">
+                                <div class="form-section">
+                                    <label class="dato-label">🆔 Número de Documento:</label>
                                     <div class="scanner-input-group">
-                                        <input type="text" id="scanner-form-control" class="scanner-form-control"
+                                        <input type="text" class="scanner-form-control"
                                                @bind="documentoVisitante" @onblur="ConsultarVisitante"
-                                               placeholder="Ingrese número de documento..." />
+                                               placeholder="Ingrese número de documento..."
+                                               style="padding: 6px 10px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 13px; height: 34px; width: 100%;" />
                                         <button type="button" class="scanner-input-icon"
                                                 title="Consultar visitante">
                                             🔍
@@ -109,46 +136,62 @@
 
                                 @if (consultaEnProgreso)
                                 {
-                                    <p id="scanner-text-primary" class="scanner-text-primary">🔍 Buscando visitante...</p>
+                                    <p style="color: #0d6efd; font-size: 13px; font-weight: 600;">🔍 Buscando visitante...</p>
                                 }
                                 else if (visitanteEncontrado)
                                 {
-                                    <hr id="scanner-hr" class="scanner-hr" />
-                                    <p><strong>👤 Nombre:</strong> @visitanteDto?.Nombres @visitanteDto?.Apellidos</p>
-                                    <p><strong>📄 Tipo Documento:</strong> @visitanteDto?.TipoDocumento</p>
-                                    <p><strong>🔧 Marca:</strong> @visitanteDto?.Marca</p>
-                                    <p><strong>💻 Modelo:</strong> @visitanteDto?.Modelo</p>
-                                    <p><strong>🏷️ Serial:</strong> @visitanteDto?.Serial</p>
-                                    <p><strong>🏢 Proveedor:</strong> @visitanteDto?.NombreProveedor</p>
-                                    <p>
-                                        <strong>🔁 Tipo de transacción:</strong>
-                                        <span class="scanner-badge @(visitanteDto.TipoTransaccionSiguiente == 1 ? "scanner-badge-success" : "scanner-badge-warning")">
-                                            @(visitanteDto.TipoTransaccionSiguiente == 1 ? "ENTRADA" : "SALIDA")
-                                        </span>
-                                    </p>
-
-                                    @if (!string.IsNullOrWhiteSpace(visitanteDto.FotoBase64))
-                                    {
-                                        <div id="scanner-form-group" class="scanner-form-group">
-                                            <label id="scanner-form-label" class="scanner-form-label">
-                                                <strong>👁️ Foto del equipo:</strong>
-                                            </label><br />
-                                            <img src="@visitanteDto.FotoBase64" alt="Foto del equipo"
-                                                 id="scanner-img-thumbnail" class="scanner-img-thumbnail" />
+                                    <div class="seccion-modal">
+                                        <div class="dato-fila">
+                                            <span class="dato-label">👤 Nombre:</span>
+                                            <span class="dato-valor">@visitanteDto?.Nombres @visitanteDto?.Apellidos</span>
                                         </div>
-                                    }
+                                        <div class="dato-fila">
+                                            <span class="dato-label">📄 Tipo Documento:</span>
+                                            <span class="dato-valor">@visitanteDto?.TipoDocumento</span>
+                                        </div>
+                                        <div class="dato-fila">
+                                            <span class="dato-label">🔧 Marca:</span>
+                                            <span class="dato-valor">@visitanteDto?.Marca</span>
+                                        </div>
+                                        <div class="dato-fila">
+                                            <span class="dato-label">💻 Modelo:</span>
+                                            <span class="dato-valor">@visitanteDto?.Modelo</span>
+                                        </div>
+                                        <div class="dato-fila">
+                                            <span class="dato-label">🏷️ Serial:</span>
+                                            <span class="dato-valor">@visitanteDto?.Serial</span>
+                                        </div>
+                                        <div class="dato-fila">
+                                            <span class="dato-label">🏢 Proveedor:</span>
+                                            <span class="dato-valor">@visitanteDto?.NombreProveedor</span>
+                                        </div>
+                                        <div class="dato-fila">
+                                            <span class="dato-label">🔁 Tipo de transacción:</span>
+                                            <span class="scanner-badge @(visitanteDto.TipoTransaccionSiguiente == 1 ? "scanner-badge-success" : "scanner-badge-warning")">
+                                                @(visitanteDto.TipoTransaccionSiguiente == 1 ? "ENTRADA" : "SALIDA")
+                                            </span>
+                                        </div>
+
+                                        @if (!string.IsNullOrWhiteSpace(visitanteDto.FotoBase64))
+                                        {
+                                            <div class="form-section">
+                                                <label class="dato-label">👁️ Foto del equipo:</label>
+                                                <img src="@visitanteDto.FotoBase64" alt="Foto del equipo"
+                                                     style="padding: 4px; background-color: #fff; border: 1px solid #e0e0e0; border-radius: 8px; max-width: 100%; height: auto; max-height: 200px; object-fit: contain; margin-top: 4px;" />
+                                            </div>
+                                        }
+                                    </div>
                                 }
                                 else if (!consultaEnProgreso && documentoVisitante != "")
                                 {
-                                    <p id="scanner-text-danger" class="scanner-text-danger">❌ Visitante no registrado.</p>
+                                    <p style="color: #dc3545; font-size: 13px; font-weight: 600;">❌ Visitante no registrado.</p>
                                 }
                             </div>
-                            <div id="scanner-modal-footer" class="scanner-modal-footer">
-                                <button id="scanner-btn-danger" class="scanner-btn scanner-btn-danger scanner-btn-flex"
-                                        @onclick="CerrarModalValidarVisitante">
+                            <div class="modal-footer-equipgo">
+                                <button class="boton-modal-equipgo boton-modal-secundario" @onclick="CerrarModalValidarVisitante">
                                     ❌ Denegar
                                 </button>
-                                <button id="scanner-btn-success" class="scanner-btn scanner-btn-success scanner-btn-flex"
+                                <button class="boton-modal-equipgo" style="background: linear-gradient(135deg, #198754 0%, #157347 100%);"
                                         @onclick="RegistrarTransaccionVisitante"
                                         disabled="@(visitanteEncontrado == false)">
                                     ✅ Aprobar
@@ -160,8 +203,9 @@
             }
 
             <div id="scanner-actions" class="scanner-actions">
-                <button id="scanner-btn-danger" class="scanner-btn scanner-btn-danger scanner-btn-large" @onclick="CerrarSesion">
-                    <span id="scanner-btn-icon" class="scanner-btn-icon">←</span> Cerrar sesión
+                <button class="scanner-btn-premium scanner-btn-logout" @onclick="CerrarSesion">
+                    <span class="scanner-btn-premium-icon">←</span>
+                    <span class="scanner-btn-premium-text">Cerrar sesión</span>
                 </button>
             </div>
         </div>

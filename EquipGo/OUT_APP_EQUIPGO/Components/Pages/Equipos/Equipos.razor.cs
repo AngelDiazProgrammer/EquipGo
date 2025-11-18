@@ -37,6 +37,7 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
         private string filtroModelo = "";
         private string filtroSerial = "";
         private string filtroAsset = "";
+        private string filtroUsuario = "";
 
         // Paginación
         private int paginaActual = 1;
@@ -145,6 +146,12 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
                     !string.IsNullOrEmpty(e.CodigoBarras) &&
                     e.CodigoBarras.Contains(filtroAsset, StringComparison.OrdinalIgnoreCase));
             }
+            if (!string.IsNullOrWhiteSpace(filtroUsuario))
+            {
+                query = query.Where(e =>
+                    !string.IsNullOrEmpty(e.UsuarioNombreCompleto) &&
+                    e.UsuarioNombreCompleto.Contains(filtroUsuario, StringComparison.OrdinalIgnoreCase));
+            }
 
             equiposFiltrados = query
                 .OrderByDescending(e => e.FechaCreacion)
@@ -203,6 +210,14 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Equipos
         private void OnFiltroCodigoDeBarrasChanged(ChangeEventArgs e)
         {
             filtroAsset = e.Value?.ToString() ?? string.Empty;
+            paginaActual = 1;
+            AplicarFiltros();
+            StateHasChanged();
+        }
+
+        private void OnFiltroUsuarioChanged(ChangeEventArgs e)
+        {
+            filtroUsuario = e.Value?.ToString() ?? string.Empty;
             paginaActual = 1;
             AplicarFiltros();
             StateHasChanged();

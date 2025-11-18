@@ -190,7 +190,7 @@ window.cargarSelectUsuarios = async function (usuarios) {
     if (!select) return;
 
     // Limpiar select
-    select.innerHTML = '<option value="">-- Buscar usuario --</option>';
+    select.innerHTML = '<option value="">Buscar usuario</option>';
 
     if (usuarios && usuarios.length > 0) {
         usuarios.forEach(usuario => {
@@ -1793,7 +1793,7 @@ window.procesarCargaMasiva = async function () {
     }
 };
 
-// Mostrar resultados de la carga - VERSIÓN CON DESCARGA AUTOMÁTICA
+// Mostrar resultados de la carga - VERSIÓN CON DESCARGA OPCIONAL Y SIN CIERRE AUTOMÁTICO
 window.mostrarResultadosCarga = function (resultado) {
     console.log("📊 Mostrando resultados:", resultado);
 
@@ -1811,9 +1811,9 @@ window.mostrarResultadosCarga = function (resultado) {
     // Mostrar mensaje principal
     const mensajeElement = document.getElementById('mensajeResultado');
 
-    // 🔥 DETERMINAR TIPO DE MENSAJE SEGÚN EL RESULTADO
+    // 🔥 NUEVA LÓGICA: Mostrar opciones en lugar de acciones automáticas
     if (resultado.registrosExitosos > 0 && resultado.registrosFallidos === 0) {
-        // ✅ ÉXITO COMPLETO - Recargar página
+        // ✅ ÉXITO COMPLETO - Mostrar opción de recargar
         mensajeElement.className = 'alert alert-success';
         mensajeElement.innerHTML = `
             <strong>${resultado.mensaje}</strong>
@@ -1822,27 +1822,15 @@ window.mostrarResultadosCarga = function (resultado) {
                 <span class="badge bg-success">Éxitos: ${resultado.registrosExitosos}</span>
                 <span class="badge bg-danger">Fallidos: ${resultado.registrosFallidos}</span>
             </div>
-            <div class="mt-2">
-                <small class="text-success">🔄 La página se recargará automáticamente...</small>
+            <div class="mt-3">
+                <button class="btn btn-success btn-sm" onclick="window.recargarPagina()">
+                    <i class="bi bi-arrow-clockwise"></i> Recargar página para ver los cambios
+                </button>
             </div>
         `;
 
-        // Recargar página después de 3 segundos
-        setTimeout(() => {
-            const modalElement = document.getElementById('modalCargaMasiva');
-            if (modalElement) {
-                const modal = bootstrap.Modal.getInstance(modalElement);
-                if (modal) {
-                    modal.hide();
-                    modalElement.addEventListener('hidden.bs.modal', function () {
-                        window.location.reload();
-                    }, { once: true });
-                }
-            }
-        }, 3000);
-
     } else if (resultado.registrosExitosos === 0 && resultado.registrosFallidos > 0) {
-        // 🔥 ERRORES - Cerrar modal y descargar Excel automáticamente
+        // 🔥 SOLO ERRORES - Mostrar opciones de descarga
         mensajeElement.className = 'alert alert-danger';
         mensajeElement.innerHTML = `
             <strong>${resultado.mensaje}</strong>
@@ -1851,10 +1839,15 @@ window.mostrarResultadosCarga = function (resultado) {
                 <span class="badge bg-success">Éxitos: ${resultado.registrosExitosos}</span>
                 <span class="badge bg-danger">Fallidos: ${resultado.registrosFallidos}</span>
             </div>
-            <div class="mt-2">
-                <small class="text-danger">📊 Se descargará automáticamente un archivo Excel con los errores...</small>
-                <br>
-                <small class="text-danger">⏳ El modal se cerrará en <span id="contadorCierre">5</span> segundos</small>
+            <div class="mt-3">
+                <div class="btn-group" role="group">
+                    <button class="btn btn-outline-danger btn-sm" onclick="window.descargarErroresOpcional()">
+                        <i class="bi bi-download"></i> Descargar reporte de errores
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="window.continuarSinDescargar()">
+                        <i class="bi bi-skip-forward"></i> Continuar sin descargar
+                    </button>
+                </div>
             </div>
         `;
 
@@ -1864,11 +1857,8 @@ window.mostrarResultadosCarga = function (resultado) {
             document.getElementById('panelErrores').style.display = 'block';
         }
 
-        // 🔥 DESCARGAR EXCEL AUTOMÁTICAMENTE Y CERRAR MODAL
-        window.descargarYcerrarModal();
-
-    } else {
-        // ⚠️ CASO MIXTO (no debería ocurrir con la nueva lógica)
+    } else if (resultado.registrosExitosos > 0 && resultado.registrosFallidos > 0) {
+        // ⚠️ CASO MIXTO - Mostrar ambas opciones
         mensajeElement.className = 'alert alert-warning';
         mensajeElement.innerHTML = `
             <strong>${resultado.mensaje}</strong>
@@ -1877,63 +1867,42 @@ window.mostrarResultadosCarga = function (resultado) {
                 <span class="badge bg-success">Éxitos: ${resultado.registrosExitosos}</span>
                 <span class="badge bg-danger">Fallidos: ${resultado.registrosFallidos}</span>
             </div>
+            <div class="mt-3">
+                <div class="btn-group" role="group">
+                    <button class="btn btn-success btn-sm" onclick="window.recargarPagina()">
+                        <i class="bi bi-arrow-clockwise"></i> Recargar para ver éxitos
+                    </button>
+                    <button class="btn btn-outline-danger btn-sm" onclick="window.descargarErroresOpcional()">
+                        <i class="bi bi-download"></i> Descargar errores
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="window.continuarSinDescargar()">
+                        <i class="bi bi-skip-forward"></i> Continuar
+                    </button>
+                </div>
+            </div>
         `;
+
+        // Mostrar errores en la tabla si los hay
+        if (window.erroresCarga.length > 0) {
+            window.mostrarErrores(window.erroresCarga);
+            document.getElementById('panelErrores').style.display = 'block';
+        }
     }
 
     // Scroll a resultados
     document.getElementById('resultadosCarga').scrollIntoView({ behavior: 'smooth' });
 };
-// DESCARGAR EXCEL Y CERRAR MODAL AUTOMÁTICAMENTE
-window.descargarYcerrarModal = function () {
-    console.log("🔥 Iniciando descarga automática y cierre del modal...");
 
-    let segundos = 5;
-    const contadorElement = document.getElementById('contadorCierre');
+// DESCARGAR ERRORES DE FORMA OPCIONAL (sin cerrar modal)
+window.descargarErroresOpcional = function () {
+    console.log("📊 Descargando errores de forma opcional...");
 
-    // Contador regresivo
-    const contadorInterval = setInterval(() => {
-        segundos--;
-        if (contadorElement) {
-            contadorElement.textContent = segundos;
-        }
-
-        if (segundos <= 0) {
-            clearInterval(contadorInterval);
-
-            // 1. Primero descargar el Excel de errores
-            window.descargarErroresAutomatico();
-
-            // 2. Esperar un poco para que inicie la descarga y luego cerrar el modal
-            setTimeout(() => {
-                const modalElement = document.getElementById('modalCargaMasiva');
-                if (modalElement) {
-                    const modal = bootstrap.Modal.getInstance(modalElement);
-                    if (modal) {
-                        modal.hide();
-
-                        // 🔥 LIMPIAR TODO después de cerrar el modal
-                        setTimeout(() => {
-                            window.limpiarTodo();
-                        }, 300);
-
-                        console.log("✅ Modal cerrado y limpiado automáticamente");
-                    }
-                }
-            }, 1000); // 1 segundo después de iniciar la descarga
-        }
-    }, 1000);
-};
-
-// DESCARGAR ERRORES AUTOMÁTICAMENTE
-window.descargarErroresAutomatico = function () {
     if (window.erroresCarga.length === 0) {
-        console.log("❌ No hay errores para descargar");
+        alert('❌ No hay errores para descargar');
         return;
     }
 
     try {
-        console.log("📊 Generando Excel de errores automáticamente...");
-
         // Crear datos para el Excel
         const datosErrores = window.erroresCarga.map(error => ({
             'Fila': error.indiceFila,
@@ -1956,12 +1925,79 @@ window.descargarErroresAutomatico = function () {
         // Descargar archivo
         XLSX.writeFile(wb, nombreArchivo);
 
-        console.log("✅ Excel de errores descargado automáticamente:", nombreArchivo);
+        console.log("✅ Excel de errores descargado opcionalmente:", nombreArchivo);
+
+        // Mostrar mensaje de confirmación (sin cerrar el modal)
+        const mensajeElement = document.getElementById('mensajeResultado');
+        if (mensajeElement) {
+            const originalHTML = mensajeElement.innerHTML;
+            mensajeElement.innerHTML = `
+                <div class="alert alert-info">
+                    <i class="bi bi-check-circle"></i> Reporte de errores descargado exitosamente.
+                    <br><small>Archivo: ${nombreArchivo}</small>
+                </div>
+                ${originalHTML}
+            `;
+        }
 
     } catch (error) {
-        console.error('❌ Error al descargar errores automáticamente:', error);
+        console.error('❌ Error al descargar errores opcionalmente:', error);
+        alert('❌ Error al descargar el reporte de errores');
     }
 };
+
+// CONTINUAR SIN DESCARGAR ERRORES (solo limpiar para nueva carga)
+window.continuarSinDescargar = function () {
+    console.log("🚀 Continuando sin descargar errores...");
+
+    // Mantener el modal abierto pero limpiar para nueva carga
+    window.limpiarParaNuevaCarga();
+};
+
+// LIMPIAR PARA NUEVA CARGA (sin cerrar el modal)
+window.limpiarParaNuevaCarga = function () {
+    console.log("🔄 Preparando para nueva carga...");
+
+    // Limpiar file input
+    const fileInput = document.getElementById('fileCargaMasiva');
+    if (fileInput) fileInput.value = '';
+
+    // Limpiar info del archivo
+    const infoArchivo = document.getElementById('infoArchivo');
+    if (infoArchivo) infoArchivo.style.display = 'none';
+
+    // Limpiar resultados
+    const resultadosCarga = document.getElementById('resultadosCarga');
+    if (resultadosCarga) resultadosCarga.style.display = 'none';
+
+    // Limpiar mensajes
+    const mensajeResultado = document.getElementById('mensajeResultado');
+    if (mensajeResultado) {
+        mensajeResultado.className = 'alert';
+        mensajeResultado.innerHTML = '';
+    }
+
+    // Limpiar tabla de errores
+    const tbodyErrores = document.getElementById('tbodyErrores');
+    if (tbodyErrores) tbodyErrores.innerHTML = '';
+
+    const panelErrores = document.getElementById('panelErrores');
+    if (panelErrores) panelErrores.style.display = 'none';
+
+    // Resetear botón procesar
+    const procesarBtn = document.getElementById('procesarCargaBtn');
+    if (procesarBtn) {
+        procesarBtn.disabled = true;
+        procesarBtn.innerHTML = '<i class="bi bi-upload"></i> Procesar Carga Masiva';
+    }
+
+    // Limpiar variables globales (excepto errores por si quieren descargar después)
+    window.equiposParaCargar = [];
+    // Mantenemos window.erroresCarga por si quieren descargar más tarde
+
+    console.log("✅ Listo para nueva carga");
+};
+
 
 // Función para recargar la página
 window.recargarPagina = function () {

@@ -1,7 +1,7 @@
-/* Estilos base del men˙ - M¡S ANGOSTO */
+Ôªø/* Estilos base del men√∫ - M√ÅS ANGOSTO */
 .cerrar {
     height: 90vh;
-    width: 240px; /* M·s angosto */
+    width: 240px;
     position: fixed;
     left: 0;
     top: 0;
@@ -23,7 +23,23 @@
     z-index: 1000;
     margin-top: 10px;
     margin-left: 15px;
-    box-shadow: 0px, 0px, 0px, 15px;
+}
+
+.flecha-icon {
+    width: 14px; /* tama√±o un poco mayor */
+    height: 14px;
+    color: #ea0029; /* gris oscuro visible sobre blanco */
+    flex-shrink: 0;
+    margin-left: auto; /* empuja la flecha al extremo derecho */
+    opacity: 1;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+/* Cuando el men√∫ est√° desplegado */
+.menu-item.expanded .flecha-icon {
+    transform: rotate(180deg);
+    color: #ea0029; /* flecha roja al expandir */
+    opacity: 1;
 }
 
 /* Logo container con imagen que ocupa todo */
@@ -118,48 +134,27 @@
     cursor: pointer;
     border-radius: 8px;
     transition: all 0.3s ease;
+}
+
+/* ELIMINAMOS el borde rojo del men√∫ padre */
+.menu-item {
     border: 2px solid transparent;
 }
 
-/* Estilo para men˙ padre activo (en rojo) */
-.menu-item.active-parent {
-    border-color: #ea0029;
-    background-color: rgba(234, 0, 41, 0.08);
-}
-
-    .menu-item.active-parent .menu-usuarios,
-    .menu-item.active-parent .menu-equipo {
-        color: #ea0029;
-    }
-
-    .menu-item.active-parent .cerrar-equipgo {
-        color: #ea0029;
-        font-weight: 700;
-    }
-
-    .menu-item.active-parent .computador-icon,
-    .menu-item.active-parent .vector-icon {
-        color: #ea0029;
-    }
-
-/* Hover sutil para men˙s no activos */
-.menu-item:not(.active-parent):not(.expanded):hover {
-    background-color: rgba(234, 0, 41, 0.03);
-    border-color: rgba(234, 0, 41, 0.1);
-}
-
+/* Solo un hover muy sutil en el header del men√∫ padre */
 .menu-usuarios, .menu-equipo {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 10px 12px;
     gap: 8px;
-    transition: all 0.2s ease;
+    transition: all 0.25s ease;
+    border-radius: 8px;
 }
 
-.menu-item:not(.active-parent) .menu-usuarios:hover,
-.menu-item:not(.active-parent) .menu-equipo:hover {
-    background-color: rgba(234, 0, 41, 0.05);
+.menu-item .menu-usuarios:hover,
+.menu-item .menu-equipo:hover {
+    background-color: rgba(234, 0, 41, 0.04);
 }
 
 .flecha-icon {
@@ -167,6 +162,7 @@
     height: 10px;
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     flex-shrink: 0;
+    color: #393e42;
 }
 
 .user2, .equipos-es {
@@ -176,8 +172,8 @@
     display: none;
     flex-direction: column;
     align-items: stretch;
-    padding: 0 12px;
-    gap: 6px;
+    padding: 8px 12px;
+    gap: 4px;
     text-align: left;
     animation: slideDown 0.3s ease;
 }
@@ -194,20 +190,25 @@
     }
 }
 
+/* Contenedor de cada subitem */
 .administrar {
     display: flex;
     align-items: center;
-    padding: 8px 10px;
-    border-radius: 6px;
-    transition: all 0.2s ease;
+    padding: 0;
+    border-radius: 8px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
 }
 
-    /* Hover sutil para elementos del submen˙ */
-    .administrar:not(.active):hover {
-        background-color: rgba(234, 0, 41, 0.05);
-        transform: translateX(2px);
+    /* Hover suave para subitems NO activos */
+    .administrar:not(.active-submenu):hover {
+        background-color: rgba(234, 0, 41, 0.06);
+        transform: translateX(3px);
     }
 
+
+/* Link dentro del subitem */
 .administrar-equipos {
     font-size: 12px;
     font-weight: 500;
@@ -217,7 +218,50 @@
     align-items: center;
     gap: 6px;
     width: 100%;
-    transition: color 0.2s ease;
+    padding: 10px 12px;
+    padding-left: 20px;
+    transition: all 0.25s ease;
+    border-radius: 8px;
+}
+
+    .administrar-equipos b,
+    .administrar-equipos span,
+    .administrar-equipos {
+        text-indent: 8px; /* solo mueve el texto, no el borde rojo */
+    }
+
+/* Estilo para el subitem ACTIVO - M√ÅS DESTACADO */
+.administrar .active,
+.administrar.active-submenu,
+.administrar.active-submenu .administrar-equipos {
+    background: linear-gradient(90deg, rgba(234, 0, 41, 0.12), rgba(234, 0, 41, 0.06));
+    color: #ea0029 !important;
+    font-weight: 700;
+    position: relative;
+}
+
+
+    /* Icono indicador para item activo */
+    .administrar .active::after,
+    .administrar.active-submenu::after {
+        content: '‚óè';
+        position: absolute;
+        right: 12px;
+        color: #ea0029;
+        font-size: 8px;
+        animation: pulse 2s ease-in-out infinite;
+    }
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.6;
+        transform: scale(1.2);
+    }
 }
 
 .user-container {
@@ -243,36 +287,20 @@
 
     .user4:hover {
         background-color: rgba(234, 0, 41, 0.08);
-    }
-
-/* Estilos para elementos activos */
-.active {
-    background-color: rgba(234, 0, 41, 0.1);
-    border-radius: 6px;
-    position: relative;
-}
-
-    .active::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 3px;
-        height: 60%;
-        background-color: #ea0029;
-        border-radius: 0 2px 2px 0;
+        transform: translateX(2px);
     }
 
 /* Responsive Design */
 @media (max-width: 768px) {
     .cerrar {
         width: 220px;
-        transform: translateX(-100%);
+        transform: translateX(-110%);
+        visibility: hidden;
     }
 
         .cerrar.mobile-open {
             transform: translateX(0);
+            visibility: visible;
         }
 
     .logo-img {
@@ -288,6 +316,7 @@
     .cerrar {
         width: 100%;
         border-radius: 0;
+        margin-left: 0;
     }
 
     .logo-container {
@@ -303,20 +332,8 @@
     }
 
     .administrar {
-        padding: 6px 8px;
+        padding: 0;
     }
-}
-
-@media (max-width: 768px) {
-    .cerrar {
-        transform: translateX(-110%);
-        visibility: hidden;
-    }
-
-        .cerrar.mobile-open {
-            transform: translateX(0);
-            visibility: visible;
-        }
 }
 
 /* Scrollbar personalizado */
@@ -338,12 +355,7 @@
         background: #c40022;
     }
 
-/* Asegura transiciÛn sobre transform (si ya lo tienes est· ok, pero reforzamos) */
-.cerrar {
-    transition: transform 0.3s ease, visibility 0.3s;
-}
-
-/* BotÛn hamburguesa */
+/* Bot√≥n hamburguesa */
 .hamburger-btn {
     display: none;
     position: fixed;
@@ -358,25 +370,18 @@
     padding: 8px 10px;
     cursor: pointer;
     box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
 }
 
-/* comportamiento mÛvil: ocultar lateral por defecto y mostrar botÛn */
+    .hamburger-btn:hover {
+        background: #c40022;
+        transform: scale(1.05);
+    }
+
 @media (max-width: 768px) {
     .hamburger-btn {
         display: block;
     }
-
-    /* aseguramos que por defecto estÈ fuera de pantalla */
-    .cerrar {
-        transform: translateX(-110%);
-        visibility: hidden;
-    }
-
-        /* al abrir */
-        .cerrar.mobile-open {
-            transform: translateX(0);
-            visibility: visible;
-        }
 }
 
 /* Estados de carga suaves */

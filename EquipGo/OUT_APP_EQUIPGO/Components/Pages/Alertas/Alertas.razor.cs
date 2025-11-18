@@ -3,6 +3,7 @@ using Infrastructure.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using OUT_OS_APP.EQUIPGO.DTO.DTOs.Alertas;
+using OUT_PERSISTENCE_EQUIPGO.Services.Equipos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,8 +13,13 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Alertas
 {
     public partial class Alertas : ComponentBase
     {
+
+        [Inject] private IConfiguration Configuration { get; set; }
+        [Inject] private Interface.Services.Equipos.IEquipoService EquipoService { get; set; }
         [Inject] private Interface.Services.Alertas.IAlertasService AlertasService { get; set; }
         [Inject] private IJSRuntime JSRuntime { get; set; }
+
+        private string apiKey;
 
         private List<AlertaDto> alertas = new();
         private List<AlertaDto> alertasFiltradas = new();
@@ -21,7 +27,12 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Alertas
         private List<TipoAlertaDto> tiposAlerta = new();
         private List<AlertaDto> equiposBloqueados = new();
 
+        //Variable para activar el modal de visualizacion de alerta completa
+        private AlertaDto alertaSeleccionada = new AlertaDto();
+        private bool mostrarModalDetalles = false;
+
         // Filtros
+        private string filtroUsuario = "";
         private string filtroSerial = "";
         private string filtroMarca = "";
         private int? filtroTipoAlerta = null;
@@ -42,6 +53,38 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Alertas
         private int AlertasHoy { get; set; }
         private int EquiposBloqueadosCount => equiposBloqueados?.Count ?? 0;
         private int AlertasCriticas => alertasFiltradas?.Count(a => a.IdTipoAlerta == 4) ?? 0; // Tipo 4 = Bloqueo
+
+        //Colores de los badge
+        private string GetBadgeClass(int idTipoAlerta)
+        {
+            return idTipoAlerta switch
+            {
+                1 => "text-success",
+                2 => "text-primary",
+                3 => "text-danger",
+                4 => "text-danger",
+                _ => "text-secondary"
+            };
+        }
+
+        protected override void OnInitialized()
+        {
+            apiKey = Configuration["GoogleMaps:ApiKey"];
+        }
+
+        //Abrir el modal
+        private void AbrirModalDetalles(AlertaDto alerta)
+        {
+            alertaSeleccionada = alerta;
+            mostrarModalDetalles = true;
+            StateHasChanged();
+        }
+        // Método para cerrar el modal
+        private void CerrarModalDetalles()
+        {
+            mostrarModalDetalles = false;
+            StateHasChanged();
+        }
 
         protected override async Task OnInitializedAsync()
         {
@@ -90,6 +133,13 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Alertas
 
             var query = alertas.AsEnumerable();
 
+            // Filtro por usuario
+            if (!string.IsNullOrWhiteSpace(filtroUsuario))
+            {
+                query = query.Where(a =>
+                !string.IsNullOrEmpty(a.UsuarioAsignado) &&
+                a.UsuarioAsignado.Contains(filtroUsuario, StringComparison.OrdinalIgnoreCase));
+            }
             // Filtro por Serial
             if (!string.IsNullOrWhiteSpace(filtroSerial))
             {
@@ -160,6 +210,14 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Alertas
         }
 
         // Métodos para manejar cambios en los filtros
+        private void OnFiltroUsuarioChanged(ChangeEventArgs e)
+        {
+            filtroUsuario = e.Value.ToString() ?? string.Empty;
+            paginaActual = 1;
+            AplicarFiltros();
+            StateHasChanged();
+        }
+
         private void OnFiltroSerialChanged(ChangeEventArgs e)
         {
             filtroSerial = e.Value?.ToString() ?? string.Empty;
@@ -289,6 +347,80 @@ namespace OUT_APP_EQUIPGO.Components.Pages.Alertas
             {
                 Console.Error.WriteLine($"❌ Error al refrescar alertas: {ex.Message}");
                 return $"error: {ex.Message}";
+            }
+        }
+
+
+        #region Descripciones Detalladas Elementos Modal
+
+
+        private string GetDescripcionTipoAlerta(int idTipoAlerta)
+        {
+            return idTipoAlerta switch
+            {
+                1 => "Primera notificación - Alerta inicial por evento de geofencing",
+                2 => "Segunda notificación - Reincidencia del evento",
+                3 => "Tercera notificación - Evento persistente, requiere atención",
+                4 => "Bloqueo - Equipo bloqueado por múltiples alertas",
+                _ => "Tipo de alerta no especificado"
+            };
+        }
+
+        private string GetDescripcionContador(int contador)
+        {
+            return contador switch
+            {
+                0 => "Sin alertas registradas",
+                1 => "Primera alerta - Monitoreo inicial",
+                2 => "Segunda alerta - Atención recomendada",
+                3 => "Tercera alerta - Requiere acción inmediata",
+                4 => "Cuarta alerta - Estado crítico",
+                >= 5 => "Alerta máxima - Equipo bloqueado automáticamente",
+                _ => "Estado del contador no definido"
+            };
+        }
+
+        private string GetDescripcionEstado(bool estaBloqueado, int contador)
+        {
+            if (estaBloqueado)
+                return "EQUIPO BLOQUEADO - Requiere desbloqueo";
+
+            if (contador >= 3)
+                return "EN RIESGO - Múltiples alertas, próximo a bloqueo automático";
+
+            if (contador >= 1)
+                return "NORMAL CON ALERTAS - Monitoreo activo";
+
+            return "NORMAL - Sin alertas activas";
+        }
+        #endregion
+
+        //Abrir mapa en la ultima ubicacion de bloqueo
+        private async Task VerUbicacionEquipo(string serialEquipo)
+        {
+            try
+            {
+                // Obtener todos los equipos y filtrar por serial
+                var equipos = await EquipoService.ObtenerTodosLosEquiposAsync();
+                var equipo = equipos.FirstOrDefault(e => e.Serial == serialEquipo);
+
+                if (equipo != null && equipo.Latitud.HasValue && equipo.Longitud.HasValue)
+                {
+                    // Usar JS interop para mostrar el mapa directamente
+                    await JSRuntime.InvokeVoidAsync("mostrarMapaUbicacion",
+                        equipo.Latitud.Value,
+                        equipo.Longitud.Value,
+                        equipo.Serial,
+                        apiKey);
+                }
+                else
+                {
+                    await JSRuntime.InvokeVoidAsync("alert", "No hay ubicación disponible para este equipo");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Error al obtener ubicación: {ex.Message}");
             }
         }
     }

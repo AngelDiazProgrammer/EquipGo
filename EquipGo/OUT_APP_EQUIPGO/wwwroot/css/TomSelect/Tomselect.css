@@ -1,0 +1,120 @@
+﻿/* ============================================
+   Estilos personalizados para TomSelect
+   ============================================ */
+
+/* Estilos para TomSelect - Hacer que parezca un select nativo mejorado */
+.ts-wrapper {
+    position: relative;
+}
+
+    .ts-wrapper .ts-control {
+        background: white;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        padding: 8px 35px 8px 12px; /* Espacio a la derecha para el icono */
+        cursor: pointer;
+        transition: all 0.4s ease; /* Transición más lenta y suave */
+    }
+
+        .ts-wrapper .ts-control:hover {
+            border-color: #80bdff;
+            transform: translateY(-1px); /* Efecto sutil de elevación */
+        }
+
+    .ts-wrapper.focus .ts-control {
+        border-color: #80bdff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        outline: 0;
+        transform: translateY(-1px);
+    }
+
+    /* Icono de flecha personalizado */
+    .ts-wrapper::after {
+        content: '▼';
+        position: absolute;
+        top: 50%;
+        right: 12px;
+        transform: translateY(-50%);
+        pointer-events: none;
+        color: #6c757d;
+        font-size: 10px;
+        z-index: 1;
+        transition: all 0.5s ease; /* Transición suave para la rotación */
+    }
+
+    .ts-wrapper.dropdown-active::after {
+        transform: translateY(-50%) rotate(180deg);
+        color: #007bff; /* Cambia de color al abrir */
+    }
+
+/* Estilos del dropdown */
+.ts-dropdown {
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    margin-top: 2px;
+    animation: fadeInDown 0.4s ease; /* Animación de aparición */
+}
+
+/* Animación de aparición del dropdown */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.ts-dropdown .option {
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: all 0.3s ease; /* Transición suave en las opciones */
+}
+
+    .ts-dropdown .option:hover,
+    .ts-dropdown .option.active {
+        background-color: #f8f9fa;
+        padding-left: 16px; /* Efecto de deslizamiento */
+    }
+
+    .ts-dropdown .option.selected {
+        background-color: #007bff;
+        color: white;
+        transition: all 0.3s ease;
+    }
+
+/* Input de búsqueda dentro del control */
+.ts-wrapper .ts-control input {
+    color: #495057;
+    transition: all 0.3s ease;
+}
+
+    .ts-wrapper .ts-control input::placeholder {
+        color: #6c757d;
+        transition: opacity 0.3s ease;
+    }
+
+/* Ocultar placeholder cuando el dropdown está abierto */
+.ts-wrapper.dropdown-active .ts-control input::placeholder {
+    opacity: 0 !important;
+}
+
+/* También ocultar cuando está en foco */
+.ts-wrapper.focus .ts-control input::placeholder {
+    opacity: 0 !important;
+}
+
+/* Ocultar el placeholder cuando hay input activo */
+.ts-wrapper .ts-control input:focus::placeholder {
+    opacity: 0 !important;
+}
+
+/* Eliminar estilos por defecto que puedan interferir */
+.ts-wrapper .ts-control .item {
+    color: #495057;
+    transition: all 0.3s ease;
+}

@@ -4,7 +4,7 @@
 <div class="frame-container">
     <!-- Encabezado -->
     <div class="dashboard-parent">
-        <h4 class="dashboard-equipgo">Equipos</h4>
+        <h4 class="dashboard-equipgo">Administrar Equipos</h4>
         <div class="logo-os">
             <img src="img/logoOutsourcing.png" alt="Logo" class="dashboard-vector-icon" />
         </div>
@@ -78,16 +78,26 @@
                                placeholder="Filtrar por estado..." />
                     </div>
                 </div>
+                <div class="buscar-nombre">
+                    <label>Usuario Asignado</label>
+                    <div class="frame-div">
+                        <input type="text"
+                               class="placeholder"
+                               @bind="filtroUsuario"
+                               @oninput="OnFiltroUsuarioChanged"
+                               placeholder="Filtrar por usuario..." />
+                    </div>
+                </div>
             </div>
         </div>
 
         <!-- Botón para añadir equipo -->
         <div class="botonera">
             <button class="botn3" data-bs-toggle="modal" data-bs-target="#modalCrearEquipo" onclick="limpiarFormularioCrear()">
-                <i class="bi bi-plus-lg"></i> Añadir Equipo
+                 Añadir Equipo
             </button>
             <button class="botn3" data-bs-toggle="modal" data-bs-target="#modalCargaMasiva">
-                <i class="bi bi-upload"></i> Carga Masiva
+                 Carga Masiva
             </button>
         </div>
 
@@ -141,6 +151,7 @@
                                 <th>Modelo</th>
                                 <th>Serial</th>
                                 <th>Asset</th>
+                                <th>Usuario Asignado</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -152,6 +163,14 @@
                                     <td>@equipo.Modelo</td>
                                     <td>@equipo.Serial</td>
                                     <td>@equipo.CodigoBarras</td>
+                                    <td>@if(!string.IsNullOrEmpty(equipo.UsuarioNombreCompleto)){
+                                        <span>@equipo.UsuarioNombreCompleto</span>  
+                                    }
+                                    else
+                                    {
+                                        <span>Sin asignar</span>
+                                    }
+                                </td>
                                     <td>
                                         <button class="btn btn-sm btn-outline-info"
                                                 onclick="abrirDetallesEquipo(@equipo.Id, '@equipo.Marca', '@equipo.Modelo')">
@@ -208,20 +227,21 @@
                         </div>
                     </div>
 
-                    <!-- Plantilla -->
-                    <div class="seccion-modal">
-                        <div class="seccion-header">
-                            <span class="seccion-titulo">📄 Plantilla</span>
-                        </div>
-                        <div class="seccion-datos">
-                            <div class="row">
-                                <div class="col-md-8">
-                                    <p>Descarga la plantilla Excel para cargar los equipos de forma masiva:</p>
+                    <div class="row">
+                        <!-- Columna izquierda: Plantilla e información -->
+                        <div class="col-md-6">
+                            <!-- Plantilla -->
+                            <div class="seccion-modal">
+                                <div class="seccion-header">
+                                    <span class="seccion-titulo">📄 Plantilla</span>
+                                </div>
+                                <div class="seccion-datos">
+                                    <p>Descarga la plantilla Excel para cargar los equipos de forma masiva, llena los datos y guarda el archivo.</p>
                                     <button class="botn3" onclick="descargarPlantillaCargaMasiva()">
                                         <i class="bi bi-download"></i> Descargar Plantilla Excel
                                     </button>
-                                </div>
-                                    
+
+                                    <div class="card mt-3">
                                         <div class="card-body">
                                             <h6 class="card-title">Columnas requeridas:</h6>
                                             <ul class="small mb-0">
@@ -231,41 +251,47 @@
                                                 <li><strong>CódigoBarras</strong> (Obligatorio)</li>
                                             </ul>
                                         </div>
-                               
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Subir archivo -->
-                    <div class="seccion-modal">
-                        <div class="seccion-header">
-                            <span class="seccion-titulo">📤 Subir Archivo</span>
-                        </div>
-                        <div class="seccion-datos">
-                            <div class="mb-3">
-                                <label for="fileCargaMasiva" class="form-label fw-bold">Seleccionar archivo Excel:</label>
-                                <input type="file" id="fileCargaMasiva" class="form-control" accept=".xlsx, .xls" />
-                            </div>
-
-                            <!-- Información del archivo -->
-                            <div id="infoArchivo" class="alert alert-light" style="display: none;">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <i class="bi bi-file-earmark-excel text-success"></i>
-                                        <span id="nombreArchivo" class="fw-bold"></span>
-                                        <span id="cantidadEquipos" class="badge bg-primary ms-2"></span>
                                     </div>
-                                    <button type="button" class="btn-close" onclick="limpiarArchivo()"></button>
                                 </div>
                             </div>
+                        </div>
 
-                            <small class="text-muted">
-                                <i class="bi bi-info-circle"></i> Formatos soportados: Excel (.xlsx, .xls). Tamaño máximo: 10MB
-                            </small>
+                        <!-- Columna derecha: Subir archivo -->
+                        <div class="col-md-6">
+                            <!-- Subir archivo -->
+                            <div class="seccion-modal">
+                                <div class="seccion-header">
+                                    <span class="seccion-titulo">📤 Subir Archivo</span>
+                                </div>
+                                <div class="seccion-datos">
+                                    <p>Sube el archivo completado y luego revisa los resultados.</p>
+
+                                    <div class="mb-3">
+                                        <label for="fileCargaMasiva" class="form-label fw-bold">Seleccionar archivo Excel:</label>
+                                        <input type="file" id="fileCargaMasiva" class="form-control" accept=".xlsx, .xls" />
+                                    </div>
+
+                                    <!-- Información del archivo -->
+                                    <div id="infoArchivo" class="alert alert-light" style="display: none;">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <i class="bi bi-file-earmark-excel text-success"></i>
+                                                <span id="nombreArchivo" class="fw-bold"></span>
+                                                <span id="cantidadEquipos" class="badge bg-primary ms-2"></span>
+                                            </div>
+                                            <button type="button" class="btn-close" onclick="limpiarArchivo()"></button>
+                                        </div>
+                                    </div>
+
+                                    <small class="text-muted">
+                                        <i class="bi bi-info-circle"></i> Formatos soportados: Excel (.xlsx, .xls). Tamaño máximo: 10MB
+                                    </small>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Resultados -->
+                    <!-- Resultados (ocupa todo el ancho) -->
                     <div class="seccion-modal" id="resultadosCarga" style="display: none;">
                         <div class="seccion-header">
                             <span class="seccion-titulo">📊 Resultados del Procesamiento</span>
@@ -322,11 +348,6 @@
                                         </thead>
                                         <tbody id="tbodyErrores"></tbody>
                                     </table>
-                                </div>
-                                <div class="mt-2 text-end">
-                                    <button class="btn btn-sm btn-outline-secondary" onclick="exportarErrores()">
-                                        <i class="bi bi-download"></i> Exportar Errores
-                                    </button>
                                 </div>
                             </div>
 
@@ -399,13 +420,13 @@
                                     <div class="col-md-6">
                                         <div class="form-section">
                                             <label>Latitud</label>
-                                            <input type="number" step="any" id="latitud" name="latitud" placeholder="0.000000" />
+                                            <input readonly type="number" step="any" id="latitud" name="latitud" placeholder="0.000000" style="background-color: gainsboro;" />
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-section">
                                             <label>Longitud</label>
-                                            <input type="number" step="any" id="longitud" name="longitud" placeholder="0.000000" />
+                                            <input readonly type="number" step="any" id="longitud" name="longitud" placeholder="0.000000" style="background-color: gainsboro;" />
                                         </div>
                                     </div>
                                 </div>
@@ -457,7 +478,7 @@
                                 <div class="form-section">
                                     <label>Usuario</label>
                                     <select id="asignarUsuarioSelect">
-                                        <option value="">-- Buscar usuario --</option>
+                                        <option value="">Buscar usuario</option>
                                     </select>
                                     <small class="text-muted">Selecciona un usuario del Active Directory o base local</small>
                                 </div>
@@ -544,9 +565,10 @@
         </div>
     </div>
 
-    <!-- Modal Editar Equipo - ORDEN ORIGINAL, SIN USUARIOS -->
+    <!-- Modal Editar Equipo  -->
     <div class="modal fade modal-equipgo" id="modalEditarEquipo" tabindex="-1" aria-labelledby="modalEditarEquipoLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl">
+        <div class="modal-dialog modal-lg">
+            <!-- Cambiado a modal-lg para mejor legibilidad en una columna -->
             <div class="modal-content">
                 <div class="modal-header-equipgo">
                     <h5 class="modal-title-equipgo">Editar Equipo</h5>
@@ -555,103 +577,130 @@
                 <div class="modal-body-equipgo">
                     <form id="formEditarEquipo">
                         <input type="hidden" id="editarId" />
-                        <div class="row">
-                            <!-- Columna izquierda - ORDEN ORIGINAL -->
-                            <div class="col-md-6">
-                                <div class="seccion-modal">
-                                    <div class="seccion-header">
-                                        <span class="seccion-titulo">💻 Datos del Equipo</span>
-                                    </div>
-                                    <div class="seccion-datos">
+
+                        <!-- Sección 1: Información básica del equipo -->
+                        <div class="seccion-modal">
+                            <div class="seccion-header">
+                                <span class="seccion-titulo">💻 Datos del Equipo</span>
+                            </div>
+                            <div class="seccion-datos">
+                                <div class="row">
+                                    <div class="col-md-6">
                                         <div class="form-section">
                                             <label>Marca</label>
-                                            <input readonly type="text" id="editarMarca" />
+                                            <input readonly type="text" id="editarMarca" style="background-color: gainsboro;" />
                                         </div>
+                                    </div>
+                                    <div class="col-md-6">
                                         <div class="form-section">
                                             <label>Modelo</label>
-                                            <input readonly type="text" id="editarModelo" />
+                                            <input readonly type="text" id="editarModelo" style="background-color: gainsboro;" />
                                         </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
                                         <div class="form-section">
                                             <label>Serial</label>
-                                            <input readonly type="text" id="editarSerial" />
+                                            <input readonly type="text" id="editarSerial" style="background-color: gainsboro;" />
                                         </div>
+                                    </div>
+                                    <div class="col-md-6">
                                         <div class="form-section">
                                             <label>Código de Barras</label>
                                             <input type="text" id="editarCodigoBarras" />
                                         </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
                                         <div class="form-section">
                                             <label>Sistema Operativo</label>
-                                            <input readonly type="text" id="editarSistemaOperativo" />
+                                            <input readonly type="text" id="editarSistemaOperativo" style="background-color: gainsboro;" />
                                         </div>
+                                    </div>
+                                    <div class="col-md-6">
                                         <div class="form-section">
                                             <label>MAC Equipo</label>
-                                            <input readonly type="text" id="editarMacEquipo" />
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="form-section">
-                                                    <label>Latitud</label>
-                                                    <input readonly type="number" step="any" id="editarLatitud" />
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-section">
-                                                    <label>Longitud</label>
-                                                    <input readonly type="number" step="any" id="editarLongitud" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Columna derecha - ORDEN ORIGINAL -->
-                            <div class="col-md-6">
-                                <div class="seccion-modal">
-                                    <div class="seccion-header">
-                                        <span class="seccion-titulo">⚙️ Características</span>
-                                    </div>
-                                    <div class="seccion-datos">
-                                        <div class="form-section">
-                                            <label>Tipo Dispositivo</label>
-                                            <select id="editarTipoDispositivo"></select>
-                                        </div>
-                                        <div class="form-section">
-                                            <label>Estado</label>
-                                            <select id="editarEstado"></select>
-                                        </div>
-
-                                        <!-- 🎯 Contenedor para Motivo en edición -->
-                                        <div id="motivoContainerEditar" style="display: none;">
-                                            <div class="form-section">
-                                                <label>Motivo:</label>
-                                                <select id="editarSubEstado">
-                                                    <option value="">Seleccionar motivo...</option>
-                                                </select>
-                                            </div>
+                                            <input readonly type="text" id="editarMacEquipo" style="background-color: gainsboro;" />
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="seccion-modal">
-                                    <div class="seccion-header">
-                                        <span class="seccion-titulo">📍 Ubicación</span>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-section">
+                                            <label>Latitud</label>
+                                            <input readonly type="number" step="any" id="editarLatitud" style="background-color: gainsboro;" />
+                                        </div>
                                     </div>
-                                    <div class="seccion-datos">
+                                    <div class="col-md-6">
                                         <div class="form-section">
-                                            <label>Proveedor</label>
-                                            <select id="editarProveedor"></select>
+                                            <label>Longitud</label>
+                                            <input readonly type="number" step="any" id="editarLongitud" style="background-color: gainsboro;" />
                                         </div>
-                                        <div class="form-section">
-                                            <label>Sede</label>
-                                            <select id="editarSede"></select>
-                                        </div>
-                                        <!-- 🚫 ELIMINADA SECCIÓN DE ASIGNACIÓN -->
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <!-- 🚫 ELIMINADO FORMULARIO DE USUARIO COMPLETAMENTE -->
+
+                        <!-- Sección 2: Características del equipo -->
+                        <div class="seccion-modal">
+                            <div class="seccion-header">
+                                <span class="seccion-titulo">⚙️ Características</span>
+                            </div>
+                            <div class="seccion-datos">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-section">
+                                            <label>Tipo Dispositivo</label>
+                                            <select id="editarTipoDispositivo"></select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-section">
+                                            <label>Estado</label>
+                                            <select id="editarEstado"></select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 🎯 Contenedor para Motivo en edición -->
+                                <div id="motivoContainerEditar" style="display: none;">
+                                    <div class="form-section">
+                                        <label>Motivo:</label>
+                                        <select id="editarSubEstado">
+                                            <option value="">Seleccionar motivo...</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sección 3: Ubicación -->
+                        <div class="seccion-modal">
+                            <div class="seccion-header">
+                                <span class="seccion-titulo">📍 Ubicación</span>
+                            </div>
+                            <div class="seccion-datos">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-section">
+                                            <label>Proveedor</label>
+                                            <select id="editarProveedor"></select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-section">
+                                            <label>Sede</label>
+                                            <select id="editarSede"></select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer-equipgo">
@@ -671,7 +720,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body-equipgo">
-                    <div class="row">
+                    <div class="row h-100">
+                        <!-- Columna izquierda: Información (50%) -->
                         <div class="col-md-6">
                             <!-- Datos del Equipo -->
                             <div class="seccion-modal">
@@ -701,9 +751,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="col-md-6">
                             <!-- Características -->
                             <div class="seccion-modal">
                                 <div class="seccion-header">
@@ -738,18 +786,16 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Mapa -->
-                    <div class="row mt-3">
-                        <div class="col-12">
-                            <div class="seccion-modal">
+                        <!-- Columna derecha: Mapa (50%) -->
+                        <div class="col-md-6">
+                            <div class="seccion-modal h-100">
                                 <div class="seccion-header">
                                     <span class="seccion-titulo">🗺️ Ubicación</span>
                                 </div>
-                                <div class="seccion-datos p-0">
-                                    <div id="google-map" style="height: 300px; width: 100%; background: #f8f9fa;">
-                                        <div class="text-center py-4 text-muted">
+                                <div class="seccion-datos p-0 h-100">
+                                    <div id="google-map" style="height: 100%; width: 100%; background: #f8f9fa;">
+                                        <div class="text-center py-4 text-muted h-100 d-flex flex-column justify-content-center">
                                             <i class="bi bi-map" style="font-size: 2rem;"></i>
                                             <p>Selecciona un equipo para ver su ubicación</p>
                                         </div>

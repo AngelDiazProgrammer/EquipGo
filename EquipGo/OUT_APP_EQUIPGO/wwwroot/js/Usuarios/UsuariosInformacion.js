@@ -293,9 +293,12 @@ window.procesarCargaMasivaUsuarios = async function () {
     }
 };
 
-// Mostrar resultados de la carga de usuarios
+// Mostrar resultados de la carga de usuarios - VERSIÓN ULTRA SEGURA
 window.mostrarResultadosCargaUsuarios = function (resultado) {
     console.log("📊 Mostrando resultados usuarios:", resultado);
+
+    // 🔥 BLOQUEO DE SEGURIDAD - Verificar que no se ejecute código automático
+    console.log("🔒 BLOQUEO ACTIVADO - No se ejecutará descarga automática");
 
     // Mostrar sección de resultados
     document.getElementById('resultadosCargaUsuarios').style.display = 'block';
@@ -311,8 +314,9 @@ window.mostrarResultadosCargaUsuarios = function (resultado) {
     // Mostrar mensaje principal
     const mensajeElement = document.getElementById('mensajeResultadoUsuarios');
 
+    // 🔥 NUEVA LÓGICA: Mostrar opciones en lugar de acciones automáticas
     if (resultado.registrosExitosos > 0 && resultado.registrosFallidos === 0) {
-        // ✅ ÉXITO COMPLETO - Recargar página
+        // ✅ ÉXITO COMPLETO - Mostrar opción de recargar
         mensajeElement.className = 'alert alert-success';
         mensajeElement.innerHTML = `
             <strong>${resultado.mensaje}</strong>
@@ -321,27 +325,18 @@ window.mostrarResultadosCargaUsuarios = function (resultado) {
                 <span class="badge bg-success">Éxitos: ${resultado.registrosExitosos}</span>
                 <span class="badge bg-danger">Fallidos: ${resultado.registrosFallidos}</span>
             </div>
-            <div class="mt-2">
-                <small class="text-success">🔄 La página se recargará automáticamente...</small>
+            <div class="mt-3">
+                <button class="btn btn-success btn-sm" onclick="window.recargarPaginaUsuarios()">
+                    <i class="bi bi-arrow-clockwise"></i> Recargar página para ver los cambios
+                </button>
+                <button class="btn btn-outline-secondary btn-sm ms-2" onclick="window.continuarSinDescargarUsuarios()">
+                    <i class="bi bi-skip-forward"></i> Continuar sin recargar
+                </button>
             </div>
         `;
 
-        // Recargar página después de 3 segundos
-        setTimeout(() => {
-            const modalElement = document.getElementById('modalCargaMasivaUsuarios');
-            if (modalElement) {
-                const modal = bootstrap.Modal.getInstance(modalElement);
-                if (modal) {
-                    modal.hide();
-                    modalElement.addEventListener('hidden.bs.modal', function () {
-                        window.location.reload();
-                    }, { once: true });
-                }
-            }
-        }, 3000);
-
     } else if (resultado.registrosExitosos === 0 && resultado.registrosFallidos > 0) {
-        // 🔥 ERRORES - Cerrar modal y descargar Excel automáticamente
+        // 🔥 SOLO ERRORES - Mostrar opciones de descarga
         mensajeElement.className = 'alert alert-danger';
         mensajeElement.innerHTML = `
             <strong>${resultado.mensaje}</strong>
@@ -350,10 +345,15 @@ window.mostrarResultadosCargaUsuarios = function (resultado) {
                 <span class="badge bg-success">Éxitos: ${resultado.registrosExitosos}</span>
                 <span class="badge bg-danger">Fallidos: ${resultado.registrosFallidos}</span>
             </div>
-            <div class="mt-2">
-                <small class="text-danger">📊 Se descargará automáticamente un archivo Excel con los errores...</small>
-                <br>
-                <small class="text-danger">⏳ El modal se cerrará en <span id="contadorCierreUsuarios">5</span> segundos</small>
+            <div class="mt-3">
+                <div class="btn-group" role="group">
+                    <button class="btn btn-outline-danger btn-sm" onclick="window.descargarErroresUsuariosOpcional()">
+                        <i class="bi bi-download"></i> Descargar reporte de errores
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="window.continuarSinDescargarUsuarios()">
+                        <i class="bi bi-skip-forward"></i> Continuar sin descargar
+                    </button>
+                </div>
             </div>
         `;
 
@@ -363,11 +363,8 @@ window.mostrarResultadosCargaUsuarios = function (resultado) {
             document.getElementById('panelErroresUsuarios').style.display = 'block';
         }
 
-        // 🔥 DESCARGAR EXCEL AUTOMÁTICAMENTE Y CERRAR MODAL
-        window.descargarYcerrarModalUsuarios();
-
-    } else {
-        // ⚠️ CASO MIXTO
+    } else if (resultado.registrosExitosos > 0 && resultado.registrosFallidos > 0) {
+        // ⚠️ CASO MIXTO - Mostrar ambas opciones
         mensajeElement.className = 'alert alert-warning';
         mensajeElement.innerHTML = `
             <strong>${resultado.mensaje}</strong>
@@ -376,64 +373,45 @@ window.mostrarResultadosCargaUsuarios = function (resultado) {
                 <span class="badge bg-success">Éxitos: ${resultado.registrosExitosos}</span>
                 <span class="badge bg-danger">Fallidos: ${resultado.registrosFallidos}</span>
             </div>
+            <div class="mt-3">
+                <div class="btn-group" role="group">
+                    <button class="btn btn-success btn-sm" onclick="window.recargarPaginaUsuarios()">
+                        <i class="bi bi-arrow-clockwise"></i> Recargar para ver éxitos
+                    </button>
+                    <button class="btn btn-outline-danger btn-sm" onclick="window.descargarErroresUsuariosOpcional()">
+                        <i class="bi bi-download"></i> Descargar errores
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="window.continuarSinDescargarUsuarios()">
+                        <i class="bi bi-skip-forward"></i> Continuar
+                    </button>
+                </div>
+            </div>
         `;
+
+        // Mostrar errores en la tabla si los hay
+        if (window.erroresCargaUsuarios.length > 0) {
+            window.mostrarErroresUsuarios(window.erroresCargaUsuarios);
+            document.getElementById('panelErroresUsuarios').style.display = 'block';
+        }
     }
 
     // Scroll a resultados
     document.getElementById('resultadosCargaUsuarios').scrollIntoView({ behavior: 'smooth' });
+
+    // 🔥 CONFIRMACIÓN FINAL
+    console.log("✅ mostrarResultadosCargaUsuarios completado SIN descarga automática");
 };
 
-// DESCARGAR EXCEL Y CERRAR MODAL AUTOMÁTICAMENTE PARA USUARIOS
-window.descargarYcerrarModalUsuarios = function () {
-    console.log("🔥 Iniciando descarga automática y cierre del modal de usuarios...");
+// DESCARGAR ERRORES DE USUARIOS DE FORMA OPCIONAL (sin cerrar modal)
+window.descargarErroresUsuariosOpcional = function () {
+    console.log("📊 Descargando errores de usuarios de forma opcional...");
 
-    let segundos = 5;
-    const contadorElement = document.getElementById('contadorCierreUsuarios');
-
-    // Contador regresivo
-    const contadorInterval = setInterval(() => {
-        segundos--;
-        if (contadorElement) {
-            contadorElement.textContent = segundos;
-        }
-
-        if (segundos <= 0) {
-            clearInterval(contadorInterval);
-
-            // 1. Primero descargar el Excel de errores
-            window.descargarErroresUsuariosAutomatico();
-
-            // 2. Esperar un poco para que inicie la descarga y luego cerrar el modal
-            setTimeout(() => {
-                const modalElement = document.getElementById('modalCargaMasivaUsuarios');
-                if (modalElement) {
-                    const modal = bootstrap.Modal.getInstance(modalElement);
-                    if (modal) {
-                        modal.hide();
-
-                        // 🔥 LIMPIAR TODO después de cerrar el modal
-                        setTimeout(() => {
-                            window.limpiarTodoUsuarios();
-                        }, 300);
-
-                        console.log("✅ Modal de usuarios cerrado y limpiado automáticamente");
-                    }
-                }
-            }, 1000);
-        }
-    }, 1000);
-};
-
-// DESCARGAR ERRORES AUTOMÁTICAMENTE PARA USUARIOS
-window.descargarErroresUsuariosAutomatico = function () {
     if (window.erroresCargaUsuarios.length === 0) {
-        console.log("❌ No hay errores para descargar");
+        alert('❌ No hay errores para descargar');
         return;
     }
 
     try {
-        console.log("📊 Generando Excel de errores de usuarios automáticamente...");
-
         // Crear datos para el Excel
         const datosErrores = window.erroresCargaUsuarios.map(error => ({
             'Fila': error.indiceFila,
@@ -456,12 +434,98 @@ window.descargarErroresUsuariosAutomatico = function () {
         // Descargar archivo
         XLSX.writeFile(wb, nombreArchivo);
 
-        console.log("✅ Excel de errores de usuarios descargado automáticamente:", nombreArchivo);
+        console.log("✅ Excel de errores de usuarios descargado opcionalmente:", nombreArchivo);
+
+        // Mostrar mensaje de confirmación (sin cerrar el modal)
+        const mensajeElement = document.getElementById('mensajeResultadoUsuarios');
+        if (mensajeElement) {
+            const originalHTML = mensajeElement.innerHTML;
+            mensajeElement.innerHTML = `
+                <div class="alert alert-info">
+                    <i class="bi bi-check-circle"></i> Reporte de errores descargado exitosamente.
+                    <br><small>Archivo: ${nombreArchivo}</small>
+                </div>
+                ${originalHTML}
+            `;
+        }
 
     } catch (error) {
-        console.error('❌ Error al descargar errores automáticamente:', error);
+        console.error('❌ Error al descargar errores opcionalmente:', error);
+        alert('❌ Error al descargar el reporte de errores');
     }
 };
+
+// CONTINUAR SIN DESCARGAR ERRORES DE USUARIOS (solo limpiar para nueva carga)
+window.continuarSinDescargarUsuarios = function () {
+    console.log("🚀 Continuando sin descargar errores de usuarios...");
+
+    // Mantener el modal abierto pero limpiar para nueva carga
+    window.limpiarParaNuevaCargaUsuarios();
+};
+
+// LIMPIAR PARA NUEVA CARGA DE USUARIOS (sin cerrar el modal)
+window.limpiarParaNuevaCargaUsuarios = function () {
+    console.log("🔄 Preparando para nueva carga de usuarios...");
+
+    // Limpiar file input
+    const fileInput = document.getElementById('fileCargaMasivaUsuarios');
+    if (fileInput) fileInput.value = '';
+
+    // Limpiar info del archivo
+    const infoArchivo = document.getElementById('infoArchivoUsuarios');
+    if (infoArchivo) infoArchivo.style.display = 'none';
+
+    // Limpiar resultados
+    const resultadosCarga = document.getElementById('resultadosCargaUsuarios');
+    if (resultadosCarga) resultadosCarga.style.display = 'none';
+
+    // Limpiar mensajes
+    const mensajeResultado = document.getElementById('mensajeResultadoUsuarios');
+    if (mensajeResultado) {
+        mensajeResultado.className = 'alert';
+        mensajeResultado.innerHTML = '';
+    }
+
+    // Limpiar tabla de errores
+    const tbodyErrores = document.getElementById('tbodyErroresUsuarios');
+    if (tbodyErrores) tbodyErrores.innerHTML = '';
+
+    const panelErrores = document.getElementById('panelErroresUsuarios');
+    if (panelErrores) panelErrores.style.display = 'none';
+
+    // Resetear botón procesar
+    const procesarBtn = document.getElementById('procesarCargaBtnUsuarios');
+    if (procesarBtn) {
+        procesarBtn.disabled = true;
+        procesarBtn.innerHTML = '<i class="bi bi-upload"></i> Procesar Carga Masiva';
+    }
+
+    // Limpiar variables globales (excepto errores por si quieren descargar después)
+    window.usuariosParaCargar = [];
+    // Mantenemos window.erroresCargaUsuarios por si quieren descargar más tarde
+
+    console.log("✅ Listo para nueva carga de usuarios");
+};
+
+// FUNCIÓN PARA RECARGAR PÁGINA DE USUARIOS
+window.recargarPaginaUsuarios = function () {
+    console.log("🎯 Recargando página manualmente...");
+
+    // Cerrar el modal primero
+    const modal = document.getElementById('modalCargaMasivaUsuarios');
+    if (modal) {
+        const modalInstance = bootstrap.Modal.getInstance(modal);
+        if (modalInstance) {
+            modalInstance.hide();
+        }
+    }
+
+    // Recargar después de que el modal se cierre
+    setTimeout(() => {
+        window.location.reload();
+    }, 300);
+};
+
 
 // LIMPIAR TODO COMPLETAMENTE PARA USUARIOS
 window.limpiarTodoUsuarios = function () {

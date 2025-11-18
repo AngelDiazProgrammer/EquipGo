@@ -45,6 +45,16 @@
         <!-- FILTROS CORREGIDOS -->
         <div class="dashboard-filtros">
             <div class="dashboard-filtro">
+                 <div class="buscar-nombre">
+                    <label>Usuario Asignado</label>
+                    <div class="frame-div">
+                        <input type="text"
+                               class="placeholder"
+                               value="@filtroUsuario"
+                               @oninput="OnFiltroUsuarioChanged"
+                               placeholder="Filtrar por usuario..." />
+                    </div>
+                </div>
                 <div class="buscar-nombre">
                     <label>Serial Equipo</label>
                     <div class="frame-div">
@@ -55,6 +65,7 @@
                                placeholder="Filtrar por serial..." />
                     </div>
                 </div>
+
                 <div class="buscar-nombre">
                     <label>Marca</label>
                     <div class="frame-div">
@@ -108,11 +119,8 @@
 
         <!-- Botonera -->
         <div class="botonera">
-            <button class="botn3" @onclick="LimpiarFiltros">
-                <i class="bi bi-arrow-clockwise"></i> Limpiar Filtros
-            </button>
             <button class="botn3" @onclick="() => RefrescarAlertas()">
-                <i class="bi bi-arrow-repeat"></i> Actualizar
+                Actualizar
             </button>
         </div>
 
@@ -136,13 +144,14 @@
                 <table class="table-equipgo">
                     <thead>
                         <tr>
-                            <th>Fecha</th>
+                            <th>Usuario Asigando</th>
+                            <th>Fecha/Hora</th>
                             <th>Serial</th>
                             <th>Equipo</th>
-                            <th>Tipo Alerta</th>
-                            <th>Descripción</th>
-                            <th>Contador</th>
-                            <th>Estado</th>
+                            <th>Nivel de prioridad</th>
+@*                             <th>Descripción</th> *@
+                            <th>Contadeo de alertas</th>
+@*                             <th>Estado</th> *@
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -150,21 +159,30 @@
                         @foreach (var alerta in alertasPaginadas)
                         {
                             <tr class="@(alerta.EstaBloqueado ? "fila-bloqueada" : "")">
+                                <td>@if(!string.IsNullOrEmpty(alerta.UsuarioAsignado))
+                                    {
+                                        <span>@alerta.UsuarioAsignado</span>
+                                    }
+                                    else
+                                    {
+                                        <span>Sin asignar</span>
+                                    }
+                                </td>
                                 <td>@alerta.Fecha.ToString("dd/MM/yyyy HH:mm")</td>
                                 <td>@alerta.SerialEquipo</td>
                                 <td>@alerta.MarcaEquipo @alerta.ModeloEquipo</td>
                                 <td>
-                                    <span class="badge @GetBadgeClass(alerta.IdTipoAlerta)">
+                                    <span class="@GetBadgeClass(alerta.IdTipoAlerta)">
                                         @alerta.NombreAlerta
                                     </span>
                                 </td>
-                                <td>@alerta.Descripcion</td>
+                                @* <td>@alerta.Descripcion</td> *@
                                 <td>
                                     <span class="contador @(alerta.Contador >= 5 ? "contador-critico" : alerta.Contador >= 3 ? "contador-advertencia" : "")">
                                         @alerta.Contador
                                     </span>
                                 </td>
-                                <td>
+@*                                 <td>
                                     @if (alerta.EstaBloqueado)
                                     {
                                         <span class="badge bg-danger">BLOQUEADO</span>
@@ -177,19 +195,29 @@
                                     {
                                         <span class="badge bg-success">NORMAL</span>
                                     }
-                                </td>
+                                </td> *@
                                 <td>
+                                    <button class="btn btn-sm btn-outline-info"
+                                        @onclick="() => AbrirModalDetalles(alerta)"
+                                        title="Ver Detalles">
+                                        🔎
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-warning"
+                                            @onclick="() => VerUbicacionEquipo(alerta.SerialEquipo)"
+                                            title="Ver Ubicación">
+                                        🗺️
+                                    </button>
                                     @if (alerta.EstaBloqueado)
                                     {
-                                        <button class="btn btn-sm btn-success"
+                                        <button class="btn btn-sm btn-outline-success"
                                                 @onclick="() => DesbloquearEquipo(alerta.SerialEquipo, alerta.Id)"
                                                 title="Desbloquear Equipo">
-                                            <i class="bi bi-check-circle"></i> Desbloquear
+                                            🔓
                                         </button>
                                     }
                                     else
                                     {
-                                        <span class="text-muted">-</span>
+                                        <span class="text-muted"></span>
                                     }
                                 </td>
                             </tr>
@@ -214,21 +242,202 @@
             </div>
         }
     </div>
-</div>
 
-@code {
-    private string GetBadgeClass(int idTipoAlerta)
+
+    <!-- Modal Detalles Alerta -->
+    @if (mostrarModalDetalles)
     {
-        return idTipoAlerta switch
-        {
-            1 => "bg-warning",   // Primera notificación
-            2 => "bg-orange",    // Segunda notificación
-            3 => "bg-danger",    // Tercera notificación
-            4 => "bg-dark",      // Bloqueo
-            _ => "bg-secondary"
-        };
+        <div class="modal fade modal-equipgo show d-block" tabindex="-1" aria-labelledby="modalDetallesAlertaLabel" aria-hidden="false" style="background-color: rgba(0,0,0,0.5)">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header-equipgo">
+                        <h5 class="modal-title-equipgo">Detalles de la Alerta</h5>
+                        <button type="button" class="btn-close" @onclick="CerrarModalDetalles" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body-equipgo">
+                        @if (alertaSeleccionada != null)
+                        {
+                            <!-- Sección 1: Información del Equipo -->
+                            <div class="seccion-modal">
+                                <div class="seccion-header">
+                                    <span class="seccion-titulo">💻 Información del Equipo</span>
+                                </div>
+                                <div class="seccion-datos">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-section">
+                                                <label><strong>Serial</strong></label>
+                                                <div class="dato-fila">
+                                                    <span class="dato-valor">@alertaSeleccionada.SerialEquipo</span>
+                                                </div>
+                                                <small class="text-muted">
+                                                    Identificador único del equipo en el sistema
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-section">
+                                                <label><strong>Marca</strong></label>
+                                                <div class="dato-fila">
+                                                    <span class="dato-valor">@alertaSeleccionada.MarcaEquipo</span>
+                                                </div>
+                                                <small class="text-muted">
+                                                    Fabricante del equipo tecnológico
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-section">
+                                                <label><strong>Modelo</strong></label>
+                                                <div class="dato-fila">
+                                                    <span class="dato-valor">@alertaSeleccionada.ModeloEquipo</span>
+                                                </div>
+                                                <small class="text-muted">
+                                                    Modelo específico del equipo
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Sección 2: Información del Usuario -->
+                            <div class="seccion-modal">
+                                <div class="seccion-header">
+                                    <span class="seccion-titulo">👤 Usuario Asignado</span>
+                                </div>
+                                <div class="seccion-datos">
+                                    <div class="form-section">
+                                        <div class="dato-fila">
+                                            @if (!string.IsNullOrEmpty(alertaSeleccionada.UsuarioAsignado))
+                                            {
+                                                <span class="">@alertaSeleccionada.UsuarioAsignado</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="">Sin asignar</span>
+                                            }
+                                    </div>
+                                    <small class="text-muted">
+                                        @(!string.IsNullOrEmpty(alertaSeleccionada.UsuarioAsignado) ?
+                                                                            "Usuario responsable del equipo en este momento" :
+                                                                            "Equipo disponible para asignación")
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                            <!-- Sección 3: Información de la Alerta -->
+                            <div class="seccion-modal">
+                                <div class="seccion-header">
+                                    <span class="seccion-titulo">⚠️ Información de la Alerta</span>
+                                </div>
+                                <div class="seccion-datos">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-section">
+                                                <label><strong>Tipo de Alerta</strong></label>
+                                                <div class="dato-fila">
+                                                    <span class="@GetBadgeClass(alertaSeleccionada.IdTipoAlerta)">
+                                                        @alertaSeleccionada.NombreAlerta
+                                                    </span>
+                                                </div>
+                                                <small class="text-muted">
+                                                    @GetDescripcionTipoAlerta(alertaSeleccionada.IdTipoAlerta)
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-section">
+                                                <label><strong>Fecha y Hora</strong></label>
+                                                <div class="dato-fila">
+                                                    <span class="dato-valor">@alertaSeleccionada.Fecha.ToString("dd/MM/yyyy HH:mm:ss")</span>
+                                                </div>
+                                                <small class="text-muted">
+                                                    Momento exacto en que se generó la alerta en el sistema
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-section">
+                                        <label><strong>Descripción</strong></label>
+                                        <div class="dato-fila">
+                                            <span class="dato-valor">@alertaSeleccionada.Descripcion</span>
+                                        </div>
+                                        <small class="text-muted">
+                                            Detalle específico de lo que activó esta alerta en el sistema de geofencing
+                                        </small>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-section">
+                                                <label><strong>Contador de Alertas</strong></label>
+                                                <div class="dato-fila">
+                                                    <span class="contador @(alertaSeleccionada.Contador >= 5 ? "contador-critico" : alertaSeleccionada.Contador >= 3 ? "contador-advertencia" : "")">
+                                                        @alertaSeleccionada.Contador
+                                                    </span>
+                                                </div>
+                                                <small class="text-muted">
+                                                    @GetDescripcionContador(alertaSeleccionada.Contador)
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-section">
+                                                <label><strong>Estado del Equipo</strong></label>
+                                                <div class="dato-fila">
+                                                    @if (alertaSeleccionada.EstaBloqueado)
+                                                    {
+                                                        <span class="">BLOQUEADO</span>
+                                                    }
+                                                    else if (alertaSeleccionada.Contador >= 3)
+                                                    {
+                                                        <span class="">EN RIESGO</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="">NORMAL</span>
+                                                    }
+                                                </div>
+                                                <small class="text-muted">
+                                                    @GetDescripcionEstado(alertaSeleccionada.EstaBloqueado, alertaSeleccionada.Contador)
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-section">
+                                                <label><strong>Revisada por Operador</strong></label>
+                                                <div class="dato-fila">
+                                                    @if (alertaSeleccionada.FueRevisada)
+                                                    {
+                                                        <span class="">SÍ</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="">NO</span>
+                                                    }
+                                            </div>
+                                            <small class="text-muted">
+                                                @(alertaSeleccionada.FueRevisada ?
+                                                                                            "Esta alerta ya fue revisada y gestionada" :
+                                                                                            "Alerta pendiente de revisión")
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                                        }
+                    </div>
+                    <div class="modal-footer-equipgo">
+                        <button class="boton-modal-equipgo" @onclick="CerrarModalDetalles">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     }
-}
+</div>
 
 <style>
     .fila-bloqueada {

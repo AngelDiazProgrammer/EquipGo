@@ -8,7 +8,7 @@
 <div class="frame-container">
     <!-- ENCABEZADO -->
     <div class="dashboard-parent">
-        <b class="dashboard-equipgo">Gestión de Usuarios</b>
+        <b class="dashboard-equipgo">Gestión de usuarios de sesión</b>
         <div class="logo-os">
             <img class="dashboard-vector-icon" alt="Logo" src="img/logoOutsourcing.png" />
         </div>
@@ -17,19 +17,13 @@
     <!-- CONTADORES -->
     <div class="info">
         <div class="card-registros">
-            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
-            </svg>
             <div class="datos">
                 <b class="b">@TotalUsuarios</b>
                 <b class="transacciones-de-hoy">Total Usuarios</b>
             </div>
         </div>
 
-        <div class="card-registros">
-            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
-            </svg>
+        <div class="dashboard-card-registros">
             <div class="datos">
                 <b class="b">@UsuariosActivos</b>
                 <b class="transacciones-de-hoy">Usuarios Activos</b>
@@ -37,9 +31,6 @@
         </div>
 
         <div class="card-alerta">
-            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
-            </svg>
             <div class="datos">
                 <b class="b">@UsuariosInactivos</b>
                 <b class="transacciones-de-hoy">Usuarios Inactivos</b>
@@ -99,10 +90,7 @@
         <!-- Botones -->
         <div class="botonera">
             <button class="botn3" @onclick="AbrirModalCrearUsuario">
-                <i class="bi bi-plus-lg"></i> Añadir Usuario Session
-            </button>
-            <button class="botn3" @onclick="LimpiarFiltros">
-                <i class="bi bi-arrow-clockwise"></i> Limpiar Filtros
+                 Añadir
             </button>
         </div>
 
@@ -155,13 +143,13 @@
                                 <td>@usuario.FechaCreacion.ToString("dd/MM/yyyy")</td>
                                 <td>
                                     <button class="btn btn-sm btn-outline-primary" @onclick="() => EditarUsuario(usuario.Id)" title="Editar">
-                                        <i class="bi bi-pencil">✏️</i>
+                                        ✏️
                                     </button>
                                     @*                                     <button class="btn btn-sm btn-outline-danger ms-1" @onclick="() => EliminarUsuario(usuario.Id)" title="Eliminar">
                                         <i class="bi bi-trash"></i>
                                     </button> *@
                                     <button class="btn btn-sm btn-outline-warning ms-1" @onclick="() => CambiarContraseña(usuario.Id)" title="Cambiar Contraseña">
-                                        <i class="bi bi-key">🔐</i>
+                                        🔐
                                     </button>
                                 </td>
                             </tr>
@@ -199,44 +187,44 @@
                     <input type="email" style="display: none; height: 0; width: 0; opacity: 0; position: absolute; left: -1000px;" aria-hidden="true" tabindex="-1">
                     <input type="password" style="display: none; height: 0; width: 0; opacity: 0; position: absolute; left: -1000px;" aria-hidden="true" tabindex="-1" autocomplete="new-password">
 
+                    <!-- Sección de Información Personal (Arriba) -->
                     <div class="seccion-modal">
                         <div class="seccion-header">
-                            <span class="seccion-titulo">👤 Información del Usuario</span>
+                            <span class="seccion-titulo">👤 Información Personal</span>
                         </div>
                         <div class="seccion-datos">
                             <div class="row">
-                                <div class="col-md-3">
+                                <div class="col-md-6">
                                     <div class="form-section">
                                         <label>Tipo de Documento <span class="text-danger">*</span></label>
-                                        <InputSelect @bind-Value="usuarioForm.IdTipodocumento" class="form-control">
-                                            <option value="">Seleccionar...</option>
-                                            @foreach (var tipoDoc in tiposDocumento)
-                                            {
-                                                <option value="@tipoDoc.Id">@tipoDoc.NombreDocumento</option>
-                                            }
-                                        </InputSelect>
+                                        <div class="ts-wrapper">
+                                            <InputSelect @bind-Value="usuarioForm.IdTipodocumento" class="ts-control" style="appearance: none; -webkit-appearance: none; -moz-appearance: none;">
+                                                <option value="">Seleccionar...</option>
+                                                @foreach (var tipoDoc in tiposDocumento)
+                                                {
+                                                    <option value="@tipoDoc.Id">@tipoDoc.NombreDocumento</option>
+                                                }
+                                            </InputSelect>
+                                        </div>
                                         <ValidationMessage For="@(() => usuarioForm.IdTipodocumento)" />
                                     </div>
-                                </div>
-                                <div class="col-md-3">
+
                                     <div class="form-section">
                                         <label>Número de Documento <span class="text-danger">*</span></label>
-                                        <InputText @bind-Value="usuarioForm.NumeroDocumento" class="form-control" placeholder="Ej: 1234567890" autocomplete="off" autocorrect="off" />
+                                        <InputText @bind-Value="usuarioForm.NumeroDocumento" placeholder="Ej: 1234567890" autocomplete="off" autocorrect="off" />
                                         <ValidationMessage For="@(() => usuarioForm.NumeroDocumento)" />
                                     </div>
-                                </div>
-                                <div class="col-md-3">
+
                                     <div class="form-section">
                                         <label>Nombre <span class="text-danger">*</span></label>
-                                        <InputText @bind-Value="usuarioForm.Nombre" class="form-control" placeholder="Ej: Juan" autocomplete="off" autocorrect="off" />
+                                        <InputText @bind-Value="usuarioForm.Nombre" placeholder="Ej: Juan" autocomplete="off" autocorrect="off" />
                                         <ValidationMessage For="@(() => usuarioForm.Nombre)" />
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-6">
                                     <div class="form-section">
                                         <label>Apellido <span class="text-danger">*</span></label>
                                         <InputText @bind-Value="usuarioForm.Apellido"
-                                                   class="form-control"
                                                    placeholder="Ej: Pérez"
                                                    autocomplete="off"
                                                    autocorrect="off"
@@ -246,18 +234,13 @@
                                                    onfocus="this.removeAttribute('readonly')" />
                                         <ValidationMessage For="@(() => usuarioForm.Apellido)" />
                                     </div>
-                                </div>
-                            </div>
 
-                            @if (usuarioEditando == null)
-                            {
-                                <div class="row">
-                                    <div class="col-md-6">
+                                    @if (usuarioEditando == null)
+                                    {
                                         <div class="form-section">
                                             <label>Contraseña <span class="text-danger">*</span></label>
                                             <InputText type="password"
                                                        @bind-Value="usuarioForm.Contraseña"
-                                                       class="form-control"
                                                        placeholder="Ingrese contraseña"
                                                        autocomplete="new-password"
                                                        autocorrect="off"
@@ -267,13 +250,11 @@
                                                        onfocus="this.removeAttribute('readonly')" />
                                             <ValidationMessage For="@(() => usuarioForm.Contraseña)" />
                                         </div>
-                                    </div>
-                                    <div class="col-md-6">
+
                                         <div class="form-section">
                                             <label>Confirmar Contraseña <span class="text-danger">*</span></label>
                                             <InputText type="password"
                                                        @bind-Value="confirmarContraseña"
-                                                       class="form-control"
                                                        placeholder="Confirme contraseña"
                                                        autocomplete="new-password"
                                                        autocorrect="off"
@@ -286,47 +267,60 @@
                                                 <small class="text-danger">Las contraseñas no coinciden</small>
                                             }
                                         </div>
-                                    </div>
+                                    }
                                 </div>
-                            }
+                            </div>
+                        </div>
+                    </div>
 
+                    <!-- Sección de Información Corporativa (Abajo) -->
+                    <div class="seccion-modal mt-3">
+                        <div class="seccion-header">
+                            <span class="seccion-titulo">🏢 Información Corporativa</span>
+                        </div>
+                        <div class="seccion-datos">
                             <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="form-section">
                                         <label>Rol <span class="text-danger">*</span></label>
-                                        <InputSelect @bind-Value="usuarioForm.IdRol" class="form-control">
-                                            <option value="">Seleccionar...</option>
-                                            @foreach (var rol in roles)
-                                            {
-                                                <option value="@rol.Id">@rol.NombreRol</option>
-                                            }
-                                        </InputSelect>
+                                        <div class="ts-wrapper">
+                                            <InputSelect @bind-Value="usuarioForm.IdRol" class="ts-control" style="appearance: none; -webkit-appearance: none; -moz-appearance: none;">
+                                                <option value="">Seleccionar...</option>
+                                                @foreach (var rol in roles)
+                                                {
+                                                    <option value="@rol.Id">@rol.NombreRol</option>
+                                                }
+                                            </InputSelect>
+                                        </div>
                                         <ValidationMessage For="@(() => usuarioForm.IdRol)" />
                                     </div>
-                                </div>
-                                <div class="col-md-4">
+
                                     <div class="form-section">
                                         <label>Sede <span class="text-danger">*</span></label>
-                                        <InputSelect @bind-Value="usuarioForm.IdSede" class="form-control">
-                                            <option value="">Seleccionar...</option>
-                                            @foreach (var sede in sedes)
-                                            {
-                                                <option value="@sede.Id">@sede.NombreSede</option>
-                                            }
-                                        </InputSelect>
+                                        <div class="ts-wrapper">
+                                            <InputSelect @bind-Value="usuarioForm.IdSede" class="ts-control" style="appearance: none; -webkit-appearance: none; -moz-appearance: none;">
+                                                <option value="">Seleccionar...</option>
+                                                @foreach (var sede in sedes)
+                                                {
+                                                    <option value="@sede.Id">@sede.NombreSede</option>
+                                                }
+                                            </InputSelect>
+                                        </div>
                                         <ValidationMessage For="@(() => usuarioForm.IdSede)" />
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="form-section">
                                         <label>Estado <span class="text-danger">*</span></label>
-                                        <InputSelect @bind-Value="usuarioForm.IdEstado" class="form-control">
-                                            <option value="">Seleccionar...</option>
-                                            @foreach (var estado in estados)
-                                            {
-                                                <option value="@estado.Id">@estado.NombreEstado</option>
-                                            }
-                                        </InputSelect>
+                                        <div class="ts-wrapper">
+                                            <InputSelect @bind-Value="usuarioForm.IdEstado" class="ts-control" style="appearance: none; -webkit-appearance: none; -moz-appearance: none;">
+                                                <option value="">Seleccionar...</option>
+                                                @foreach (var estado in estados)
+                                                {
+                                                    <option value="@estado.Id">@estado.NombreEstado</option>
+                                                }
+                                            </InputSelect>
+                                        </div>
                                         <ValidationMessage For="@(() => usuarioForm.IdEstado)" />
                                     </div>
                                 </div>

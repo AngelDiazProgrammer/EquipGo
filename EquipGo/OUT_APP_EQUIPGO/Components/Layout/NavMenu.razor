@@ -26,6 +26,51 @@
 
             <!-- Submenús -->
             <div class="submen">
+                <!-- Equipos -->
+                <div class="equipos menu-item" id="menuEquipos">
+                    <div class="menu-equipo">
+                        <div class="user">
+                            <div class="usuario">
+                                <b class="cerrar-equipgo">Equipos</b>
+                            </div>
+                        </div>
+                        <i class="bi bi-caret-down-fill flecha-icon"></i>
+                    </div>
+                    <div class="equipos-es">
+                        <div class="administrar">
+                            <NavLink class="administrar-equipos d-flex align-items-center"
+                                     activeClass="active"
+                                     href="/equipos/"
+                                     style="text-decoration: none; color: #393e42;">
+                                Administrar equipos
+                            </NavLink>
+                        </div>
+                        <div class="administrar">
+                            <NavLink class="administrar-equipos d-flex align-items-center"
+                                     activeClass="active"
+                                     href="/subestados/"
+                                     style="text-decoration: none; color: #393e42;">
+                                Subestados
+                            </NavLink>
+                        </div>
+                        <div class="administrar">
+                            <NavLink class="administrar-equipos d-flex align-items-center"
+                                     activeClass="active"
+                                     href="/monitoreo/"
+                                     style="text-decoration: none; color: #393e42;">
+                                Módulo de monitoreo
+                            </NavLink>
+                        </div>
+                        <div class="administrar">
+                            <NavLink class="administrar-equipos d-flex align-items-center"
+                                     activeClass="active"
+                                     href="/alertas/"
+                                     style="text-decoration: none; color: #393e42;">
+                                Alertas
+                            </NavLink>
+                        </div>
+                    </div>
+                </div>
                 <!-- Usuarios -->
                 <div class="usuarios menu-item" id="menuUsuarios">
                     <div class="menu-usuarios">
@@ -56,66 +101,6 @@
                     </div>
                 </div>
 
-                <!-- Equipos -->
-                <div class="equipos menu-item" id="menuEquipos">
-                    <div class="menu-equipo">
-                        <div class="user">
-                            <div class="usuario">
-                                <b class="cerrar-equipgo">Equipos</b>
-                            </div>
-                        </div>
-                        <i class="bi bi-caret-down-fill flecha-icon"></i>
-                    </div>
-                    <div class="equipos-es">
-                        <div class="administrar">
-                            <NavLink class="administrar-equipos d-flex align-items-center"
-                                     activeClass="active"
-                                     href="/equipos/"
-                                     style="text-decoration: none; color: #393e42;">
-                                Administrar equipos
-                            </NavLink>
-                        </div>
-                        <div class="administrar">
-                            <NavLink class="administrar-equipos d-flex align-items-center"
-                                     activeClass="active"
-                                     href="/monitoreo/"
-                                     style="text-decoration: none; color: #393e42;">
-                                Módulo de monitoreo
-                            </NavLink>
-                        </div>
-                        <div class="administrar">
-                            <NavLink class="administrar-equipos d-flex align-items-center"
-                                     activeClass="active"
-                                     href="/alertas/"
-                                     style="text-decoration: none; color: #393e42;">
-                                Alertas
-                            </NavLink>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- SubEstados -->
-                <div class="equipos menu-item" id="menuSmart">
-                    <div class="menu-equipo">
-                        <div class="user">
-                            <div class="usuario">
-                                <b class="cerrar-equipgo">Smart</b>
-                            </div>
-                        </div>
-                        <i class="bi bi-caret-down-fill flecha-icon"></i>
-                    </div>
-                    <div class="equipos-es">
-                        <div class="administrar">
-                            <NavLink class="administrar-equipos d-flex align-items-center"
-                                     activeClass="active"
-                                     href="/subestados/"
-                                     style="text-decoration: none; color: #393e42;">
-                                Estados
-                            </NavLink>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Transacciones -->
                 <div class="equipos menu-item" id="menuTransacciones">
                     <div class="menu-equipo">
@@ -126,7 +111,7 @@
                         </div>
                         <i class="bi bi-caret-down-fill flecha-icon"></i>
                     </div>
-                    <div class="equipos-es">   
+                    <div class="equipos-es">
                         <div class="administrar">
                             <NavLink class="administrar-equipos d-flex align-items-center"
                                      activeClass="active"
@@ -161,9 +146,8 @@
     </div>
 </nav>
 
-<script>
 
-  
+<script>
     window.initMenu = function() {
         const menuItems = document.querySelectorAll('.menu-item');
 
@@ -201,7 +185,6 @@
                 }
             });
 
-            // Evitar que el clic en el submenú cierre el menú
             if (submenu) {
                 submenu.addEventListener('click', function(e) {
                     e.stopPropagation();
@@ -209,96 +192,82 @@
             }
         });
 
-        // Inicializar detección de menú activo
         checkActiveMenu();
     }
 
-    // Función para verificar y marcar el menú activo
     function checkActiveMenu() {
-        // Remover resaltado de todos los menús primero
+        // Remover todas las clases activas
         document.querySelectorAll('.menu-item').forEach(item => {
             item.classList.remove('active-parent');
         });
 
-        // Buscar elementos activos en los submenús
-        const activeSubItems = document.querySelectorAll('.administrar .active');
+        document.querySelectorAll('.administrar').forEach(item => {
+            item.classList.remove('active-submenu');
+        });
 
-        activeSubItems.forEach(activeItem => {
-            // Encontrar el menú padre del elemento activo
-            let parent = activeItem.closest('.user2, .equipos-es');
-            if (parent) {
-                let menuItem = parent.closest('.menu-item');
+        // Buscar el link activo dentro de los submenús
+        const activeLinks = document.querySelectorAll('.administrar-equipos.active');
+
+        activeLinks.forEach(activeLink => {
+            // Marcar el contenedor del subitem como activo
+            let adminDiv = activeLink.closest('.administrar');
+            if (adminDiv) {
+                adminDiv.classList.add('active-submenu');
+            }
+
+            // Expandir el menú padre
+            let submenu = activeLink.closest('.user2, .equipos-es');
+            if (submenu) {
+                let menuItem = submenu.closest('.menu-item');
                 if (menuItem) {
-                    menuItem.classList.add('active-parent');
-                    // Asegurar que el submenú esté expandido
-                    const submenu = menuItem.querySelector('.equipos-es, .user2');
                     const arrow = menuItem.querySelector('.flecha-icon');
-                    if (submenu) {
-                        submenu.style.display = 'flex';
+                    submenu.style.display = 'flex';
+                    if (arrow) {
                         arrow.style.transform = 'rotate(180deg)';
-                        menuItem.classList.add('expanded');
                     }
+                    menuItem.classList.add('expanded');
                 }
             }
         });
 
-        // También verificar después de un pequeño delay para asegurar que Blazor haya aplicado las clases
+        // Verificar después de delay para Blazor
         setTimeout(() => {
-            const activeSubItemsDelay = document.querySelectorAll('.administrar .active');
-            activeSubItemsDelay.forEach(activeItem => {
-                let parent = activeItem.closest('.user2, .equipos-es');
-                if (parent) {
-                    let menuItem = parent.closest('.menu-item');
+            const delayedActiveLinks = document.querySelectorAll('.administrar-equipos.active');
+            delayedActiveLinks.forEach(activeLink => {
+                let adminDiv = activeLink.closest('.administrar');
+                if (adminDiv) {
+                    adminDiv.classList.add('active-submenu');
+                }
+
+                let submenu = activeLink.closest('.user2, .equipos-es');
+                if (submenu) {
+                    let menuItem = submenu.closest('.menu-item');
                     if (menuItem) {
-                        menuItem.classList.add('active-parent');
-                        // Asegurar que el submenú esté expandido
-                        const submenu = menuItem.querySelector('.equipos-es, .user2');
                         const arrow = menuItem.querySelector('.flecha-icon');
-                        if (submenu) {
-                            submenu.style.display = 'flex';
+                        submenu.style.display = 'flex';
+                        if (arrow) {
                             arrow.style.transform = 'rotate(180deg)';
-                            menuItem.classList.add('expanded');
                         }
+                        menuItem.classList.add('expanded');
                     }
                 }
             });
         }, 100);
     }
 
-    // Llamar a checkActiveMenu cuando cambie la ruta
     window.addEventListener('popstate', checkActiveMenu);
 
-    // Para Blazor: llamar esta función cuando se navegue
     window.navigationHandler = function() {
         setTimeout(checkActiveMenu, 150);
     }
 
-
-    function toggleMenu() {
-      const nav = document.querySelector('.cerrar');
-      if (!nav) {
-        console.error('toggleMenu: no se encontró .cerrar');
-        return;
-      }
-      nav.classList.toggle('mobile-open');
-    }
-
-    // Conectar el botón de forma segura después de cargar DOM
-    document.addEventListener('DOMContentLoaded', function () {
-      const btn = document.getElementById('hamburgerBtn');
-      if (!btn) {
-        console.error('No se encontró #hamburgerBtn');
-        return;
-      }
-      btn.addEventListener('click', toggleMenu);
-    });
-
-        window.toggleMenu = function () {
+    window.toggleMenu = function () {
         const nav = document.querySelector('.cerrar');
         if (!nav) return;
         nav.classList.toggle('mobile-open');
     };
 </script>
+
 @code {
     [Inject] public IJSRuntime JS { get; set; }
     [Inject] public NavigationManager Navigation { get; set; }

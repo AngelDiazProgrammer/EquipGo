@@ -20,5 +20,9 @@ namespace OUT_OS_APP.EQUIPGO.DTO.DTOs.Alertas
         public string ModeloEquipo { get; set; } = string.Empty;
         public int Contador {  get; set; }
         public bool EstaBloqueado => Contador >= 5 && IdTipoAlerta == 4;
+
+        //Navegacion para usuario asignado
+
+        public string UsuarioAsignado {  get; set; } = string.Empty;
     }
 }

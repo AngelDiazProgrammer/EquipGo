@@ -9,7 +9,7 @@
 <div class="frame-container">
     <!-- ENCABEZADO -->
     <div class="dashboard-parent">
-        <b class="dashboard-equipgo">Gestión de Transacciones</b>
+        <b class="dashboard-equipgo">Gestión de transacciones equipos corporativos</b>
         <div class="logo-os">
             <img class="dashboard-vector-icon" alt="Logo" src="img/logoOutsourcing.png" />
         </div>
@@ -18,19 +18,13 @@
     <!-- CONTADORES -->
     <div class="info">
         <div class="card-registros">
-            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
-            </svg>
             <div class="datos">
                 <b class="b">@TotalTransacciones</b>
                 <b class="transacciones-de-hoy">Total Transacciones</b>
             </div>
         </div>
 
-        <div class="card-registros">
-            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
-            </svg>
+        <div class="dashboard-card-registros">
             <div class="datos">
                 <b class="b">@TransaccionesHoy</b>
                 <b class="transacciones-de-hoy">Transacciones Hoy</b>
@@ -38,9 +32,6 @@
         </div>
 
         <div class="card-alerta">
-            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
-            </svg>
             <div class="datos">
                 <b class="b">@TransaccionesUltimaSemana</b>
                 <b class="transacciones-de-hoy">Última Semana</b>
@@ -88,12 +79,13 @@
                     <b class="dashboard-equipgo">Tipo Transacción</b>
                     <div class="frame-div">
                         <div class="placeholder-wrapper">
-                            <input type="text"
-                                   class="placeholder"
-                                   @bind="filtroTipoTransaccion"
-                                   @oninput="OnFiltroTipoTransaccionChanged"
-                                   data-filtro="tipoTransaccion"
-                                   placeholder="Filtrar por tipo..." />
+                            <select class="placeholder"
+                                    @bind="filtroTipoTransaccion"
+                                    @oninput="OnFiltroTipoTransaccionChanged">
+                                <option value="">Todas</option>
+                                <option value="entrada">Entrada</option>
+                                <option value="salida">Salida</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -131,7 +123,7 @@
             <!-- Botones -->
             <div class="botonera">
                 <button class="botn3" @onclick="DescargarExcelConFiltros">
-                    <i class="bi bi-file-earmark-excel"></i> Descargar Reporte
+                     Descargar Reporte
                 </button>
             </div>
 

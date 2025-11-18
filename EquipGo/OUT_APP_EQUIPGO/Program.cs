@@ -23,6 +23,7 @@ using Interface.Services.Visitantes;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using OfficeOpenXml;
 using OUT_APP_EQUIPGO.Components;
 using OUT_APP_EQUIPGO.Middlewares;
@@ -52,7 +53,6 @@ builder.WebHost.UseUrls("http://0.0.0.0:5000", "https://0.0.0.0:7096");
 // ====================
 builder.Services.AddDbContext<EquipGoDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("EquipGoConnection")));
-
 // ====================
 // 📌 Registro de Servicios
 // ====================

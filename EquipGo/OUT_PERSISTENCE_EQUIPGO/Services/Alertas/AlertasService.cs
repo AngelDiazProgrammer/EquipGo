@@ -29,6 +29,9 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Alertas
                                  join equipo in _context.Equipos on alerta.IdEquipo equals equipo.Id
                                  join contador in _context.ContadoresGeofencing on equipo.Serial equals contador.Serial into contadores
                                  from contador in contadores.DefaultIfEmpty()
+                                 join usuarioInfo in _context.UsuariosInformacion on equipo.IdUsuarioInfo equals usuarioInfo.Id into usuarios
+                                 from usuario in usuarios.DefaultIfEmpty()
+                                 where alerta.IdTipoAlerta != 5 // ← SOLO ALERTAS ACTIVAS (excluir tipo 5)
                                  select new AlertaDto
                                  {
                                      Id = alerta.Id,
@@ -40,7 +43,8 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Alertas
                                      SerialEquipo = equipo.Serial,
                                      MarcaEquipo = equipo.Marca,
                                      ModeloEquipo = equipo.Modelo,
-                                     Contador = contador != null ? contador.Contador : 0
+                                     Contador = contador != null ? contador.Contador : 0,
+                                     UsuarioAsignado = usuario != null ? $"{usuario.Nombres} {usuario.Apellidos}" : "Sin asignar"
                                  })
                                 .OrderByDescending(a => a.Fecha)
                                 .ToListAsync();

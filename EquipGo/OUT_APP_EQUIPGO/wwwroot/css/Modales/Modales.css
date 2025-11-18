@@ -26,6 +26,7 @@
 
 .modal-equipgo .modal-body-equipgo {
     padding: 12px 16px;
+    min-height: 300px;
     max-height: 75vh;
     overflow-y: auto;
     font-size: 0.875rem;
@@ -68,6 +69,22 @@
     flex-direction: column;
     gap: 6px;
     padding-left: 26px;
+}
+
+/*Limit Selects*/
+/* Estilo para limitar los selects a mostrar máximo 3 opciones */
+.select-limitado {
+    max-height: 120px; /* Altura para aproximadamente 3 opciones */
+    overflow-y: auto;
+}
+
+/* Para aplicar a todos los selects específicos */
+#crearTipoDocumento,
+#crearArea,
+#crearCampana,
+#crearEstado {
+    max-height: 120px;
+    overflow-y: auto;
 }
 
 /* Formularios más compactos */
