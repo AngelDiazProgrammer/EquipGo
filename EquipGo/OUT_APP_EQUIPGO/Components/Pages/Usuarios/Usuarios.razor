@@ -8,12 +8,20 @@
 <div class="frame-container">
     <!-- ENCABEZADO -->
     <div class="dashboard-parent">
-        <b class="dashboard-equipgo">Gestión de usuarios informativos</b>
+        <div>
+            <div>
+               <b class="dashboard-equipgo">Gestión de usuarios informativos</b>
+            </div>
+            <div>
+                <small class="text-muted">
+                    <i class="bi bi-info-circle"></i> Administra los perfiles de usuarios asociados al uso o asignación de equipos.
+                </small>
+            </div>
+        </div>
         <div class="logo-os">
             <img class="dashboard-vector-icon" alt="Logo" src="img/logoOutsourcing.png" />
         </div>
     </div>
-
     <!-- CONTADORES -->
     <div class="info">
         <div class="card-registros">
@@ -45,7 +53,7 @@
             <div class="dashboard-filtro">
                 <!-- Filtro por Número de Documento -->
                 <div class="buscar-nombre">
-                    <b class="dashboard-equipgo">N° Documento</b>
+                    <label>N° Documento</label>
                     <div class="frame-div">
                         <div class="placeholder-wrapper">
                             <input type="text"
@@ -59,7 +67,7 @@
 
                 <!-- Filtro por Nombre Completo -->
                 <div class="buscar-nombre">
-                    <b class="dashboard-equipgo">Nombre Completo</b>
+                    <label>Nombre Completo</label>
                     <div class="frame-div">
                         <div class="placeholder-wrapper">
                             <input type="text"
@@ -73,7 +81,7 @@
 
                 <!-- Filtro por Campaña -->
                 <div class="buscar-nombre">
-                    <b class="dashboard-equipgo">Campaña</b>
+                    <label>Campaña</label>
                     <div class="frame-div">
                         <div class="placeholder-wrapper">
                             <input type="text"
@@ -366,13 +374,13 @@
                             <div class="seccion-datos">
                                 <p>Descarga la plantilla Excel para cargar los usuarios de forma masiva, llena los datos de los usuarios y guarda el archivo.</p>
                                 <button class="botn3" onclick="descargarPlantillaCargaMasivaUsuarios()">
-                                    <i class="bi bi-download"></i> Descargar Plantilla Excel
+                                     Descargar Plantilla Excel
                                 </button>
 
                                 <div class="card mt-3">
                                     <div class="card-body">
                                         <h6 class="card-title">Columnas requeridas:</h6>
-                                        <ul class="small mb-0">
+                                        <ul class="">
                                             <li><strong>NumeroDocumento</strong> (Obligatorio)</li>
                                             <li><strong>Nombres</strong> (Obligatorio)</li>
                                             <li><strong>Apellidos</strong> (Obligatorio)</li>
@@ -497,10 +505,10 @@
             </div>
             <div class="modal-footer-equipgo">
                 <button class="boton-modal-equipgo boton-modal-secundario" data-bs-dismiss="modal" onclick="limpiarModalCargaUsuarios()">
-                    <i class="bi bi-x-circle"></i> Cancelar
+                     Cancelar
                 </button>
                 <button class="boton-modal-equipgo" id="procesarCargaBtnUsuarios" disabled>
-                    <i class="bi bi-upload"></i> Procesar Carga Masiva
+                     Procesar Carga Masiva
                 </button>
             </div>
         </div>

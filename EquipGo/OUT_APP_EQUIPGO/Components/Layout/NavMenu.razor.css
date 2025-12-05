@@ -26,11 +26,11 @@
 }
 
 .flecha-icon {
-    width: 14px; /* tamaño un poco mayor */
+    width: 14px;
     height: 14px;
-    color: #ea0029; /* gris oscuro visible sobre blanco */
+    color: #ea0029;
     flex-shrink: 0;
-    margin-left: auto; /* empuja la flecha al extremo derecho */
+    margin-left: auto;
     opacity: 1;
     transition: transform 0.3s ease, color 0.3s ease;
 }
@@ -38,7 +38,7 @@
 /* Cuando el menú está desplegado */
 .menu-item.expanded .flecha-icon {
     transform: rotate(180deg);
-    color: #ea0029; /* flecha roja al expandir */
+    color: #ea0029;
     opacity: 1;
 }
 
@@ -136,12 +136,10 @@
     transition: all 0.3s ease;
 }
 
-/* ELIMINAMOS el borde rojo del menú padre */
 .menu-item {
     border: 2px solid transparent;
 }
 
-/* Solo un hover muy sutil en el header del menú padre */
 .menu-usuarios, .menu-equipo {
     display: flex;
     align-items: center;
@@ -154,17 +152,17 @@
 
 .menu-item .menu-usuarios:hover,
 .menu-item .menu-equipo:hover {
-    background-color: rgba(234, 0, 41, 0.04);
+    background-color: rgba(234, 0, 41, 0.08) !important;
+    border: 1px solid rgba(234, 0, 41, 0.1) !important;
 }
 
-.flecha-icon {
-    width: 10px;
-    height: 10px;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    flex-shrink: 0;
-    color: #393e42;
+.menu-item.expanded .menu-usuarios,
+.menu-item.expanded .menu-equipo {
+    background-color: rgba(234, 0, 41, 0.05) !important;
+    border: 1px solid rgba(234, 0, 41, 0.15) !important;
 }
 
+/* SUBMENÚS - CAMBIOS PRINCIPALES AQUÍ */
 .user2, .equipos-es {
     width: 100%;
     border-left: 2px solid #e0e0e0;
@@ -172,8 +170,8 @@
     display: none;
     flex-direction: column;
     align-items: stretch;
-    padding: 8px 12px;
-    gap: 4px;
+    padding: 8px 0 !important;
+    gap: 8px !important;
     text-align: left;
     animation: slideDown 0.3s ease;
 }
@@ -190,23 +188,28 @@
     }
 }
 
-/* Contenedor de cada subitem */
+/* CONTENEDOR DE CADA SUBITEM - CAMBIOS PRINCIPALES */
 .administrar {
-    display: flex;
+    display: flex !important;
     align-items: center;
-    padding: 0;
-    border-radius: 8px;
+    padding: 0 !important;
+    border-radius: 8px !important;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
+    border: 1px solid #e8e8e8 !important;
+    background-color: #f8f9fa !important;
+    margin: 0 6px !important;
+    min-height: 40px;
 }
 
     /* Hover suave para subitems NO activos */
     .administrar:not(.active-submenu):hover {
-        background-color: rgba(234, 0, 41, 0.06);
+        background-color: rgba(234, 0, 41, 0.08) !important;
         transform: translateX(3px);
+        border-color: #d0d0d0 !important;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) !important;
     }
-
 
 /* Link dentro del subitem */
 .administrar-equipos {
@@ -218,8 +221,8 @@
     align-items: center;
     gap: 6px;
     width: 100%;
-    padding: 10px 12px;
-    padding-left: 20px;
+    padding: 10px 12px !important;
+    padding-left: 20px !important;
     transition: all 0.25s ease;
     border-radius: 8px;
 }
@@ -227,19 +230,20 @@
     .administrar-equipos b,
     .administrar-equipos span,
     .administrar-equipos {
-        text-indent: 8px; /* solo mueve el texto, no el borde rojo */
+        text-indent: 8px;
     }
 
 /* Estilo para el subitem ACTIVO - MÁS DESTACADO */
 .administrar .active,
 .administrar.active-submenu,
 .administrar.active-submenu .administrar-equipos {
-    background: linear-gradient(90deg, rgba(234, 0, 41, 0.12), rgba(234, 0, 41, 0.06));
+    background: linear-gradient(90deg, rgba(234, 0, 41, 0.12), rgba(234, 0, 41, 0.06)) !important;
     color: #ea0029 !important;
     font-weight: 700;
     position: relative;
+    border: 1px solid rgba(234, 0, 41, 0.4) !important;
+    box-shadow: 0 2px 8px rgba(234, 0, 41, 0.15) !important;
 }
-
 
     /* Icono indicador para item activo */
     .administrar .active::after,
@@ -400,6 +404,8 @@
         background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
         animation: loadingShimmer 1.5s infinite;
     }
+
+
 
 @keyframes loadingShimmer {
     0% {

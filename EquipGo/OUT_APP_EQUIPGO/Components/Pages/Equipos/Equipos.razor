@@ -4,7 +4,16 @@
 <div class="frame-container">
     <!-- Encabezado -->
     <div class="dashboard-parent">
-        <h4 class="dashboard-equipgo">Administrar Equipos</h4>
+        <div>
+            <div>
+                <b class="dashboard-equipgo">Administrar Equipos</b>
+            </div>
+            <div>
+                <small class="text-muted">
+                    <i class="bi bi-info-circle"></i> Administra (añade o edita), visualiza y asigna personal a los equipos activos de la empresa.
+                </small>
+            </div>
+        </div>
         <div class="logo-os">
             <img src="img/logoOutsourcing.png" alt="Logo" class="dashboard-vector-icon" />
         </div>
@@ -238,13 +247,13 @@
                                 <div class="seccion-datos">
                                     <p>Descarga la plantilla Excel para cargar los equipos de forma masiva, llena los datos y guarda el archivo.</p>
                                     <button class="botn3" onclick="descargarPlantillaCargaMasiva()">
-                                        <i class="bi bi-download"></i> Descargar Plantilla Excel
+                                         Descargar Plantilla Excel
                                     </button>
 
                                     <div class="card mt-3">
                                         <div class="card-body">
                                             <h6 class="card-title">Columnas requeridas:</h6>
-                                            <ul class="small mb-0">
+                                            <ul class="">
                                                 <li><strong>Marca</strong> (Obligatorio)</li>
                                                 <li><strong>Modelo</strong> (Obligatorio)</li>
                                                 <li><strong>Serial</strong> (Obligatorio)</li>
@@ -357,7 +366,7 @@
                                     <i class="bi bi-check-circle"></i> Registros procesados exitosamente
                                 </h6>
                                 <div class="alert alert-success">
-                                    <i class="bi bi-info-circle"></i> Los equipos han sido registrados correctamente en el sistema.
+                                     Los equipos han sido registrados correctamente en el sistema.
                                 </div>
                             </div>
                         </div>
@@ -365,10 +374,10 @@
                 </div>
                 <div class="modal-footer-equipgo">
                     <button class="boton-modal-equipgo boton-modal-secundario" data-bs-dismiss="modal" onclick="limpiarModalCarga()">
-                        <i class="bi bi-x-circle"></i> Cancelar
+                         Cancelar
                     </button>
                     <button class="boton-modal-equipgo" id="procesarCargaBtn" disabled>
-                        <i class="bi bi-upload"></i> Procesar Carga Masiva
+                         Procesar Carga Masiva
                     </button>
                 </div>
             </div>
@@ -553,12 +562,12 @@
                 <div class="modal-footer-equipgo">
                     <!-- Botón de Desasignar (solo visible si hay usuario asignado) -->
                     <button class="boton-modal-equipgo boton-modal-peligro" id="btnDesasignar" style="display: none; margin-right: auto;" onclick="desasignarUsuario()">
-                        🗑️ Desasignar
+                         Desasignar
                     </button>
 
                     <button class="boton-modal-equipgo boton-modal-secundario" data-bs-dismiss="modal">Cancelar</button>
                     <button class="boton-modal-equipgo" onclick="guardarAsignacionUsuario()" id="btnGuardarAsignacion">
-                        💾 Guardar Asignación
+                         Guardar Asignación
                     </button>
                 </div>
             </div>

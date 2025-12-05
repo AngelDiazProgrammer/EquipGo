@@ -31,39 +31,39 @@
                     <div style="position: relative; width: auto; margin: 0 auto; max-width: 500px; pointer-events: none; top: 50%; transform: translateY(-50%);">
                         <div class="modal-content">
                             <div class="modal-header-equipgo" style="background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%); border-bottom: 2px solid #d39e00;">
-                                <h5 class="modal-title-equipgo">⚠️ <strong>Requiere validación</strong></h5>
+                                <h5 class="modal-title-equipgo">⚠ <strong>Requiere validación</strong></h5>
                             </div>
                             <div class="modal-body-equipgo">
                                 <div class="seccion-modal">
                                     <div class="dato-fila">
-                                        <span class="dato-label">📌 Área:</span>
+                                        <span class="dato-label"> Área:</span>
                                         <span class="dato-valor">@equipoEscaneado.Area</span>
                                     </div>
                                     <div class="dato-fila">
-                                        <span class="dato-label">👤 Usuario:</span>
+                                        <span class="dato-label"> Usuario:</span>
                                         <span class="dato-valor">@equipoEscaneado.NombreUsuario</span>
                                     </div>
                                     <div class="dato-fila">
-                                        <span class="dato-label">🆔 Documento:</span>
+                                        <span class="dato-label"> Documento:</span>
                                         <span class="dato-valor">@equipoEscaneado.DocumentoUsuario</span>
                                     </div>
                                     <div class="dato-fila">
-                                        <span class="dato-label">💻 Modelo:</span>
+                                        <span class="dato-label"> Modelo:</span>
                                         <span class="dato-valor">@equipoEscaneado.Modelo</span>
                                     </div>
                                     <div class="dato-fila">
-                                        <span class="dato-label">🏷️ Serial:</span>
+                                        <span class="dato-label"> Serial:</span>
                                         <span class="dato-valor">@equipoEscaneado.Serial</span>
                                     </div>
                                     <div class="dato-fila">
-                                        <span class="dato-label">🔖 Asset:</span>
+                                        <span class="dato-label"> Asset:</span>
                                         <span class="dato-valor">@equipoEscaneado.CodigoBarras</span>
                                     </div>
                                 </div>
 
                                 <div class="seccion-modal">
                                     <div class="dato-fila">
-                                        <span class="dato-label">🚥 Tipo de Transacción:</span>
+                                        <span class="dato-label"> Tipo de Transacción:</span>
                                         <span class="scanner-badge @(tipoTransaccionAutomatico == 1 ? "scanner-badge-success" : "scanner-badge-warning")">
                                             @(tipoTransaccionAutomatico == 1 ? "ENTRADA" : "SALIDA")
                                         </span>
@@ -75,7 +75,7 @@
                                 {
                                     <div class="seccion-modal">
                                         <div class="seccion-header">
-                                            <span class="seccion-icon">🕒</span>
+                                            <span class="seccion-icon"></span>
                                             <span class="seccion-titulo">Historial de Transacciones</span>
                                         </div>
                                         <div class="seccion-datos">
@@ -93,10 +93,10 @@
                             </div>
                             <div class="modal-footer-equipgo">
                                 <button class="boton-modal-equipgo boton-modal-secundario" @onclick="CerrarModal">
-                                    ❌ Denegar
+                                     Denegar
                                 </button>
                                 <button class="boton-modal-equipgo" style="background: linear-gradient(135deg, #198754 0%, #157347 100%);" @onclick="AprobarTransaccion">
-                                    ✅ Aprobar
+                                     Aprobar
                                 </button>
                             </div>
                         </div>
@@ -106,7 +106,7 @@
 
             <div id="scanner-actions" class="scanner-actions">
                 <button class="scanner-btn-premium scanner-btn-validate" @onclick="AbrirModalValidarVisitante">
-                    <span class="scanner-btn-premium-icon">🔍</span>
+                    <span class="scanner-btn-premium-icon"></span>
                     <span class="scanner-btn-premium-text">Validar visitante</span>
                 </button>
             </div>
@@ -121,7 +121,7 @@
                             </div>
                             <div class="modal-body-equipgo">
                                 <div class="form-section">
-                                    <label class="dato-label">🆔 Número de Documento:</label>
+                                    <label class="dato-label"> Número de Documento:</label>
                                     <div class="scanner-input-group">
                                         <input type="text" class="scanner-form-control"
                                                @bind="documentoVisitante" @onblur="ConsultarVisitante"
@@ -142,31 +142,31 @@
                                 {
                                     <div class="seccion-modal">
                                         <div class="dato-fila">
-                                            <span class="dato-label">👤 Nombre:</span>
+                                            <span class="dato-label"> Nombre:</span>
                                             <span class="dato-valor">@visitanteDto?.Nombres @visitanteDto?.Apellidos</span>
                                         </div>
                                         <div class="dato-fila">
-                                            <span class="dato-label">📄 Tipo Documento:</span>
+                                            <span class="dato-label"> Tipo Documento:</span>
                                             <span class="dato-valor">@visitanteDto?.TipoDocumento</span>
                                         </div>
                                         <div class="dato-fila">
-                                            <span class="dato-label">🔧 Marca:</span>
+                                            <span class="dato-label"> Marca:</span>
                                             <span class="dato-valor">@visitanteDto?.Marca</span>
                                         </div>
                                         <div class="dato-fila">
-                                            <span class="dato-label">💻 Modelo:</span>
+                                            <span class="dato-label"> Modelo:</span>
                                             <span class="dato-valor">@visitanteDto?.Modelo</span>
                                         </div>
                                         <div class="dato-fila">
-                                            <span class="dato-label">🏷️ Serial:</span>
+                                            <span class="dato-label"> Serial:</span>
                                             <span class="dato-valor">@visitanteDto?.Serial</span>
                                         </div>
                                         <div class="dato-fila">
-                                            <span class="dato-label">🏢 Proveedor:</span>
+                                            <span class="dato-label"> Proveedor:</span>
                                             <span class="dato-valor">@visitanteDto?.NombreProveedor</span>
                                         </div>
                                         <div class="dato-fila">
-                                            <span class="dato-label">🔁 Tipo de transacción:</span>
+                                            <span class="dato-label"> Tipo de transacción:</span>
                                             <span class="scanner-badge @(visitanteDto.TipoTransaccionSiguiente == 1 ? "scanner-badge-success" : "scanner-badge-warning")">
                                                 @(visitanteDto.TipoTransaccionSiguiente == 1 ? "ENTRADA" : "SALIDA")
                                             </span>
@@ -175,7 +175,7 @@
                                         @if (!string.IsNullOrWhiteSpace(visitanteDto.FotoBase64))
                                         {
                                             <div class="form-section">
-                                                <label class="dato-label">👁️ Foto del equipo:</label>
+                                                <label class="dato-label"> Foto del equipo:</label>
                                                 <img src="@visitanteDto.FotoBase64" alt="Foto del equipo"
                                                      style="padding: 4px; background-color: #fff; border: 1px solid #e0e0e0; border-radius: 8px; max-width: 100%; height: auto; max-height: 200px; object-fit: contain; margin-top: 4px;" />
                                             </div>
@@ -184,17 +184,17 @@
                                 }
                                 else if (!consultaEnProgreso && documentoVisitante != "")
                                 {
-                                    <p style="color: #dc3545; font-size: 13px; font-weight: 600;">❌ Visitante no registrado.</p>
+                                    <p style="color: #dc3545; font-size: 13px; font-weight: 600;"> Visitante no registrado.</p>
                                 }
                             </div>
                             <div class="modal-footer-equipgo">
                                 <button class="boton-modal-equipgo boton-modal-secundario" @onclick="CerrarModalValidarVisitante">
-                                    ❌ Denegar
+                                     Denegar
                                 </button>
                                 <button class="boton-modal-equipgo" style="background: linear-gradient(135deg, #198754 0%, #157347 100%);"
                                         @onclick="RegistrarTransaccionVisitante"
                                         disabled="@(visitanteEncontrado == false)">
-                                    ✅ Aprobar
+                                     Aprobar
                                 </button>
                             </div>
                         </div>
@@ -204,7 +204,7 @@
 
             <div id="scanner-actions" class="scanner-actions">
                 <button class="scanner-btn-premium scanner-btn-logout" @onclick="CerrarSesion">
-                    <span class="scanner-btn-premium-icon">←</span>
+                    <span class="scanner-btn-premium-icon"></span>
                     <span class="scanner-btn-premium-text">Cerrar sesión</span>
                 </button>
             </div>

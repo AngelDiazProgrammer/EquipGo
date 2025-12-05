@@ -456,7 +456,7 @@ window.guardarAsignacionUsuario = async function () {
             return;
         }
 
-        // Validar campos requeridos del formulario
+        // Validar campos requeridos
         const camposRequeridos = [
             { id: 'asignarTipoDocumento', nombre: 'Tipo de Documento' },
             { id: 'asignarNumeroDocumento', nombre: 'Número de Documento' },
@@ -477,7 +477,7 @@ window.guardarAsignacionUsuario = async function () {
             }
         }
 
-        // Preparar datos para enviar
+        // Datos para enviar
         const requestData = {
             equipoId: parseInt(equipoId),
             idTipoDocumento: parseInt(document.getElementById('asignarTipoDocumento').value),
@@ -490,13 +490,11 @@ window.guardarAsignacionUsuario = async function () {
 
         console.log("📦 Enviando datos de asignación:", requestData);
 
-        // Mostrar loading en el botón
         const btnGuardar = document.getElementById('btnGuardarAsignacion');
         const textoOriginal = btnGuardar.innerHTML;
         btnGuardar.innerHTML = '<i class="bi bi-arrow-repeat spinner"></i> Guardando...';
         btnGuardar.disabled = true;
 
-        // Enviar request al backend
         const response = await fetch('/api/equipos/admin/asignar-usuario', {
             method: 'POST',
             headers: {
@@ -505,31 +503,37 @@ window.guardarAsignacionUsuario = async function () {
             body: JSON.stringify(requestData)
         });
 
-        if (response.ok) {
-            const resultado = await response.json();
-            console.log("✅ Asignación exitosa:", resultado);
-
-            // Mostrar mensaje de éxito
-            alert('✅ Usuario asignado correctamente al equipo');
-
-            // Cerrar el modal
-            const modal = bootstrap.Modal.getInstance(document.getElementById('modalAsignarUsuario'));
-            modal.hide();
-
-            // Actualizar la lista de equipos
-            await actualizarListaEquipos();
-
-        } else {
+        // ---------------------------
+        //   🔥 CONTROL DE USUARIO INACTIVO
+        // ---------------------------
+        if (!response.ok) {
             const error = await response.json();
             console.error("❌ Error en asignación:", error);
+
+            if (error.usuario_inactivo === true || error.error?.includes("no está activo")) {
+                alert("❌ El usuario existe pero está INACTIVO. No se puede asignar el equipo.");
+                return;
+            }
+
             alert(`❌ Error: ${error.error || 'No se pudo asignar el usuario'}`);
+            return;
         }
+
+        // Ok
+        const resultado = await response.json();
+        console.log("✅ Asignación exitosa:", resultado);
+
+        alert('✅ Usuario asignado correctamente al equipo');
+
+        const modal = bootstrap.Modal.getInstance(document.getElementById('modalAsignarUsuario'));
+        modal.hide();
+
+        await actualizarListaEquipos();
 
     } catch (error) {
         console.error("❌ Error en guardarAsignacionUsuario:", error);
         alert('❌ Error de red o servidor al guardar la asignación');
     } finally {
-        // Restaurar botón
         const btnGuardar = document.getElementById('btnGuardarAsignacion');
         if (btnGuardar) {
             btnGuardar.innerHTML = '💾 Guardar Asignación';
@@ -537,6 +541,7 @@ window.guardarAsignacionUsuario = async function () {
         }
     }
 };
+
 
 // Función para desasignar usuario del equipo
 window.desasignarUsuario = async function () {

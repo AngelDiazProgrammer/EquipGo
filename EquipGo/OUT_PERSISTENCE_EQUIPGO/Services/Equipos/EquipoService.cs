@@ -541,6 +541,13 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Equipos
                     return false;
                 }
 
+                // Verificar si está activo
+                if (usuario.IdEstado != 1) 
+                {
+                    Console.WriteLine("❌ El usuario existe pero no está activo. No se puede asignar el equipo.");
+                    return false;
+                }
+
                 // Asignar usuario al equipo
                 equipo.IdUsuarioInfo = usuarioId;
                 equipo.UltimaModificacion = DateTime.UtcNow;
@@ -557,6 +564,7 @@ namespace OUT_PERSISTENCE_EQUIPGO.Services.Equipos
                 return false;
             }
         }
+
 
         public async Task<bool> DesasignarUsuarioDeEquipoAsync(int equipoId)
         {

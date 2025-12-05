@@ -242,6 +242,12 @@ public class EquiposController : ControllerBase
                 return NotFound(new { message = "Usuario no encontrado en la base de datos local." });
             }
 
+            // ❌ Si el usuario está inactivo, no devolverlo
+            if (usuario.IdEstado != 1)
+            {
+                return BadRequest(new { message = "El usuario existe pero está inactivo." });
+            }
+
             // Devolvemos un DTO con la información relevante para el formulario
             return Ok(new
             {
@@ -371,8 +377,6 @@ public class EquiposController : ControllerBase
         }
     }
 
-    // Agregar estos endpoints en tu EquiposController
-
     [HttpPost("admin/asignar-usuario")]
     public async Task<IActionResult> AsignarUsuarioAEquipo([FromBody] AsignarUsuarioRequestDto request)
     {
@@ -380,27 +384,40 @@ public class EquiposController : ControllerBase
         {
             Console.WriteLine($"🔄 Asignando usuario al equipo {request.EquipoId}");
 
-            // Validaciones básicas
             if (request.EquipoId <= 0)
                 return BadRequest(new { error = "ID de equipo inválido" });
 
             if (string.IsNullOrWhiteSpace(request.NumeroDocumento))
                 return BadRequest(new { error = "El número de documento es obligatorio" });
 
-            // Buscar el equipo
+            // Buscar equipo
             var equipo = await _equipoService.ObtenerPorIdAsync(request.EquipoId);
             if (equipo == null)
                 return NotFound(new { error = "Equipo no encontrado" });
 
-            // --- LÓGICA DE UPSERT PARA EL USUARIO ---
             int usuarioId;
 
-            // Buscar usuario por documento
+            // Buscar usuario existente por documento
             var usuarioExistente = await _usuariosInformacionService.ConsultarUsuarioPorDocumentoAsync(request.NumeroDocumento);
 
+            // --------------------------------------------------------------------
+            //   🔥 CONTROL DE USUARIO INACTIVO
+            // --------------------------------------------------------------------
+            if (usuarioExistente != null && usuarioExistente.IdEstado != 1)
+            {
+                Console.WriteLine("❌ Usuario encontrado pero INACTIVO. No se puede asignar.");
+                return BadRequest(new
+                {
+                    error = "El usuario existe pero no está activo",
+                    usuario_inactivo = true
+                });
+            }
+
+            // --------------------------------------------------------------------
+            //   🟦 UPSERT (actualizar o crear)
+            // --------------------------------------------------------------------
             if (usuarioExistente != null)
             {
-                // ✅ Usuario existe - ACTUALIZAR
                 Console.WriteLine($"✅ Usuario existente encontrado: {usuarioExistente.Nombres} {usuarioExistente.Apellidos}");
 
                 usuarioExistente.IdTipodocumento = request.IdTipoDocumento;
@@ -415,7 +432,7 @@ public class EquiposController : ControllerBase
             }
             else
             {
-                // 🆕 Usuario no existe - CREAR
+                // Crear usuario nuevo
                 Console.WriteLine($"🆕 Creando nuevo usuario: {request.Nombres} {request.Apellidos}");
 
                 var nuevoUsuario = new UsuariosInformacion
@@ -426,7 +443,7 @@ public class EquiposController : ControllerBase
                     Apellidos = request.Apellidos,
                     IdArea = request.IdArea,
                     IdCampaña = request.IdCampaña,
-                    IdEstado = 1, // Estado Activo
+                    IdEstado = 1, // Activo
                     FechaCreacion = DateTime.UtcNow,
                     UltimaModificacion = DateTime.UtcNow
                 };
@@ -434,7 +451,9 @@ public class EquiposController : ControllerBase
                 usuarioId = await _usuariosInformacionService.CrearUsuarioAsync(nuevoUsuario);
             }
 
-            // --- ASIGNAR USUARIO AL EQUIPO ---
+            // --------------------------------------------------------------------
+            //   🟩 ASIGNAR USUARIO AL EQUIPO
+            // --------------------------------------------------------------------
             var actualizado = await _equipoService.AsignarUsuarioAEquipoAsync(request.EquipoId, usuarioId);
 
             if (!actualizado)
@@ -447,7 +466,6 @@ public class EquiposController : ControllerBase
                 message = "Usuario asignado correctamente al equipo",
                 usuarioId = usuarioId
             });
-
         }
         catch (Exception ex)
         {
@@ -455,6 +473,7 @@ public class EquiposController : ControllerBase
             return BadRequest(new { error = ex.Message });
         }
     }
+
 
     [HttpPost("admin/desasignar-usuario/{equipoId}")]
     public async Task<IActionResult> DesasignarUsuarioDeEquipo(int equipoId)

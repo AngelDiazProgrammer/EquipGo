@@ -99,7 +99,7 @@ namespace EquipGo.Public.Controllers
 
             try
             {
-                var response = await client.GetAsync("https://test.outsourcing.col:6997/api/proveedores");
+                var response = await client.GetAsync("https://localhost:7096/api/proveedores");
 
                 if (response.IsSuccessStatusCode)
                     return await response.Content.ReadFromJsonAsync<List<ProveedorDto>>() ?? new();
@@ -118,7 +118,7 @@ namespace EquipGo.Public.Controllers
 
             try
             {
-                var response = await client.GetAsync("https://test.outsourcing.col:6997/api/tiposdocumentos");
+                var response = await client.GetAsync("https://localhost:7096/api/tiposdocumentos");
                 Console.WriteLine($"Status Code: {response.StatusCode}"); // Debug
 
                 if (response.IsSuccessStatusCode)
